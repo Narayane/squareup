@@ -1,0 +1,9 @@
+<resources>
+    <string name="sq_app_name">Square up</string>
+
+    <string name="sq_action_settings">Settings</string>
+
+    <string name="sq_navigation_drawer_open">Open navigation drawer</string>
+    <string name="sq_navigation_drawer_close">Close navigation drawer</string>
+
+</resources>

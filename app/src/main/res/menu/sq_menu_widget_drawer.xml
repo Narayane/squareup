@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sq_drawer_menu_item_event"
+            android:icon="@drawable/sq_ic_event_24dp"
+            android:checked="true"
+            android:title="My events"/>
+        <item
+            android:id="@+id/sq_drawer_menu_item_currency"
+            android:icon="@drawable/sq_ic_currency_24dp"
+            android:title="My active currencies"/>
+        <item
+            android:id="@+id/sq_drawer_menu_item_about"
+            android:icon="@drawable/sq_ic_about_24dp"
+            android:title="About"/>
+    </group>
+
+    <!--<item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share"/>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send"/>
+        </menu>
+    </item>-->
+
+</menu>

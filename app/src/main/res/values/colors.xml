@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sq_color_primary">#1976d2</color>
+    <color name="sq_color_primary_dark">#0d47a1</color>
+    <color name="sq_color_accent">#ff8f00</color>
+</resources>

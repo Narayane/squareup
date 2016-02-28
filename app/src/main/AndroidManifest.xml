@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.sebastien.balard.android.squareup"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:name=".SQApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/sq_app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.activities.SQHomeActivity"
+            android:label="My events"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="7988e6ed164e770bc103a2ffd3a6037c24bbc405" />
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
