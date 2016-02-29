@@ -8,7 +8,7 @@ import com.sebastien.balard.android.squareup.BuildConfig;
 import io.fabric.sdk.android.Fabric;
 
 /**
- * Created by sbalard on 27/02/2016.
+ * Created by Sébastien BALARD on 27/02/2016.
  */
 public class SQFabricUtils {
 

@@ -21,6 +21,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Sébastien BALARD on 27/02/2016.
+ */
 public class SQHomeActivity extends SQActivity {
 
     @Bind(R.id.drawer_layout)

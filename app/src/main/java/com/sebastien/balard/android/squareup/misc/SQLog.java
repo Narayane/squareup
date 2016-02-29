@@ -5,7 +5,7 @@ import android.util.Log;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 
 /**
- * Created by sbalard on 27/07/2015.
+ * Created by Sébastien BALARD on 27/07/2015.
  */
 public class SQLog {
 
