@@ -10,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -26,13 +27,13 @@ import butterknife.OnClick;
  */
 public class SQHomeActivity extends SQActivity {
 
-    @Bind(R.id.drawer_layout)
+    @Bind(R.id.sq_activity_home_layout_drawer)
     DrawerLayout mDrawerLayout;
-    @Bind(R.id.nav_view)
+    @Bind(R.id.sq_activity_home_navigationview)
     NavigationView mNavigationView;
-    @Bind(R.id.toolbar)
+    @Bind(R.id.sq_widget_app_bar_toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.fab)
+    @Bind(R.id.sq_activity_home_fab)
     FloatingActionButton mFab;
 
     public final static Intent getIntent(Context pContext) {
@@ -50,7 +51,7 @@ public class SQHomeActivity extends SQActivity {
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .sq_navigation_drawer_open, R.string.sq_navigation_drawer_close);
+                .sq_action_open_drawer, R.string.sq_action_close_drawer);
         mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
@@ -58,14 +59,12 @@ public class SQHomeActivity extends SQActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem pMenuItem) {
                 switch (pMenuItem.getItemId()) {
-                    case R.id.sq_drawer_menu_item_event:
-                        SQLog.i("click on drawer menu item: event");
+                    case R.id.sq_menu_drawer_item_event:
+                        //SQLog.i("click on drawer menu item: event");
                         break;
-                    case R.id.sq_drawer_menu_item_currency:
-                        SQLog.i("click on drawer menu item: currency");
-                        break;
-                    case R.id.sq_drawer_menu_item_about:
-                        SQLog.i("click on drawer menu item: about");
+                    case R.id.sq_menu_drawer_item_currency:
+                        //SQLog.i("click on drawer menu item: currency");
+                        startActivity(SQCurrenciesListActivity.getIntent(SQHomeActivity.this));
                         break;
                     default:
                         break;
@@ -74,6 +73,13 @@ public class SQHomeActivity extends SQActivity {
                 return true;
             }
         });
+        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu pMenu) {
+        getMenuInflater().inflate(R.menu.sq_menu_default, pMenu);
+        return true;
     }
 
     @Override
@@ -85,7 +91,7 @@ public class SQHomeActivity extends SQActivity {
         }
     }
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
         Snackbar.make(pView, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();

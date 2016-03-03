@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/sq_menu_default_item_about"
         android:orderInCategory="100"
-        android:title="@string/sq_action_settings"
+        android:title="@string/sq_action_about"
         app:showAsAction="never"/>
 </menu>

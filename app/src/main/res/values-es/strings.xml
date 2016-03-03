@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sq_action_about">Acerca de</string>
+    <string name="sq_action_open_drawer">Abre el menú de navegación</string>
+    <string name="sq_action_close_drawer">Cierra el menú de navegación</string>
+    <string name="sq_commons_my_events">Mis acontecimientos</string>
+    <string name="sq_commons_my_currencies">Mis monedas activas</string>
+    <string name="sq_screen_home_textview_empty_label">You do not have created event yet</string>
+    <string name="sq_screen_currencies_list_textview_empty_label">You do not activated currency yet</string>
+</resources>

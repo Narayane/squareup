@@ -3,4 +3,5 @@
     <color name="sq_color_primary">#1976d2</color>
     <color name="sq_color_primary_dark">#0d47a1</color>
     <color name="sq_color_accent">#ff8f00</color>
+    <color name="sq_color_white">#ffffff</color>
 </resources>

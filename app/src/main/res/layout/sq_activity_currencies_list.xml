@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
-    android:id="@+id/sq_activity_home_layout_drawer"
+    android:id="@+id/sq_activity_currencies_list_layout_drawer"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,7 +12,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activities.SQHomeActivity">
+        tools:context=".ui.activities.SQCurrenciesListActivity">
 
         <include layout="@layout/sq_widget_app_bar"/>
 
@@ -22,41 +22,41 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <TextView
-                android:id="@+id/sq_activity_home_textview_empty"
+                android:id="@+id/sq_activity_currencies_list_textview_empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/sq_screen_home_textview_empty_label"/>
+                android:text="@string/sq_screen_currencies_list_textview_empty_label"/>
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/sq_activity_home_recyclerview"
+            android:id="@+id/sq_activity_currencies_list_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:visibility="gone"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/sq_activity_home_fab"
+        <!--<android.support.design.widget.FloatingActionButton
+            android:id="@+id/sq_activity_currencies_list_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/sq_margin_fab"
-            android:src="@drawable/sq_ic_new_24dp"/>
+            android:src="@drawable/sq_ic_activate_24dp"
+            android:layout_gravity="bottom|end"/>-->
 
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/sq_activity_home_navigationview"
+        android:id="@+id/sq_activity_currencies_list_navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@drawable/sq_shape_drawer_header"
         android:fitsSystemWindows="true"
+        android:background="@drawable/sq_shape_drawer_header"
         app:headerLayout="@layout/sq_widget_drawer"
+        app:menu="@menu/sq_menu_drawer"
         app:itemBackground="@drawable/sq_selector_navigation_view_item_background"
-        app:itemIconTint="@color/sq_selector_navigation_view_item"
         app:itemTextColor="@color/sq_selector_navigation_view_item"
-        app:menu="@menu/sq_menu_drawer"/>
+        app:itemIconTint="@color/sq_selector_navigation_view_item"/>
 
 </android.support.v4.widget.DrawerLayout>
