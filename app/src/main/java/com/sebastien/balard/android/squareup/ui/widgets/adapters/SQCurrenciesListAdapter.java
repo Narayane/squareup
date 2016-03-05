@@ -32,7 +32,7 @@ public class SQCurrenciesListAdapter extends RecyclerView.Adapter<SQCurrenciesLi
     public void onBindViewHolder(ViewHolder pHolder, int pPosition) {
         SQCurrency vCurrency = mCurrenciesList.get(pPosition);
 
-        pHolder.mCodeTextView.setText(vCurrency.getCurrencyCode());
+        pHolder.mCodeTextView.setText(vCurrency.getCode());
         String vLabel = vCurrency.getName();
         vLabel += " (";
         vLabel += vCurrency.getSymbol() + ")";

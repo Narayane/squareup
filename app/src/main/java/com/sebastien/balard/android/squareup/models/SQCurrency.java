@@ -62,13 +62,6 @@ public class SQCurrency {
         return mRate;
     }
 
-    public String getCurrencyCode() {
-        if (mCurrency == null) {
-            mCurrency = SQCurrencyUtils.getCurrencyByCode(mCode);
-        }
-        return mCurrency.getCurrencyCode();
-    }
-
     public String getName() {
         if (mCurrency == null) {
             mCurrency = SQCurrencyUtils.getCurrencyByCode(mCode);

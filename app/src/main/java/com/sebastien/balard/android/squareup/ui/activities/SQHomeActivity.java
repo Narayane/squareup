@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +35,8 @@ public class SQHomeActivity extends SQActivity {
     NavigationView mNavigationView;
     @Bind(R.id.sq_widget_app_bar_toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.sq_activity_home_recyclerview)
+    RecyclerView mRecyclerView;
     @Bind(R.id.sq_activity_home_fab)
     FloatingActionButton mFab;
 
@@ -74,6 +78,8 @@ public class SQHomeActivity extends SQActivity {
             }
         });
         mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override

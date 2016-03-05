@@ -55,7 +55,7 @@ public class SQCurrenciesListActivity extends SQActivity {
     private SearchView mSearchView;
     private SimpleCursorAdapter mSearchViewCursorAdapter;
     private List<Currency> mAllCurrencies;
-    private List<Currency> mShownCurrencies;
+    private List<Currency> mActivableCurrencies;
     private List<SQCurrency> mActivatedCurrencies;
     private SQCurrenciesListAdapter mAdapter;
 
@@ -103,7 +103,7 @@ public class SQCurrenciesListActivity extends SQActivity {
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
         mSearchViewCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        mShownCurrencies = new ArrayList<Currency>();
+        mActivableCurrencies = new ArrayList<Currency>();
 
         mActivatedCurrencies = new ArrayList<SQCurrency>();
         mAdapter = new SQCurrenciesListAdapter(mActivatedCurrencies);
@@ -123,7 +123,7 @@ public class SQCurrenciesListActivity extends SQActivity {
         SQLog.v("onPrepareOptionsMenu");
         final MenuItem vMenuItem = pMenu.findItem(R.id.sq_menu_search_item_search);
         mSearchView = (SearchView) vMenuItem.getActionView();
-        mSearchView.setQueryHint("Activate a currency");
+        mSearchView.setQueryHint(getString(R.string.sq_commons_activate_currency));
         mSearchView.setSuggestionsAdapter(mSearchViewCursorAdapter);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -150,16 +150,16 @@ public class SQCurrenciesListActivity extends SQActivity {
             @Override
             public boolean onSuggestionClick(int pPosition) {
                 SQLog.i("click on suggestion: " + pPosition);
-                Currency vSelected = mShownCurrencies.get(pPosition);
-                Snackbar.make(mSearchView, vSelected.getDisplayName(Locale.getDefault()), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Currency vSelected = mActivableCurrencies.get(pPosition);
+                SQCurrency vActivatedCurrency = new SQCurrency(vSelected.getCurrencyCode(), 1.0f);
+                // TODO: call dao to save currency, remove next line
+                mActivatedCurrencies.add(vActivatedCurrency);
+                refreshLayout();
+                Snackbar.make(mSearchView, getString(R.string.sq_message_info_currency_activated, vSelected
+                        .getDisplayName(Locale.getDefault())), Snackbar.LENGTH_LONG).show();
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 vMenuItem.collapseActionView();
-                SQCurrency vActivatedCurrency = new SQCurrency(vSelected.getCurrencyCode(), 1.0f);
-                mActivatedCurrencies.add(vActivatedCurrency);
-                mAdapter.notifyDataSetChanged();
-                refreshLayout();
                 return true;
             }
         });
@@ -185,6 +185,7 @@ public class SQCurrenciesListActivity extends SQActivity {
     }
 
     private void refreshLayout() {
+        // TODO: call dao to reload activated currencies list
         if (mActivatedCurrencies.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
@@ -192,20 +193,27 @@ public class SQCurrenciesListActivity extends SQActivity {
             mEmptyView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void filter(String pQuery) {
 
         final MatrixCursor vCursor = new MatrixCursor(new String[]{BaseColumns._ID, "label"});
-        mShownCurrencies.clear();
 
+        List<String> vCodesList = new ArrayList<String>();
+        for (int vIndex = 0;vIndex < mActivatedCurrencies.size();vIndex++) {
+            vCodesList.add(mActivatedCurrencies.get(vIndex).getCode());
+        }
+
+        mActivableCurrencies.clear();
         int vIndex = 0;
         for (Currency vCurrency : mAllCurrencies) {
-            if (vCurrency.getDisplayName(Locale.getDefault()).toLowerCase().contains(pQuery.toLowerCase()) ||
-                    vCurrency.getCurrencyCode().toLowerCase().contains(pQuery.toLowerCase())) {
+            if ((vCurrency.getDisplayName(Locale.getDefault()).toLowerCase().contains(pQuery.toLowerCase()) ||
+                    vCurrency.getCurrencyCode().toLowerCase().contains(pQuery.toLowerCase())) && !vCodesList.contains
+                            (vCurrency.getCurrencyCode())) {
                 vCursor.addRow(new Object[]{vIndex, vCurrency.getDisplayName(Locale.getDefault()) + " (" +
                         vCurrency.getCurrencyCode() + ", " + vCurrency.getSymbol(Locale.getDefault()) + ")"});
-                mShownCurrencies.add(vCurrency);
+                mActivableCurrencies.add(vCurrency);
                 vIndex++;
             }
         }

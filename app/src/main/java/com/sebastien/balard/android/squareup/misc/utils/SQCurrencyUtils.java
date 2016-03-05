@@ -23,7 +23,16 @@ public class SQCurrencyUtils {
         if (CURRENCIES == null) {
             loadCurrencies();
         }
-        return new ArrayList<Currency>(CURRENCIES.values());
+        List<Currency> vAllCurrencies = new ArrayList<Currency>(CURRENCIES.values());
+        Collections.sort(vAllCurrencies, new Comparator<Currency>() {
+            @Override
+            public int compare(Currency pFirst, Currency pSecond) {
+                return pFirst.getDisplayName(Locale.getDefault()).compareTo(pSecond.getDisplayName(Locale.getDefault
+                        ()));
+
+            }
+        });
+        return vAllCurrencies;
     }
 
     public static Currency getCurrencyByCode(String pCode) {
@@ -39,14 +48,6 @@ public class SQCurrencyUtils {
         CURRENCIES = new HashMap<String, Currency>();
         List<Currency> vAllCurrencies = new ArrayList<Currency>();
         vAllCurrencies.addAll(vSet);
-        Collections.sort(vAllCurrencies, new Comparator<Currency>() {
-            @Override
-            public int compare(Currency pFirst, Currency pSecond) {
-                return pFirst.getDisplayName(Locale.getDefault()).compareTo(pSecond.getDisplayName(Locale.getDefault
-                        ()));
-
-            }
-        });
         for (Currency vCurrency : vAllCurrencies) {
             CURRENCIES.put(vCurrency.getCurrencyCode(), vCurrency);
         }

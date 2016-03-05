@@ -5,6 +5,8 @@
     <string name="sq_action_close_drawer">Fermer le menu de navigation</string>
     <string name="sq_commons_my_events">Mes évènements</string>
     <string name="sq_commons_my_currencies">Mes devises actives</string>
+    <string name="sq_commons_activate_currency">Activer une devise</string>
     <string name="sq_screen_home_textview_empty_label">Vous n\'avez pas encore créé d\'événement</string>
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
+    <string name="sq_message_info_currency_activated">"Vous venez d'activer la devise : %1$s"</string>
 </resources>
