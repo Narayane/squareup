@@ -17,9 +17,11 @@
         <include layout="@layout/sq_widget_app_bar"/>
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/sq_activity_currencies_list_nestedscrollview_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/sq_activity_currencies_list_textview_empty"
@@ -33,16 +35,7 @@
             android:id="@+id/sq_activity_currencies_list_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:visibility="gone"/>
-
-        <!--<android.support.design.widget.FloatingActionButton
-            android:id="@+id/sq_activity_currencies_list_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/sq_margin_fab"
-            android:src="@drawable/sq_ic_activate_24dp"
-            android:layout_gravity="bottom|end"/>-->
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

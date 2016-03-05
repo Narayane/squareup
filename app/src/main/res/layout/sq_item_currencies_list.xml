@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:padding="16dp">
 
     <TextView
-        android:id="@+id/sq_item_currencies_list_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/sq_item_currencies_list_textview_code"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="EUR"/>
+
+    <TextView
+        android:id="@+id/sq_item_currencies_list_textview_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="euro (€)"/>
+
+    <TextView
+        android:id="@+id/sq_item_currencies_list_textview_rate"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="1,00000"/>
 
 </LinearLayout>

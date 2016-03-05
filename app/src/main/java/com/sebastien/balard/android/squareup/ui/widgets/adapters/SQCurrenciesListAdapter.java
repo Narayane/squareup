@@ -1,32 +1,25 @@
 package com.sebastien.balard.android.squareup.ui.widgets.adapters;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Filterable;
-import android.widget.SimpleCursorAdapter;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.models.SQCurrency;
 
-import java.util.Currency;
 import java.util.List;
 
 /**
  * Created by sbalard on 03/03/2016.
  */
-public class SQCurrenciesListAdapter extends SimpleCursorAdapter implements Filterable {
+public class SQCurrenciesListAdapter extends RecyclerView.Adapter<SQCurrenciesListAdapter.ViewHolder> {
 
-    List<Currency> mCurrenciesList;
+    List<SQCurrency> mCurrenciesList;
 
-    public SQCurrenciesListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-        super(context, layout, c, from, to, flags);
-    }
-
-    /*public SQCurrenciesListAdapter() {
-        mCurrenciesList = new ArrayList<Currency>();
-        mCurrenciesList.addAll(Currency.getAvailableCurrencies());
+    public SQCurrenciesListAdapter(List<SQCurrency> pCurrenciesList) {
+        mCurrenciesList = pCurrenciesList;
     }
 
     @Override
@@ -37,26 +30,32 @@ public class SQCurrenciesListAdapter extends SimpleCursorAdapter implements Filt
 
     @Override
     public void onBindViewHolder(ViewHolder pHolder, int pPosition) {
-        Currency vCurrency = mCurrenciesList.get(pPosition);
-        String vLabel = vCurrency.getDisplayName(Locale.getDefault());
+        SQCurrency vCurrency = mCurrenciesList.get(pPosition);
+
+        pHolder.mCodeTextView.setText(vCurrency.getCurrencyCode());
+        String vLabel = vCurrency.getName();
         vLabel += " (";
-        vLabel += vCurrency.getCurrencyCode() + ")";
+        vLabel += vCurrency.getSymbol() + ")";
         pHolder.mLabelTextView.setText(vLabel);
     }
 
     @Override
     public int getItemCount() {
         return mCurrenciesList.size();
-    }*/
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView mCodeTextView;
         TextView mLabelTextView;
+        TextView mRateTextView;
 
         public ViewHolder(View pView) {
             super(pView);
 
-            mLabelTextView = (TextView) itemView.findViewById(R.id.sq_item_currencies_list_label);
+            mCodeTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_code);
+            mLabelTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_label);
+            mRateTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_rate);
         }
     }
 }

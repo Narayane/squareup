@@ -10,25 +10,29 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
+import com.sebastien.balard.android.squareup.models.SQCurrency;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQCurrenciesListAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,11 +47,17 @@ public class SQCurrenciesListActivity extends SQActivity {
     ImageView mAppBarImageView;
     @Bind(R.id.sq_widget_app_bar_toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.sq_activity_currencies_list_nestedscrollview_empty)
+    NestedScrollView mEmptyView;
+    @Bind(R.id.sq_activity_currencies_list_recyclerview)
+    RecyclerView mRecyclerView;
 
     private SearchView mSearchView;
     private SimpleCursorAdapter mSearchViewCursorAdapter;
     private List<Currency> mAllCurrencies;
     private List<Currency> mShownCurrencies;
+    private List<SQCurrency> mActivatedCurrencies;
+    private SQCurrenciesListAdapter mAdapter;
 
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQCurrenciesListActivity.class)/*.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent
@@ -90,30 +100,27 @@ public class SQCurrenciesListActivity extends SQActivity {
         });
         mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_currency);
 
-        Set<Currency> vSet = Currency.getAvailableCurrencies();
-        SQLog.d("android currencies count: " + vSet.size());
-        mAllCurrencies = new ArrayList<Currency>();
-        mAllCurrencies.addAll(vSet);
-        Collections.sort(mAllCurrencies, new Comparator<Currency>() {
-            @Override
-            public int compare(Currency pFirst, Currency pSecond) {
-                return pFirst.getDisplayName(Locale.getDefault()).compareTo(pSecond.getDisplayName(Locale.getDefault
-                        ()));
-            }
-        });
+        mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
         mSearchViewCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mShownCurrencies = new ArrayList<Currency>();
+
+        mActivatedCurrencies = new ArrayList<SQCurrency>();
+        mAdapter = new SQCurrenciesListAdapter(mActivatedCurrencies);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
+        SQLog.v("onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.sq_menu_search, pMenu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu pMenu) {
+        SQLog.v("onPrepareOptionsMenu");
         final MenuItem vMenuItem = pMenu.findItem(R.id.sq_menu_search_item_search);
         mSearchView = (SearchView) vMenuItem.getActionView();
         mSearchView.setQueryHint("Activate a currency");
@@ -143,11 +150,16 @@ public class SQCurrenciesListActivity extends SQActivity {
             @Override
             public boolean onSuggestionClick(int pPosition) {
                 SQLog.i("click on suggestion: " + pPosition);
-                Snackbar.make(mSearchView, mShownCurrencies.get(pPosition).getDisplayName(Locale.getDefault()), Snackbar
-                        .LENGTH_LONG).setAction("Action", null).show();
+                Currency vSelected = mShownCurrencies.get(pPosition);
+                Snackbar.make(mSearchView, vSelected.getDisplayName(Locale.getDefault()), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 vMenuItem.collapseActionView();
+                SQCurrency vActivatedCurrency = new SQCurrency(vSelected.getCurrencyCode(), 1.0f);
+                mActivatedCurrencies.add(vActivatedCurrency);
+                mAdapter.notifyDataSetChanged();
+                refreshLayout();
                 return true;
             }
         });
@@ -155,11 +167,30 @@ public class SQCurrenciesListActivity extends SQActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SQLog.v("onResume");
+
+        refreshLayout();
+    }
+
+    @Override
     public void onBackPressed() {
+        SQLog.v("onBackPressed");
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void refreshLayout() {
+        if (mActivatedCurrencies.size() == 0) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -173,7 +204,7 @@ public class SQCurrenciesListActivity extends SQActivity {
             if (vCurrency.getDisplayName(Locale.getDefault()).toLowerCase().contains(pQuery.toLowerCase()) ||
                     vCurrency.getCurrencyCode().toLowerCase().contains(pQuery.toLowerCase())) {
                 vCursor.addRow(new Object[]{vIndex, vCurrency.getDisplayName(Locale.getDefault()) + " (" +
-                        vCurrency.getCurrencyCode() + ")"});
+                        vCurrency.getCurrencyCode() + ", " + vCurrency.getSymbol(Locale.getDefault()) + ")"});
                 mShownCurrencies.add(vCurrency);
                 vIndex++;
             }
