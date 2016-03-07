@@ -45,7 +45,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:background="@drawable/sq_shape_drawer_header"
+        android:background="@drawable/sq_shape_drawer_background"
         app:headerLayout="@layout/sq_widget_drawer"
         app:menu="@menu/sq_menu_drawer"
         app:itemBackground="@drawable/sq_selector_navigation_view_item_background"

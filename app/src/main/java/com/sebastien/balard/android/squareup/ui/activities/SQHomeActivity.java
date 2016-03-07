@@ -1,3 +1,22 @@
+/**
+ * Square up android app
+ * Copyright (C) 2016  Sebastien BALARD
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package com.sebastien.balard.android.squareup.ui.activities;
 
 import android.content.Context;
@@ -18,6 +37,7 @@ import android.view.View;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 
 import butterknife.Bind;
@@ -100,6 +120,6 @@ public class SQHomeActivity extends SQActivity {
     @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
-        Snackbar.make(pView, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        SQDialogUtils.createSnackBar(pView, "Replace with your own action", Snackbar.LENGTH_LONG).show();
     }
 }

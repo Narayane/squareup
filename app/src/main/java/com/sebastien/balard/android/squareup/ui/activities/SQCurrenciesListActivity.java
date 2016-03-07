@@ -1,3 +1,22 @@
+/**
+ * Square up android app
+ * Copyright (C) 2016  Sebastien BALARD
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package com.sebastien.balard.android.squareup.ui.activities;
 
 import android.content.Context;
@@ -27,6 +46,7 @@ import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQCurrenciesListAdapter;
 
@@ -161,7 +181,7 @@ public class SQCurrenciesListActivity extends SQActivity {
             vSnackBarLabel = getString(R.string.sq_message_error_currency_activated, pSelected.getDisplayName(Locale
                     .getDefault()));
         } finally {
-            Snackbar.make(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
+            SQDialogUtils.createSnackBar(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
         }
     }
 

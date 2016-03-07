@@ -13,7 +13,8 @@
         <activity
             android:name=".ui.activities.SQHomeActivity"
             android:label="@string/sq_commons_my_events"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,7 +25,15 @@
         <activity
             android:name=".ui.activities.SQCurrenciesListActivity"
             android:label="@string/sq_commons_my_currencies"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".ui.activities.SQAboutActivity"
+            android:label="@string/sq_action_about"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
 
         <meta-data

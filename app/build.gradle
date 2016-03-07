@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId "com.sebastien.balard.android.squareup"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 12
         versionName "2.0-alpha"
