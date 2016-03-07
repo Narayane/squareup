@@ -6,7 +6,8 @@
     <string name="sq_commons_my_events">Mis acontecimientos</string>
     <string name="sq_commons_my_currencies">Mis monedas activas</string>
     <string name="sq_commons_activate_currency">Activate a currency</string>
-    <string name="sq_screen_home_textview_empty_label">You do not have created event yet</string>
-    <string name="sq_screen_currencies_list_textview_empty_label">You do not activated currency yet</string>
-    <string name="sq_message_info_currency_activated">"You have just activated currency: %1$s"</string>
+    <string name="sq_screen_home_textview_empty_label">You have not created event yet</string>
+    <string name="sq_screen_currencies_list_textview_empty_label">You have not activated currency yet</string>
+    <string name="sq_message_info_currency_activated">"You have just activated the currency %1$s"</string>
+    <string name="sq_message_error_currency_activated">"The currency %1$s has not been activated, please retry"</string>
 </resources>

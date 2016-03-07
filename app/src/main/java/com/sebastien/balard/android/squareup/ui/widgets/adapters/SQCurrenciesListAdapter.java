@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
-import com.sebastien.balard.android.squareup.models.SQCurrency;
+import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 
 import java.util.List;
 

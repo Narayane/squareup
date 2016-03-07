@@ -8,5 +8,7 @@
     <string name="sq_commons_activate_currency">Activer une devise</string>
     <string name="sq_screen_home_textview_empty_label">Vous n\'avez pas encore créé d\'événement</string>
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
-    <string name="sq_message_info_currency_activated">"Vous venez d'activer la devise : %1$s"</string>
+    <string name="sq_message_info_currency_activated">"Vous venez d'activer la devise %1$s"</string>
+    <string name="sq_message_error_currency_activated">"La devise %1$s n\'a pas pu être activée, veuillez
+        réessayer"</string>
 </resources>

@@ -23,12 +23,14 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
+import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
-import com.sebastien.balard.android.squareup.models.SQCurrency;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQCurrenciesListAdapter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -52,6 +54,7 @@ public class SQCurrenciesListActivity extends SQActivity {
     @Bind(R.id.sq_activity_currencies_list_recyclerview)
     RecyclerView mRecyclerView;
 
+    private MenuItem mSearchViewMenuItem;
     private SearchView mSearchView;
     private SimpleCursorAdapter mSearchViewCursorAdapter;
     private List<Currency> mAllCurrencies;
@@ -121,8 +124,55 @@ public class SQCurrenciesListActivity extends SQActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu pMenu) {
         SQLog.v("onPrepareOptionsMenu");
-        final MenuItem vMenuItem = pMenu.findItem(R.id.sq_menu_search_item_search);
-        mSearchView = (SearchView) vMenuItem.getActionView();
+        mSearchViewMenuItem = pMenu.findItem(R.id.sq_menu_search_item_search);
+        initSearchView();
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SQLog.v("onResume");
+
+        refreshLayout();
+    }
+
+    @Override
+    public void onBackPressed() {
+        SQLog.v("onBackPressed");
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void activateCurrency(Currency pSelected) {
+
+        String vSnackBarLabel = null;
+        try {
+            SQCurrency vActivatedCurrency = new SQCurrency(pSelected.getCurrencyCode(), 1.0f);
+            SQDatabaseHelper.getInstance(SQCurrenciesListActivity.this).getCurrencyDao().create(vActivatedCurrency);
+            refreshLayout();
+            vSnackBarLabel = getString(R.string.sq_message_info_currency_activated, pSelected.getDisplayName(Locale
+                    .getDefault()));
+        } catch (SQLException pException) {
+            SQLog.e("fail to activate currency: " + pSelected.getCurrencyCode());
+            vSnackBarLabel = getString(R.string.sq_message_error_currency_activated, pSelected.getDisplayName(Locale
+                    .getDefault()));
+        } finally {
+            Snackbar.make(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private void collapseSearchView() {
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        mSearchViewMenuItem.collapseActionView();
+    }
+
+    private void initSearchView() {
+        mSearchView = (SearchView) mSearchViewMenuItem.getActionView();
         mSearchView.setQueryHint(getString(R.string.sq_commons_activate_currency));
         mSearchView.setSuggestionsAdapter(mSearchViewCursorAdapter);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -149,43 +199,20 @@ public class SQCurrenciesListActivity extends SQActivity {
 
             @Override
             public boolean onSuggestionClick(int pPosition) {
-                SQLog.i("click on suggestion: " + pPosition);
                 Currency vSelected = mActivableCurrencies.get(pPosition);
-                SQCurrency vActivatedCurrency = new SQCurrency(vSelected.getCurrencyCode(), 1.0f);
-                // TODO: call dao to save currency, remove next line
-                mActivatedCurrencies.add(vActivatedCurrency);
-                refreshLayout();
-                Snackbar.make(mSearchView, getString(R.string.sq_message_info_currency_activated, vSelected
-                        .getDisplayName(Locale.getDefault())), Snackbar.LENGTH_LONG).show();
-                mSearchView.setQuery("", false);
-                mSearchView.clearFocus();
-                vMenuItem.collapseActionView();
+                SQLog.i("click on currency: " + vSelected.getCurrencyCode());
+                activateCurrency(vSelected);
+                collapseSearchView();
                 return true;
             }
         });
-        return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SQLog.v("onResume");
-
-        refreshLayout();
-    }
-
-    @Override
-    public void onBackPressed() {
-        SQLog.v("onBackPressed");
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     private void refreshLayout() {
-        // TODO: call dao to reload activated currencies list
+        mActivatedCurrencies.clear();
+        mActivatedCurrencies.addAll(SQDatabaseHelper.getInstance(this).getCurrencyDao()
+                .getActivatedCurrenciesList());
+        mAdapter.notifyDataSetChanged();
         if (mActivatedCurrencies.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
@@ -193,7 +220,6 @@ public class SQCurrenciesListActivity extends SQActivity {
             mEmptyView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
-        mAdapter.notifyDataSetChanged();
     }
 
     private void filter(String pQuery) {

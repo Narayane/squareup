@@ -1,5 +1,9 @@
-package com.sebastien.balard.android.squareup.models;
+package com.sebastien.balard.android.squareup.data.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -11,11 +15,16 @@ import java.util.Locale;
 /**
  * Created by sbalard on 04/03/2016.
  */
+@DatabaseTable(tableName = "square_up_currency", daoClass = SQCurrencyDaoImpl.class)
 public class SQCurrency {
 
+    @DatabaseField(generatedId = true, columnName = "currency_id", canBeNull = false)
     Long mId;
+    @DatabaseField(columnName = "currency_code", width = 3, canBeNull = false, unique = true)
     String mCode;
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_RATE)
     Float mRate;
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_BASE, canBeNull = false)
     Boolean mBase;
 
     private Currency mCurrency;
@@ -74,5 +83,9 @@ public class SQCurrency {
             mCurrency = SQCurrencyUtils.getCurrencyByCode(mCode);
         }
         return mCurrency.getSymbol(Locale.getDefault());
+    }
+
+    public void setBase(Boolean pIsBase) {
+        mBase = pIsBase;
     }
 }
