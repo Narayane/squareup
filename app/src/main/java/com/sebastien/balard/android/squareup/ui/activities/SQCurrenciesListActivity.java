@@ -44,6 +44,8 @@ import android.widget.ImageView;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.io.dto.openexchangerates.OERLatestDto;
+import com.sebastien.balard.android.squareup.io.ws.WSFacade;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
@@ -58,6 +60,9 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SQCurrenciesListActivity extends SQActivity {
 
@@ -132,6 +137,23 @@ public class SQCurrenciesListActivity extends SQActivity {
         mAdapter = new SQCurrenciesListAdapter(mActivatedCurrencies);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
+
+        WSFacade.getLatestRates(new Callback<OERLatestDto>() {
+            @Override
+            public void onResponse(Call<OERLatestDto> pCall, Response<OERLatestDto> pResponse) {
+                if (pResponse.isSuccess()) {
+                    OERLatestDto vDto = pResponse.body();
+                    SQLog.v("open exchange rates currencies count: " + vDto.getRates().size());
+                } else {
+                    SQLog.e(pResponse);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OERLatestDto> pCall, Throwable pException) {
+                SQLog.e("fail to get latest rates: " + pException.getMessage());
+            }
+        });
     }
 
     @Override

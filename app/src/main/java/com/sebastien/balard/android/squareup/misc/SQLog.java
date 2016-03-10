@@ -23,6 +23,8 @@ import android.util.Log;
 
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 
+import retrofit2.Response;
+
 /**
  * Created by Sébastien BALARD on 27/07/2015.
  */
@@ -76,6 +78,14 @@ public class SQLog {
         if (mValue >= SQLogLevel.ERROR.mValue) {
             Log.e(TAG + getCallerName(), pMessage);
             SQFabricUtils.SQCrashlyticsUtils.sendLog(pMessage);
+        }
+    }
+
+    public static void e(Response pResponse) {
+        if (mValue >= SQLogLevel.ERROR.mValue) {
+            String vMessage = pResponse.code() + ": " + pResponse.message();
+            Log.e(TAG + getCallerName(), vMessage);
+            SQFabricUtils.SQCrashlyticsUtils.sendLog(vMessage);
         }
     }
 

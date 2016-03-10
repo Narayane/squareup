@@ -26,6 +26,10 @@ android {
         versionCode 12
         versionName "2.0-alpha"
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
     buildTypes {
         debug {
             buildConfigField("String", "LOG_LEVEL", "\"all\";")
@@ -51,6 +55,11 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    compile 'net.danlew:android.joda:2.9.2'
+    // tool
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
