@@ -17,35 +17,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.sebastien.balard.android.squareup.io.dto.openexchangerates;
+package com.sebastien.balard.android.squareup.data.daos;
 
-import com.google.gson.annotations.SerializedName;
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTableConfig;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 
-import org.joda.time.DateTime;
-
-import java.util.Map;
+import java.sql.SQLException;
 
 /**
- * Created by Sebastien BALARD on 08/03/2016.
+ * Created by Sebastien BALARD on 10/03/2016.
  */
-public class OERLatestDto {
+public class SQConversionBaseDaoImpl extends BaseDaoImpl<SQConversionBase, Long> {
 
-    @SerializedName("timestamp")
-    DateTime mDate;
-    @SerializedName("base")
-    String mBase;
-    @SerializedName("rates")
-    Map<String, Float> mRates;
-
-    protected DateTime getDate() {
-        return mDate;
-    }
-
-    public String getBase() {
-        return mBase;
-    }
-
-    public Map<String, Float> getRates() {
-        return mRates;
+    public SQConversionBaseDaoImpl(ConnectionSource pConnectionSource, DatabaseTableConfig<SQConversionBase>
+            pTableConfig)
+            throws SQLException {
+        super(pConnectionSource, pTableConfig);
     }
 }

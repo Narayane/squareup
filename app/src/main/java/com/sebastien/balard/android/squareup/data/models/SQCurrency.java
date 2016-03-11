@@ -34,7 +34,7 @@ import java.util.Locale;
 /**
  * Created by sbalard on 04/03/2016.
  */
-@DatabaseTable(tableName = "square_up_currency", daoClass = SQCurrencyDaoImpl.class)
+@DatabaseTable(tableName = "sq_currency", daoClass = SQCurrencyDaoImpl.class)
 public class SQCurrency {
 
     @DatabaseField(generatedId = true, columnName = "currency_id", canBeNull = false)

@@ -19,7 +19,7 @@
 
 package com.sebastien.balard.android.squareup.io.ws.openexchangerates;
 
-import com.sebastien.balard.android.squareup.io.dto.openexchangerates.OERLatestDto;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -31,5 +31,5 @@ import retrofit2.http.Query;
 public interface PublicResources {
 
     @GET("latest.json")
-    Call<OERLatestDto> getLatestRates(@Query("app_id") String pToken);
+    Call<SQConversionBase> getLatestRates(@Query("app_id") String pToken);
 }

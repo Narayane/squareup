@@ -27,8 +27,10 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
@@ -44,6 +46,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static SQDatabaseHelper mInstance;
 
     private SQCurrencyDaoImpl mCurrencyDao;
+    private SQConversionBaseDaoImpl mCurrencyBaseDao;
 
     public SQDatabaseHelper(Context pContext) {
         super(pContext, DATABASE_NAME, null, DATABASE_VERSION, R.raw.sq_config_ormlite);
@@ -68,6 +71,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
+        mCurrencyBaseDao = null;
         mCurrencyDao = null;
         mInstance = null;
     }
@@ -89,5 +93,17 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
             }
         }
         return mCurrencyDao;
+    }
+
+    public SQConversionBaseDaoImpl getCurrencyBaseDao() {
+        if (mCurrencyBaseDao == null) {
+            try {
+                mCurrencyBaseDao = getDao(SQConversionBase.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get currency base dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mCurrencyBaseDao;
     }
 }

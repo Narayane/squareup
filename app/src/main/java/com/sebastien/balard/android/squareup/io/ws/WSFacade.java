@@ -21,7 +21,7 @@ package com.sebastien.balard.android.squareup.io.ws;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
-import com.sebastien.balard.android.squareup.io.dto.openexchangerates.OERLatestDto;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,8 +31,8 @@ import retrofit2.Callback;
  */
 public class WSFacade {
 
-    public static void getLatestRates(Callback<OERLatestDto> pCallback) {
-        Call<OERLatestDto> vCall = OpenExchangeRatesRestClient.getPublicApiService().getLatestRates
+    public static void getLatestRates(Callback<SQConversionBase> pCallback) {
+        Call<SQConversionBase> vCall = OpenExchangeRatesRestClient.getPublicApiService().getLatestRates
                 (SQApplication.getContext().getString(R.string.key_openexchangerates));
         vCall.enqueue(pCallback);
     }

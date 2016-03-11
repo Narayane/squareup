@@ -22,7 +22,6 @@ package com.sebastien.balard.android.squareup.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -57,8 +56,6 @@ public class SQHomeActivity extends SQActivity {
     Toolbar mToolbar;
     @Bind(R.id.sq_activity_home_recyclerview)
     RecyclerView mRecyclerView;
-    @Bind(R.id.sq_activity_home_fab)
-    FloatingActionButton mFab;
 
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQHomeActivity.class)/*.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent
@@ -68,9 +65,9 @@ public class SQHomeActivity extends SQActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SQLog.v("onCreate");
         setContentView(R.layout.sq_activity_home);
         ButterKnife.bind(this);
-        SQLog.v("onCreate");
 
         setSupportActionBar(mToolbar);
 
@@ -84,10 +81,10 @@ public class SQHomeActivity extends SQActivity {
             public boolean onNavigationItemSelected(MenuItem pMenuItem) {
                 switch (pMenuItem.getItemId()) {
                     case R.id.sq_menu_drawer_item_event:
-                        //SQLog.i("click on drawer menu item: event");
+                        SQLog.i("click on drawer menu item: events list");
                         break;
                     case R.id.sq_menu_drawer_item_currency:
-                        //SQLog.i("click on drawer menu item: currency");
+                        SQLog.i("click on drawer menu item: currencies list");
                         startActivity(SQCurrenciesListActivity.getIntent(SQHomeActivity.this));
                         break;
                     default:
@@ -104,12 +101,14 @@ public class SQHomeActivity extends SQActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
+        SQLog.v("onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.sq_menu_default, pMenu);
         return true;
     }
 
     @Override
     public void onBackPressed() {
+        SQLog.v("onBackPressed");
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {

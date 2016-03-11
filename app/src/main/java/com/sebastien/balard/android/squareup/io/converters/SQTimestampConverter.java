@@ -41,11 +41,11 @@ public class SQTimestampConverter implements JsonDeserializer<DateTime>, JsonSer
     @Override
     public DateTime deserialize(JsonElement pJsonElement, Type pTypeOfT, JsonDeserializationContext
             pDeserializationContext) throws JsonParseException {
-        return new DateTime(pJsonElement.getAsString(), DateTimeZone.UTC);
+        return new DateTime(pJsonElement.getAsLong() * 1000, DateTimeZone.UTC);
     }
 
     @Override
     public JsonElement serialize(DateTime pDateTime, Type pTypeOfT, JsonSerializationContext pSerializationContext) {
-        return new JsonPrimitive(ISODateTimeFormat.dateTimeNoMillis().print(pDateTime));
+        return new JsonPrimitive(ISODateTimeFormat.dateTimeNoMillis().print(pDateTime.getMillis()));
     }
 }

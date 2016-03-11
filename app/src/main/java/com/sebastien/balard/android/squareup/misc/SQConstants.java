@@ -26,4 +26,6 @@ public interface SQConstants {
 
     static final String TABLE_CURRENCY_COLUMN_NAME_RATE = "currency_rate";
     static final String TABLE_CURRENCY_COLUMN_NAME_BASE = "is_base";
+
+    static final String ACTION_UPDATE_CONVERSION_BASES = "action.SQ_ACTION_UPDATE_CONVERSION_BASES";
 }

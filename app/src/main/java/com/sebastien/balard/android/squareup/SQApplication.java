@@ -26,6 +26,7 @@ import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
+import com.sebastien.balard.android.squareup.ui.services.SQDataAsyncUpdateIntentService;
 
 import java.sql.SQLException;
 import java.util.Currency;
@@ -45,6 +46,7 @@ public class SQApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        SQLog.v("onCreate");
         mInstance = this;
 
         SQLog.initWithLevel(BuildConfig.LOG_LEVEL);
@@ -62,5 +64,8 @@ public class SQApplication extends Application {
         } catch (SQLException pException) {
             SQLog.e("fail to check base currency", pException);
         }
+
+        // TODO: add delta, check it
+        SQDataAsyncUpdateIntentService.startActionUpdateConversionBases(this);
     }
 }
