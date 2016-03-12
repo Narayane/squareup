@@ -20,6 +20,7 @@
 package com.sebastien.balard.android.squareup;
 
 import android.app.Application;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
@@ -67,5 +68,13 @@ public class SQApplication extends Application {
 
         // TODO: add delta, check it
         SQDataAsyncUpdateIntentService.startActionUpdateConversionBases(this);
+    }
+
+    @Override
+    public void onTrimMemory(int pLevel) {
+        super.onTrimMemory(pLevel);
+        if (pLevel == ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
+            SQDatabaseHelper.release();
+        }
     }
 }
