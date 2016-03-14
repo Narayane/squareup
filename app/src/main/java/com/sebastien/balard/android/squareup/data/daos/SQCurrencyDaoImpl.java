@@ -41,18 +41,20 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
         super(pConnectionSource, pTableConfig);
     }
 
-    public List<SQCurrency> getActivatedCurrenciesList() {
+    public List<SQCurrency> getActivatedCurrencies() {
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.orderBy(SQConstants.TABLE_CURRENCY_COLUMN_NAME_BASE, false).orderBy(SQConstants
-                .TABLE_CURRENCY_COLUMN_NAME_RATE, true);
+        vQueryBuilder.orderBy(SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, false);
 
         List<SQCurrency> vList = null;
         try {
             vList = vQueryBuilder.query();
         } catch (SQLException pException) {
-            SQLog.e("fail to get activated currencies list");
+            SQLog.e("fail to get activated currencies");
             vList = new ArrayList<SQCurrency>();
         } finally {
+            if (vList == null) {
+                vList = new ArrayList<SQCurrency>();
+            }
             SQLog.d("activated currencies count: " + vList.size());
             return vList;
         }
@@ -60,18 +62,14 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
 
     public SQCurrency getBase() throws SQLException {
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_NAME_BASE, true);
+        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, true);
         return vQueryBuilder.queryForFirst();
     }
 
-    public void createBaseFromCode(String pCode) {
-        try {
-            SQCurrency vNewBase = new SQCurrency(pCode, 1.0f);
-            vNewBase.setBase(true);
-            create(vNewBase);
-            SQLog.i("create base currency: " + pCode);
-        } catch (SQLException pException) {
-            SQLog.e("fail to create base currency: " + pCode);
-        }
+    public void createBaseWithCode(String pCode) throws SQLException {
+        SQCurrency vNewBase = new SQCurrency(pCode);
+        vNewBase.setIsBase(true);
+        create(vNewBase);
+        SQLog.i("create base currency: " + pCode);
     }
 }

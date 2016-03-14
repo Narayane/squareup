@@ -23,11 +23,13 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
+import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.sql.SQLException;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -35,27 +37,35 @@ import java.util.Locale;
  * Created by sbalard on 04/03/2016.
  */
 @DatabaseTable(tableName = "sq_currency", daoClass = SQCurrencyDaoImpl.class)
-public class SQCurrency {
+public class SQCurrency implements Comparable<SQCurrency> {
 
     @DatabaseField(generatedId = true, columnName = "currency_id", canBeNull = false)
     Long mId;
-    @DatabaseField(columnName = "currency_code", width = 3, canBeNull = false, unique = true)
+    @DatabaseField(columnName = "code", width = 3, canBeNull = false, unique = true)
     String mCode;
-    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_RATE)
-    Float mRate;
-    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_BASE, canBeNull = false)
-    Boolean mBase;
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, canBeNull = false)
+    Boolean mIsBase;
 
     private Currency mCurrency;
 
     public SQCurrency() {
-        mBase = false;
+        mIsBase = false;
     }
 
-    public SQCurrency(String pCode, Float pRate) {
+    public SQCurrency(String pCode) {
         this();
         mCode = pCode;
-        mRate = pRate;
+    }
+
+    @Override
+    public int compareTo(SQCurrency pCurrency) {
+        if (isBase() == true && pCurrency.isBase() == false) {
+            return -1;
+        } else if (isBase() == false && pCurrency.isBase() == true) {
+            return 1;
+        } else {
+            return  getRate().compareTo(pCurrency.getRate());
+        }
     }
 
     @Override
@@ -75,7 +85,7 @@ public class SQCurrency {
     }
 
     public Boolean isBase() {
-        return mBase;
+        return mIsBase;
     }
 
     public String getCode() {
@@ -87,7 +97,12 @@ public class SQCurrency {
     }
 
     public Float getRate() {
-        return mRate;
+        try {
+            return SQCurrencyUtils.getConversionBase().getRates().get(mCode);
+        } catch (SQLException pException) {
+            SQLog.e("fail to get " + mCode + " currency rate");
+            return null;
+        }
     }
 
     public String getName() {
@@ -104,7 +119,7 @@ public class SQCurrency {
         return mCurrency.getSymbol(Locale.getDefault());
     }
 
-    public void setBase(Boolean pIsBase) {
-        mBase = pIsBase;
+    public void setIsBase(Boolean pIsBase) {
+        mIsBase = pIsBase;
     }
 }

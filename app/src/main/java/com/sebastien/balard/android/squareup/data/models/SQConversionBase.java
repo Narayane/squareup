@@ -24,12 +24,13 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Created by Sebastien BALARD on 10/03/2016.
@@ -40,16 +41,26 @@ public class SQConversionBase {
     @DatabaseField(generatedId = true, columnName = "conversion_base_id", canBeNull = false)
     Long mId;
     @SerializedName("timestamp")
-    @DatabaseField(columnName = "conversion_base_last_update", dataType = DataType.DATE_TIME)
+    @DatabaseField(columnName = "last_update", dataType = DataType.DATE_TIME)
     DateTime mLastUpdate;
     @SerializedName("base")
-    @DatabaseField(columnName = "conversion_base_code", width = 3, canBeNull = false, unique = true)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, width = 3, canBeNull = false,
+            unique = true)
     String mCode;
     @SerializedName("rates")
-    @DatabaseField(columnName = "conversion_base_rates", dataType = DataType.SERIALIZABLE)
-    Map<String, Float> mRates;
+    @DatabaseField(columnName = "rates", dataType = DataType.SERIALIZABLE)
+    HashMap<String, Float> mRates;
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, canBeNull = false)
+    Boolean mIsDefault;
 
     public SQConversionBase() {
+        mRates = new HashMap<>();
+        mIsDefault = false;
+    }
+
+    public SQConversionBase(String pCode) {
+        this();
+        mCode = pCode;
     }
 
     @Override
@@ -80,7 +91,23 @@ public class SQConversionBase {
         return mLastUpdate;
     }
 
-    public Map<String, Float> getRates() {
+    public HashMap<String, Float> getRates() {
         return mRates;
+    }
+
+    public Boolean isDefault() {
+        return mIsDefault;
+    }
+
+    public void setLastUpdate(DateTime pLastUpdate) {
+        mLastUpdate = pLastUpdate;
+    }
+
+    public void setRates(HashMap<String, Float> pRates) {
+        mRates = pRates;
+    }
+
+    public void setIsDefault(Boolean pIsDefault) {
+        mIsDefault = pIsDefault;
     }
 }

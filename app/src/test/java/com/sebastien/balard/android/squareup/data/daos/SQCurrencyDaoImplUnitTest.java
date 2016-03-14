@@ -21,7 +21,6 @@ package com.sebastien.balard.android.squareup.data.daos;
 
 import android.content.Context;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.sebastien.balard.android.squareup.BuildConfig;
 import com.sebastien.balard.android.squareup.SQTestApplication;
 import com.sebastien.balard.android.squareup.SQTestDatabaseHelper;
@@ -59,25 +58,21 @@ public class SQCurrencyDaoImplUnitTest {
 
     @After
     public void tearDown() {
-        if (mDatabaseHelperTest != null) {
-            OpenHelperManager.releaseHelper();
-            mDatabaseHelperTest = null;
-        }
+        SQTestDatabaseHelper.release();
     }
 
     @Test
     public void testCreateBaseCurrency() throws Exception {
 
         SQCurrencyDaoImpl vCurrencyDao = mDatabaseHelperTest.getCurrencyDao();
-        List<SQCurrency> list = vCurrencyDao.getActivatedCurrenciesList();
+        List<SQCurrency> list = vCurrencyDao.getActivatedCurrencies();
         assertThat(list.size(), is(equalTo(0)));
 
-        vCurrencyDao.createBaseFromCode("EUR");
+        vCurrencyDao.createBaseWithCode("EUR");
 
         SQCurrency vBase = vCurrencyDao.getBase();
         assertThat(vBase.getId(), notNullValue());
         assertThat(vBase.getCode(), is(equalTo("EUR")));
-        assertThat(vBase.getRate(), is(equalTo(1.0f)));
         assertThat(vBase.isBase(), is(true));
     }
 }

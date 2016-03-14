@@ -20,7 +20,6 @@
 package com.sebastien.balard.android.squareup;
 
 import android.app.Application;
-import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -43,13 +42,5 @@ public class SQTestApplication extends Application {
         mInstance = this;
 
         SQLog.initWithLevel(BuildConfig.LOG_LEVEL);
-    }
-
-    @Override
-    public void onTrimMemory(int pLevel) {
-        super.onTrimMemory(pLevel);
-        if (pLevel == ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
-            SQTestDatabaseHelper.release();
-        }
     }
 }

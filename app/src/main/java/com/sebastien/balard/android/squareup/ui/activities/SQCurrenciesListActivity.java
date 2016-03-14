@@ -52,6 +52,7 @@ import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQCurrenciesLis
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -171,7 +172,7 @@ public class SQCurrenciesListActivity extends SQActivity {
 
         String vSnackBarLabel = null;
         try {
-            SQCurrency vActivatedCurrency = new SQCurrency(pSelected.getCurrencyCode(), 1.0f);
+            SQCurrency vActivatedCurrency = new SQCurrency(pSelected.getCurrencyCode());
             SQDatabaseHelper.getInstance(SQCurrenciesListActivity.this).getCurrencyDao().create(vActivatedCurrency);
             refreshLayout();
             vSnackBarLabel = getString(R.string.sq_message_info_currency_activated, pSelected.getDisplayName(Locale
@@ -230,8 +231,8 @@ public class SQCurrenciesListActivity extends SQActivity {
 
     private void refreshLayout() {
         mActivatedCurrencies.clear();
-        mActivatedCurrencies.addAll(SQDatabaseHelper.getInstance(this).getCurrencyDao()
-                .getActivatedCurrenciesList());
+        mActivatedCurrencies.addAll(SQDatabaseHelper.getInstance(this).getCurrencyDao().getActivatedCurrencies());
+        Collections.sort(mActivatedCurrencies);
         mAdapter.notifyDataSetChanged();
         if (mActivatedCurrencies.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);

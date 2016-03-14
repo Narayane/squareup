@@ -46,7 +46,21 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static SQDatabaseHelper mInstance;
 
     private SQCurrencyDaoImpl mCurrencyDao;
-    private SQConversionBaseDaoImpl mCurrencyBaseDao;
+    private SQConversionBaseDaoImpl mConversionBaseDao;
+
+    public static synchronized SQDatabaseHelper getInstance(Context pContext) {
+        if (mInstance == null) {
+            mInstance = OpenHelperManager.getHelper(pContext.getApplicationContext(), SQDatabaseHelper.class);
+        }
+        return mInstance;
+    }
+
+    public static synchronized void release() {
+        if (mInstance != null) {
+            OpenHelperManager.releaseHelper();
+            mInstance = null;
+        }
+    }
 
     public SQDatabaseHelper(Context pContext) {
         super(pContext, DATABASE_NAME, null, DATABASE_VERSION, R.raw.sq_config_ormlite);
@@ -57,6 +71,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         SQLog.i("create database");
         try {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
+            TableUtils.createTable(pConnectionSource, SQConversionBase.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create database", pException);
             throw new RuntimeException(pException);
@@ -66,21 +81,6 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
 
-    }
-
-    @Override
-    public void close() {
-        super.close();
-        mCurrencyBaseDao = null;
-        mCurrencyDao = null;
-        mInstance = null;
-    }
-
-    public static SQDatabaseHelper getInstance(Context pContext) {
-        if (mInstance == null) {
-            mInstance = OpenHelperManager.getHelper(pContext.getApplicationContext(), SQDatabaseHelper.class);
-        }
-        return mInstance;
     }
 
     public SQCurrencyDaoImpl getCurrencyDao() {
@@ -95,15 +95,15 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mCurrencyDao;
     }
 
-    public SQConversionBaseDaoImpl getCurrencyBaseDao() {
-        if (mCurrencyBaseDao == null) {
+    public SQConversionBaseDaoImpl getConversionBaseDao() {
+        if (mConversionBaseDao == null) {
             try {
-                mCurrencyBaseDao = getDao(SQConversionBase.class);
+                mConversionBaseDao = getDao(SQConversionBase.class);
             } catch (SQLException pException) {
-                SQLog.e("fail to get currency base dao");
+                SQLog.e("fail to get conversion base dao");
                 throw new RuntimeException(pException);
             }
         }
-        return mCurrencyBaseDao;
+        return mConversionBaseDao;
     }
 }

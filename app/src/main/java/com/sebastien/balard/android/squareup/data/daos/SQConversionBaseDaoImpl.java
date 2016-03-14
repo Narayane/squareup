@@ -20,11 +20,17 @@
 package com.sebastien.balard.android.squareup.data.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
+import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Created by Sebastien BALARD on 10/03/2016.
@@ -32,8 +38,53 @@ import java.sql.SQLException;
 public class SQConversionBaseDaoImpl extends BaseDaoImpl<SQConversionBase, Long> {
 
     public SQConversionBaseDaoImpl(ConnectionSource pConnectionSource, DatabaseTableConfig<SQConversionBase>
-            pTableConfig)
-            throws SQLException {
+            pTableConfig) throws SQLException {
         super(pConnectionSource, pTableConfig);
+    }
+
+    public void createDefaultWithCode(String pCode) throws SQLException {
+        SQConversionBase vConversionBase = new SQConversionBase(pCode);
+        vConversionBase.setIsDefault(true);
+        create(vConversionBase);
+        SQLog.i("create default conversion base: " + pCode);
+    }
+
+    public void updateDefault() throws SQLException {
+        SQConversionBase vDefaultConversionBase = getDefault();
+        if (!vDefaultConversionBase.getCode().equals("USD")) {
+            SQConversionBase vUSDConversionBase = findByCode("USD");
+            vDefaultConversionBase.getRates().clear();
+            Float vConversionRate = vUSDConversionBase.getRates().get(vDefaultConversionBase.getCode());
+            SQLog.d("USD / " + vDefaultConversionBase.getCode() + ": " + SQFormatUtils.formatRate(vConversionRate));
+            for (Map.Entry<String, Float> vEntry : vUSDConversionBase.getRates().entrySet()) {
+                vDefaultConversionBase.getRates().put(vEntry.getKey(), vEntry.getValue() / vConversionRate);
+            }
+            vDefaultConversionBase.setLastUpdate(vUSDConversionBase.getLastUpdate());
+            super.update(vDefaultConversionBase);
+            SQLog.i("update currencies rates of default conversion base: " + vDefaultConversionBase.getCode());
+        }
+        SQCurrencyUtils.refreshConversionBase();
+    }
+
+    public SQConversionBase findByCode(String pCode) throws SQLException {
+        QueryBuilder<SQConversionBase, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, pCode);
+        return vQueryBuilder.queryForFirst();
+    }
+
+    public SQConversionBase getDefault() throws SQLException {
+        QueryBuilder<SQConversionBase, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, true);
+        return vQueryBuilder.queryForFirst();
+    }
+
+    @Override
+    public CreateOrUpdateStatus createOrUpdate(SQConversionBase pConversionBase) throws SQLException {
+        SQConversionBase vExisting = findByCode(pConversionBase.getCode());
+        if (vExisting != null) {
+            vExisting.setLastUpdate(pConversionBase.getLastUpdate());
+            vExisting.setRates(pConversionBase.getRates());
+        }
+        return super.createOrUpdate(pConversionBase);
     }
 }

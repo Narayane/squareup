@@ -48,9 +48,9 @@ public class SQDataAsyncUpdateIntentService extends IntentService {
         super(CLASS_NAME);
     }
 
-    public static void startActionUpdateConversionBases(Context pContext) {
+    public static void startActionUpdateCurrenciesRates(Context pContext) {
         Intent vIntent = new Intent(pContext, SQDataAsyncUpdateIntentService.class);
-        vIntent.setAction(SQConstants.ACTION_UPDATE_CONVERSION_BASES);
+        vIntent.setAction(SQConstants.ACTION_UPDATE_CURRENCIES_RATES);
         pContext.startService(vIntent);
     }
 
@@ -58,8 +58,8 @@ public class SQDataAsyncUpdateIntentService extends IntentService {
     protected void onHandleIntent(Intent pIntent) {
         if (pIntent != null) {
             switch (pIntent.getAction()) {
-                case SQConstants.ACTION_UPDATE_CONVERSION_BASES:
-                    handleActionUpdateConversionBases();
+                case SQConstants.ACTION_UPDATE_CURRENCIES_RATES:
+                    handleActionUpdateCurrenciesRates();
                     break;
                 default:
                     break;
@@ -67,26 +67,17 @@ public class SQDataAsyncUpdateIntentService extends IntentService {
         }
     }
 
-    private void handleActionUpdateConversionBases() {
+    private void handleActionUpdateCurrenciesRates() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLog.v("update conversion bases");
+                SQLog.v("update currencies rates");
                 WSFacade.getLatestRates(new Callback<SQConversionBase>() {
                     @Override
                     public void onResponse(Call<SQConversionBase> pCall, Response<SQConversionBase> pResponse) {
                         if (pResponse.isSuccess()) {
                             SQConversionBase vBaseUSD = pResponse.body();
-                            SQLog.v("conversion base: " + vBaseUSD.getCode());
-                            SQLog.v("last update: " + SQFormatUtils.formatDateAndTime(vBaseUSD.getLastUpdate
-                                    ()));
-                            SQLog.v("rates count: " + vBaseUSD.getRates().size());
-                            try {
-                                SQDatabaseHelper.getInstance(SQDataAsyncUpdateIntentService.this).getCurrencyBaseDao
-                                        ().createOrUpdate(vBaseUSD);
-                            } catch (SQLException pException) {
-                                SQLog.e("fail to save conversion base: " + vBaseUSD.getCode());
-                            }
+                            updateCurrenciesRates(vBaseUSD);
                         } else {
                             SQLog.e(pResponse);
                         }
@@ -99,5 +90,18 @@ public class SQDataAsyncUpdateIntentService extends IntentService {
                 });
             }
         }).start();
+    }
+
+    private void updateCurrenciesRates(SQConversionBase pUSDConversionBase) {
+        SQLog.v("conversion base: " + pUSDConversionBase.getCode());
+        SQLog.v("last update: " + SQFormatUtils.formatDateAndTime(pUSDConversionBase.getLastUpdate()));
+        SQLog.v("rates count: " + pUSDConversionBase.getRates().size());
+        try {
+            SQDatabaseHelper.getInstance(SQDataAsyncUpdateIntentService.this).getConversionBaseDao()
+                    .createOrUpdate(pUSDConversionBase);
+            SQDatabaseHelper.getInstance(SQDataAsyncUpdateIntentService.this).getConversionBaseDao().updateDefault();
+        } catch (SQLException pException) {
+            SQLog.e("fail to save conversion base: " + pUSDConversionBase.getCode());
+        }
     }
 }

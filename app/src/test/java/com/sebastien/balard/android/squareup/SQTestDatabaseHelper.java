@@ -67,6 +67,7 @@ public class SQTestDatabaseHelper extends OrmLiteSqliteOpenHelper {
         SQLog.v("onCreate");
         try {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
+            TableUtils.createTable(pConnectionSource, SQConversionBase.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create test database", pException);
             throw new RuntimeException(pException);

@@ -24,8 +24,11 @@ package com.sebastien.balard.android.squareup.misc;
  */
 public interface SQConstants {
 
-    static final String TABLE_CURRENCY_COLUMN_NAME_RATE = "currency_rate";
-    static final String TABLE_CURRENCY_COLUMN_NAME_BASE = "is_base";
+    static final String TABLE_CURRENCY_COLUMN_NAME_IS_BASE = "is_base";
+    static final String TABLE_CONVERSION_BASE_COLUMN_NAME_CODE = "code";
+    static final String TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT = "is_default";
 
-    static final String ACTION_UPDATE_CONVERSION_BASES = "action.SQ_ACTION_UPDATE_CONVERSION_BASES";
+    static final String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
+
+    static final String USER_PREFERENCE_RATES_UPDATE_FREQUENCY = "USER_PREFERENCE_RATES_UPDATE_FREQUENCY";
 }

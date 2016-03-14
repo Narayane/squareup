@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class SQCurrenciesListAdapter extends RecyclerView.Adapter<SQCurrenciesLi
         vLabel += " (";
         vLabel += vCurrency.getSymbol() + ")";
         pHolder.mLabelTextView.setText(vLabel);
+        pHolder.mRateTextView.setText(SQFormatUtils.formatRate(vCurrency.getRate()));
     }
 
     @Override

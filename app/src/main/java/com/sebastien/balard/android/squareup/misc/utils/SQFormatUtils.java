@@ -24,11 +24,23 @@ import com.sebastien.balard.android.squareup.SQApplication;
 import org.joda.time.DateTime;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 
 /**
  * Created by Sebastien BALARD on 10/03/2016.
  */
 public class SQFormatUtils {
+
+    public static String formatRate(Float pValue) {
+
+        DecimalFormat df = new DecimalFormat("###,###,###,##0.000000");
+
+        String vLabel = "-";
+        if (pValue != null) {
+            vLabel = df.format(pValue);
+        }
+        return vLabel;
+    }
 
     public static String formatDateAndTime(DateTime pDateTime) {
         String vLabel = "-";

@@ -19,8 +19,12 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
+import com.sebastien.balard.android.squareup.SQApplication;
+import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +42,15 @@ public class SQCurrencyUtils {
 
     static Map<String, Currency> CURRENCIES;
 
+    static SQConversionBase CONVERSION_BASE;
+
+    public static SQConversionBase getConversionBase() throws SQLException {
+        if (CONVERSION_BASE == null) {
+            loadConversionBase();
+        }
+        return CONVERSION_BASE;
+    }
+
     public static List<Currency> getAllCurrencies() {
         if (CURRENCIES == null) {
             loadCurrencies();
@@ -54,11 +67,23 @@ public class SQCurrencyUtils {
         return vAllCurrencies;
     }
 
+    public static void refreshConversionBase() {
+        SQLog.v("refresh conversion base");
+        CONVERSION_BASE = null;
+    }
+
     public static Currency getCurrencyByCode(String pCode) {
         if (CURRENCIES == null) {
             loadCurrencies();
         }
         return CURRENCIES.get(pCode);
+    }
+
+    private static void loadConversionBase() throws SQLException {
+        String vCurrentBaseCode = SQDatabaseHelper.getInstance(SQApplication.getContext()).getCurrencyDao().getBase()
+                .getCode();
+        CONVERSION_BASE = SQDatabaseHelper.getInstance(SQApplication.getContext()).getConversionBaseDao()
+                .findByCode(vCurrentBaseCode);
     }
 
     private static void loadCurrencies() {
