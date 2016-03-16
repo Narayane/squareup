@@ -36,12 +36,12 @@ import java.util.Locale;
 /**
  * Created by sbalard on 04/03/2016.
  */
-@DatabaseTable(tableName = "sq_currency", daoClass = SQCurrencyDaoImpl.class)
+@DatabaseTable(tableName = SQConstants.TABLE_CURRENCY_NAME, daoClass = SQCurrencyDaoImpl.class)
 public class SQCurrency implements Comparable<SQCurrency> {
 
-    @DatabaseField(generatedId = true, columnName = "currency_id", canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_ID, canBeNull = false)
     Long mId;
-    @DatabaseField(columnName = "code", width = 3, canBeNull = false, unique = true)
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, width = 3, canBeNull = false, unique = true)
     String mCode;
     @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, canBeNull = false)
     Boolean mIsBase;

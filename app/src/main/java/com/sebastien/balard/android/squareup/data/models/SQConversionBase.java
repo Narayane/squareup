@@ -35,20 +35,20 @@ import java.util.HashMap;
 /**
  * Created by Sebastien BALARD on 10/03/2016.
  */
-@DatabaseTable(tableName = "sq_conversion_base", daoClass = SQConversionBaseDaoImpl.class)
+@DatabaseTable(tableName = SQConstants.TABLE_CONVERSION_BASE_NAME, daoClass = SQConversionBaseDaoImpl.class)
 public class SQConversionBase {
 
-    @DatabaseField(generatedId = true, columnName = "conversion_base_id", canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_ID, canBeNull = false)
     Long mId;
     @SerializedName("timestamp")
-    @DatabaseField(columnName = "last_update", dataType = DataType.DATE_TIME)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_LAST_UPDATE, dataType = DataType.DATE_TIME)
     DateTime mLastUpdate;
     @SerializedName("base")
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, width = 3, canBeNull = false,
             unique = true)
     String mCode;
     @SerializedName("rates")
-    @DatabaseField(columnName = "rates", dataType = DataType.SERIALIZABLE)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_RATES, dataType = DataType.SERIALIZABLE)
     HashMap<String, Float> mRates;
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, canBeNull = false)
     Boolean mIsDefault;

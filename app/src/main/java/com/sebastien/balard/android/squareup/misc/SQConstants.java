@@ -24,12 +24,20 @@ package com.sebastien.balard.android.squareup.misc;
  */
 public interface SQConstants {
 
-    static final String TABLE_CURRENCY_COLUMN_NAME_IS_BASE = "is_base";
-    static final String TABLE_CONVERSION_BASE_COLUMN_NAME_CODE = "code";
-    static final String TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT = "is_default";
+    String TABLE_CURRENCY_NAME = "sq_currencies";
+    String TABLE_CURRENCY_COLUMN_NAME_ID = "currency_id";
+    String TABLE_CURRENCY_COLUMN_NAME_CODE = "currency_code";
+    String TABLE_CURRENCY_COLUMN_NAME_IS_BASE = "is_reference";
 
-    static final String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
+    String TABLE_CONVERSION_BASE_NAME = "sq_conversion_bases";
+    String TABLE_CONVERSION_BASE_COLUMN_NAME_ID = "id";
+    String TABLE_CONVERSION_BASE_COLUMN_NAME_LAST_UPDATE = "last_update";
+    String TABLE_CONVERSION_BASE_COLUMN_NAME_CODE = "code";
+    String TABLE_CONVERSION_BASE_COLUMN_NAME_RATES = "rates";
+    String TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT = "is_default";
 
-    static final String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
-    static final String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
+    String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
+
+    String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
+    String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
 }

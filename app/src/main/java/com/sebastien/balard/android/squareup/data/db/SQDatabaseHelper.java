@@ -29,8 +29,8 @@ import com.j256.ormlite.table.TableUtils;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
-import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
+import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ import java.sql.SQLException;
 public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public static final String DATABASE_NAME = "square_up.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     private static SQDatabaseHelper mInstance;
 
@@ -68,7 +68,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase pDatabase, ConnectionSource pConnectionSource) {
-        SQLog.i("create database");
+        SQLog.v("onCreate");
         try {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
             TableUtils.createTable(pConnectionSource, SQConversionBase.class);
@@ -79,8 +79,19 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+    public void onUpgrade(SQLiteDatabase pDatabase, ConnectionSource pConnectionSource, int pOldVersion, int
+            pNewVersion) {
+        SQLog.v("onUpgrade");
+        try {
+            if (pOldVersion < 2) {
+                getCurrencyDao().executeRaw("ALTER TABLE `square_up_currency` RENAME TO `sq_currencies`");
+                /*getCurrencyDao().executeRaw("ALTER TABLE `sq_currency` ADD COLUMN `event_type` " + "INTEGER NOT " +
+                        "NULL DEFAULT 0;");*/
+            }
+        } catch (SQLException pException) {
+            SQLog.e("database upgrade problem (" + pOldVersion + " => " + pNewVersion, pException);
+            throw new RuntimeException(pException);
+        }
     }
 
     public SQCurrencyDaoImpl getCurrencyDao() {
