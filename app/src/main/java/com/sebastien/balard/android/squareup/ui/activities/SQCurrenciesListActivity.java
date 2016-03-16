@@ -177,12 +177,12 @@ public class SQCurrenciesListActivity extends SQActivity {
             refreshLayout();
             vSnackBarLabel = getString(R.string.sq_message_info_currency_activated, pSelected.getDisplayName(Locale
                     .getDefault()));
+            SQDialogUtils.createSnackBarSuccess(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
         } catch (SQLException pException) {
             SQLog.e("fail to activate currency: " + pSelected.getCurrencyCode());
             vSnackBarLabel = getString(R.string.sq_message_error_currency_activated, pSelected.getDisplayName(Locale
                     .getDefault()));
-        } finally {
-            SQDialogUtils.createSnackBar(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
+            SQDialogUtils.createSnackBarError(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
         }
     }
 

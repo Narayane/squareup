@@ -119,6 +119,6 @@ public class SQHomeActivity extends SQActivity {
     @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
-        SQDialogUtils.createSnackBar(pView, "Replace with your own action", Snackbar.LENGTH_LONG).show();
+        SQDialogUtils.createSnackBarWarning(pView, "Not yet implemented", Snackbar.LENGTH_LONG).show();
     }
 }

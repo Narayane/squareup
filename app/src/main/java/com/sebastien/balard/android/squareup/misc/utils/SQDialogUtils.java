@@ -34,10 +34,26 @@ import com.sebastien.balard.android.squareup.SQApplication;
  */
 public class SQDialogUtils {
 
-    public static Snackbar createSnackBar(View pAnchorView, String pMessage, int pDuration) {
+    public static Snackbar createSnackBarError(View pAnchorView, String pMessage, int pDuration) {
+        Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
+        vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
+                .sq_color_red_500));
 
-        Snackbar vSnackbar=  Snackbar.make(pAnchorView, pMessage, pDuration);
-        vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color.sq_color_blue_500));
+        return vSnackbar;
+    }
+
+    public static Snackbar createSnackBarWarning(View pAnchorView, String pMessage, int pDuration) {
+        Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
+        vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
+                .sq_color_orange_500));
+
+        return vSnackbar;
+    }
+
+    public static Snackbar createSnackBarSuccess(View pAnchorView, String pMessage, int pDuration) {
+        Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
+        vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
+                .sq_color_green_500));
 
         return vSnackbar;
     }
