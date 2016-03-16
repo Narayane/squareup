@@ -24,6 +24,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
@@ -63,13 +64,45 @@ public class SQApplication extends Application {
         JodaTimeAndroid.init(this);
 
         checkBaseCurrency();
+        checkDefaultConversionBase();
         checkCurrenciesRates();
+    }
+
+    @Override
+    public void onTrimMemory(int pLevel) {
+        super.onTrimMemory(pLevel);
+        if (pLevel == ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
+            SQDatabaseHelper.release();
+        }
+    }
+
+    private void checkDefaultConversionBase() {
+        try {
+            SQConversionBase vDefault = SQDatabaseHelper.getInstance(this).getConversionBaseDao().getDefault();
+            if (vDefault == null) {
+                setDefaultConversionBase();
+            } else {
+                SQLog.d("default conversion base is already set: " + vDefault.getCode());
+            }
+        } catch (SQLException pException) {
+            SQLog.e("fail to check default conversion base", pException);
+        }
+    }
+
+    private void setDefaultConversionBase() {
+        Currency vLocaleCurrency = Currency.getInstance(Locale.getDefault());
+        SQLog.d("android locale currency: " + vLocaleCurrency.getCurrencyCode());
+        try {
+            SQDatabaseHelper.getInstance(this).getConversionBaseDao().createDefaultWithCode(vLocaleCurrency
+                    .getCurrencyCode());
+        } catch (SQLException pException) {
+            SQLog.e("fail to create default conversion base: " + vLocaleCurrency.getCurrencyCode());
+        }
     }
 
     private void checkBaseCurrency() {
         try {
             SQCurrency vBase = SQDatabaseHelper.getInstance(this).getCurrencyDao().getBase();
-            // FIXME: test conversion base to in case of v1.2 app upgrade
             if (vBase == null) {
                 setBaseCurrency();
             } else {
@@ -77,6 +110,16 @@ public class SQApplication extends Application {
             }
         } catch (SQLException pException) {
             SQLog.e("fail to check base currency", pException);
+        }
+    }
+
+    private void setBaseCurrency() {
+        Currency vLocaleCurrency = Currency.getInstance(Locale.getDefault());
+        SQLog.d("android locale currency: " + vLocaleCurrency.getCurrencyCode());
+        try {
+            SQDatabaseHelper.getInstance(this).getCurrencyDao().createBaseWithCode(vLocaleCurrency.getCurrencyCode());
+        } catch (SQLException pException) {
+            SQLog.e("fail to create base currency: " + vLocaleCurrency.getCurrencyCode());
         }
     }
 
@@ -107,29 +150,5 @@ public class SQApplication extends Application {
                 }
             }
         }).start();
-    }
-
-    private void setBaseCurrency() {
-        Currency vLocaleCurrency = Currency.getInstance(Locale.getDefault());
-        SQLog.d("android locale currency: " + vLocaleCurrency.getCurrencyCode());
-        try {
-            SQDatabaseHelper.getInstance(this).getCurrencyDao().createBaseWithCode(vLocaleCurrency.getCurrencyCode());
-        } catch (SQLException pException) {
-            SQLog.e("fail to create base currency: " + vLocaleCurrency.getCurrencyCode());
-        }
-        try {
-            SQDatabaseHelper.getInstance(this).getConversionBaseDao().createDefaultWithCode(vLocaleCurrency
-                    .getCurrencyCode());
-        } catch (SQLException pException) {
-            SQLog.e("fail to create default conversion base: " + vLocaleCurrency.getCurrencyCode());
-        }
-    }
-
-    @Override
-    public void onTrimMemory(int pLevel) {
-        super.onTrimMemory(pLevel);
-        if (pLevel == ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
-            SQDatabaseHelper.release();
-        }
     }
 }
