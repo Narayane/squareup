@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sq_action_about">À propos</string>
+    <string name="sq_action_settings">Paramètres</string>
     <string name="sq_action_open_drawer">Ouvrir le menu de navigation</string>
     <string name="sq_action_close_drawer">Fermer le menu de navigation</string>
-    <string name="sq_commons_my_events">Mes évènements</string>
-    <string name="sq_commons_my_currencies">Mes devises actives</string>
-    <string name="sq_commons_activate_currency">Activer une devise</string>
+    <string name="sq_commons_my_events">Mes événements</string>
+    <string name="sq_commons_my_currencies">Mes monnaies</string>
+    <string name="sq_commons_activate_currency">Activer une monnaie</string>
+    <string name="sq_commons_one_day">1 jour</string>
+    <string name="sq_commons_two_days">2 jours</string>
+    <string name="sq_commons_three_days">3 jours</string>
+    <string name="sq_commons_one_week">1 semaine</string>
+    <!-- settings screen -->
+    <string name="sq_screen_settings_category_currencies_title">Monnaies</string>
+    <string name="sq_screen_settings_category_currencies_label_update_frequency">Fréquence de mise à jour</string>
+    <string name="sq_screen_settings_category_currencies_dialog_select_frequency">Sélectionner une fréquence</string>
+    <string name="sq_screen_settings_category_currencies_label_last_update">Date de dernière mise à jour</string>
+    <string name="sq_screen_settings_category_debts_title">Dettes</string>
+    <string name="sq_screen_settings_category_debts_label_minimize">Minimiser</string>
+    <!-- home screen -->
     <string name="sq_screen_home_textview_empty_label">Vous n\'avez pas encore créé d\'événement</string>
+    <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
-    <string name="sq_message_info_currency_activated">"Vous venez d'activer la devise %1$s"</string>
-    <string name="sq_message_error_currency_activated">"La devise %1$s n\'a pas pu être activée, veuillez
+    <!-- messages -->
+    <string name="sq_message_info_currency_activated">"Vous venez d'activer la monnaie %1$s"</string>
+    <string name="sq_message_error_currency_activated">"La monnaie %1$s n\'a pas pu être activée, veuillez
         réessayer"</string>
 </resources>

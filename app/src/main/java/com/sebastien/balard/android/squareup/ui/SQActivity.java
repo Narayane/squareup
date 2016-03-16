@@ -25,6 +25,7 @@ import android.view.MenuItem;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.ui.activities.SQAboutActivity;
+import com.sebastien.balard.android.squareup.ui.activities.SQSettingsActivity;
 
 /**
  * Created by Sébastien BALARD on 27/02/2016.
@@ -48,6 +49,9 @@ public class SQActivity extends AppCompatActivity {
         switch (pMenuItem.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.sq_menu_default_item_settings:
+                startActivity(SQSettingsActivity.getIntent(this));
                 return true;
             case R.id.sq_menu_default_item_about:
                 startActivity(SQAboutActivity.getIntent(this));

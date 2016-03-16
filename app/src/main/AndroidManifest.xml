@@ -27,6 +27,12 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
+            android:name=".ui.activities.SQSettingsActivity"
+            android:label="@string/sq_action_settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".ui.activities.SQAboutActivity"
             android:label="@string/sq_action_about"
             android:screenOrientation="portrait"

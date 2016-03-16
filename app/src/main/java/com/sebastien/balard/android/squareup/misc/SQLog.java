@@ -185,6 +185,7 @@ public class SQLog {
     }
 
     private static String getCallerName() {
-        return new Throwable().getStackTrace()[2].getClassName();
+        StackTraceElement[] vElements = new Throwable().getStackTrace();
+        return vElements[2].getClassName();
     }
 }

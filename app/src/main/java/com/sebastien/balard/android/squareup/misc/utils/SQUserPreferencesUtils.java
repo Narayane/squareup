@@ -19,7 +19,6 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.sebastien.balard.android.squareup.SQApplication;
@@ -31,15 +30,7 @@ import com.sebastien.balard.android.squareup.misc.SQConstants;
 public class SQUserPreferencesUtils {
 
     public static int getRatesUpdateFrequency() {
-        // TODO: default to 7 days
-        return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getInt(SQConstants
-                .USER_PREFERENCE_RATES_UPDATE_FREQUENCY, 1);
-    }
-
-    public static void setRatesUpdateFrequency(int pFrequency) {
-        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
-                .edit();
-        vEditor.putInt(SQConstants.USER_PREFERENCE_RATES_UPDATE_FREQUENCY, pFrequency);
-        vEditor.commit();
+        return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
+                (SQConstants.USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY, "7"));
     }
 }

@@ -55,7 +55,7 @@ public class SQConversionBaseDaoImpl extends BaseDaoImpl<SQConversionBase, Long>
             SQConversionBase vUSDConversionBase = findByCode("USD");
             vDefaultConversionBase.getRates().clear();
             Float vConversionRate = vUSDConversionBase.getRates().get(vDefaultConversionBase.getCode());
-            SQLog.d("USD / " + vDefaultConversionBase.getCode() + ": " + SQFormatUtils.formatRate(vConversionRate));
+            SQLog.d(vDefaultConversionBase.getCode()  + " / USD: " + SQFormatUtils.formatRate(vConversionRate));
             for (Map.Entry<String, Float> vEntry : vUSDConversionBase.getRates().entrySet()) {
                 vDefaultConversionBase.getRates().put(vEntry.getKey(), vEntry.getValue() / vConversionRate);
             }

@@ -30,5 +30,6 @@ public interface SQConstants {
 
     static final String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 
-    static final String USER_PREFERENCE_RATES_UPDATE_FREQUENCY = "USER_PREFERENCE_RATES_UPDATE_FREQUENCY";
+    static final String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
+    static final String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
 }

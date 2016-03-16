@@ -50,6 +50,14 @@ public class SQFormatUtils {
         return vLabel;
     }
 
+    public static String formatMediumDateAndTime(DateTime pDateTime) {
+        String vLabel = "-";
+        if (pDateTime != null) {
+            vLabel = formatMediumDate(pDateTime) + " " + formatTime(pDateTime);
+        }
+        return vLabel;
+    }
+
     public static String formatDate(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {

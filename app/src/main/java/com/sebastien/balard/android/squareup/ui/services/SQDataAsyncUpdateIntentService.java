@@ -42,10 +42,10 @@ import retrofit2.Response;
  */
 public class SQDataAsyncUpdateIntentService extends IntentService {
 
-    static final String CLASS_NAME = SQDataAsyncUpdateIntentService.class.getSimpleName();
+    static final String TAG = SQDataAsyncUpdateIntentService.class.getSimpleName();
 
     public SQDataAsyncUpdateIntentService() {
-        super(CLASS_NAME);
+        super(TAG);
     }
 
     public static void startActionUpdateCurrenciesRates(Context pContext) {

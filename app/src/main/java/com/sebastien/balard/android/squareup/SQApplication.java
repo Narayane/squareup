@@ -69,6 +69,7 @@ public class SQApplication extends Application {
     private void checkBaseCurrency() {
         try {
             SQCurrency vBase = SQDatabaseHelper.getInstance(this).getCurrencyDao().getBase();
+            // FIXME: test conversion base to in case of v1.2 app upgrade
             if (vBase == null) {
                 setBaseCurrency();
             } else {
@@ -94,8 +95,7 @@ public class SQApplication extends Application {
 
                     boolean vTimeToCheck = true;
                     if (vLastUpdate != null) {
-                        vTimeToCheck = Days.daysBetween(vLastUpdate.toLocalDate(), vNow.toLocalDate()).getDays() >
-                                vFrequency;
+                        vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
                     }
                     if (vTimeToCheck) {
                         SQDataAsyncUpdateIntentService.startActionUpdateCurrenciesRates(SQApplication.this);
@@ -106,7 +106,7 @@ public class SQApplication extends Application {
                     SQLog.e("fail to get default conversion base");
                 }
             }
-        });
+        }).start();
     }
 
     private void setBaseCurrency() {
