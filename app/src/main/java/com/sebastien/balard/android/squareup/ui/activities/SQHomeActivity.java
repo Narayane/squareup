@@ -72,7 +72,7 @@ public class SQHomeActivity extends SQActivity {
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .sq_action_open_drawer, R.string.sq_action_close_drawer);
+                .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
         mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 

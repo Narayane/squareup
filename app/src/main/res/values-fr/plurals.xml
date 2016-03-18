@@ -20,7 +20,7 @@
 
 <resources>
     <plurals name="sq_cab_currencies_selected">
-        <item quantity="one">%d currency</item>
-        <item quantity="other">%d currencies</item>
+        <item quantity="one">%d monnaie</item>
+        <item quantity="other">%d monnaies</item>
     </plurals>
 </resources>

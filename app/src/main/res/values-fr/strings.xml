@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sq_action_about">À propos</string>
-    <string name="sq_action_settings">Paramètres</string>
-    <string name="sq_action_open_drawer">Ouvrir le menu de navigation</string>
-    <string name="sq_action_close_drawer">Fermer le menu de navigation</string>
+    <string name="sq_actions_about">À propos</string>
+    <string name="sq_actions_settings">Paramètres</string>
+    <string name="sq_actions_open_drawer">Ouvrir le menu de navigation</string>
+    <string name="sq_actions_close_drawer">Fermer le menu de navigation</string>
+    <string name="sq_actions_deactivate">Désactiver</string>
     <string name="sq_commons_my_events">Mes événements</string>
     <string name="sq_commons_my_currencies">Mes monnaies</string>
     <string name="sq_commons_activate_currency">Activer une monnaie</string>
@@ -23,7 +24,9 @@
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
     <!-- messages -->
-    <string name="sq_message_info_currency_activated">"Vous venez d'activer la monnaie %1$s"</string>
-    <string name="sq_message_error_currency_activated">"La monnaie %1$s n\'a pas pu être activée, veuillez
-        réessayer"</string>
+    <string name="sq_message_success_activate_currency">"Vous venez d'activer la monnaie : %1$s"</string>
+    <string name="sq_message_error_activate_currency">"La monnaie %1$s n\'a pas pu être activée"</string>
+    <string name="sq_message_success_deactivate_currencies_selection">"Vous venez de désactiver : %1$s"</string>
+    <string name="sq_message_error_deactivate_currencies_selection">"Une ou plusieurs monnaies de votre
+        sélection n'ont pu être désactivées"</string>
 </resources>

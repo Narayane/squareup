@@ -1,17 +1,17 @@
 /**
  * Square up android app
  * Copyright (C) 2016  Sebastien BALARD
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,6 +32,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -49,6 +51,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQCurrenciesListAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -75,11 +78,12 @@ public class SQCurrenciesListActivity extends SQActivity {
     @Bind(R.id.sq_activity_currencies_list_recyclerview)
     RecyclerView mRecyclerView;
 
+    private ActionMode mActionMode;
     private MenuItem mSearchViewMenuItem;
     private SearchView mSearchView;
     private SimpleCursorAdapter mSearchViewCursorAdapter;
     private List<Currency> mAllCurrencies;
-    private List<Currency> mActivableCurrencies;
+    private List<Currency> mAvailableCurrencies;
     private List<SQCurrency> mActivatedCurrencies;
     private SQCurrenciesListAdapter mAdapter;
 
@@ -100,7 +104,7 @@ public class SQCurrenciesListActivity extends SQActivity {
         //mAppBarImageView.setImageResource(R.drawable.sq_img_currency);
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .sq_action_open_drawer, R.string.sq_action_close_drawer);
+                .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
         mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
@@ -127,12 +131,32 @@ public class SQCurrenciesListActivity extends SQActivity {
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
         mSearchViewCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        mActivableCurrencies = new ArrayList<Currency>();
+        mAvailableCurrencies = new ArrayList<Currency>();
 
         mActivatedCurrencies = new ArrayList<SQCurrency>();
         mAdapter = new SQCurrenciesListAdapter(mActivatedCurrencies);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
+                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
+            @Override
+            public void onClick(View pView, int pPosition) {
+                SQLog.v("onClick");
+                if (mActionMode != null) {
+                    performSelection(pPosition);
+                }
+            }
+
+            @Override
+            public void onLongClick(View pView, int pPosition) {
+                SQLog.v("onLongClick");
+                if (mActionMode == null) {
+                    mActionMode = startSupportActionMode(mActionModeCallback);
+                }
+                performSelection(pPosition);
+            }
+        }));
     }
 
     @Override
@@ -168,6 +192,45 @@ public class SQCurrenciesListActivity extends SQActivity {
         }
     }
 
+    private void performSelection(int pPosition) {
+        mAdapter.toggleSelection(pPosition);
+        if (mAdapter.getSelectedItemsCount() == 0) {
+            mActionMode.finish();
+        } else {
+            mActionMode.setTitle(getResources().getQuantityString(R.plurals.sq_cab_currencies_selected, mAdapter
+                    .getSelectedItemsCount(), mAdapter.getSelectedItemsCount()));
+        }
+    }
+
+    private void deactivateCurrenciesSelection() {
+        List<Integer> vPositions = mAdapter.getSelectedItemsPositions();
+        boolean vSuccess = true;
+        String vLabel = null;
+        for (int vPosition : vPositions) {
+            SQCurrency vCurrency = mAdapter.getItem(vPosition);
+            try {
+                SQDatabaseHelper.getInstance(SQCurrenciesListActivity.this).getCurrencyDao().delete(vCurrency);
+                if (vLabel == null) {
+                    vLabel = vCurrency.getName();
+                } else {
+                    vLabel += ", " + vCurrency.getName();
+                }
+            } catch (SQLException pException) {
+                SQLog.e("fail to deactivate currency:" + vCurrency.getCode());
+                vSuccess &= false;
+            }
+        }
+        refreshLayout();
+        mActionMode.finish();
+        if (vSuccess) {
+            SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string
+                    .sq_message_success_deactivate_currencies_selection, vLabel), Snackbar.LENGTH_LONG).show();
+        } else {
+            SQDialogUtils.createSnackBarError(mToolbar, getString(R.string
+                    .sq_message_error_deactivate_currencies_selection), Snackbar.LENGTH_LONG).show();
+        }
+    }
+
     private void activateCurrency(Currency pSelected) {
 
         String vSnackBarLabel = null;
@@ -175,12 +238,12 @@ public class SQCurrenciesListActivity extends SQActivity {
             SQCurrency vActivatedCurrency = new SQCurrency(pSelected.getCurrencyCode());
             SQDatabaseHelper.getInstance(SQCurrenciesListActivity.this).getCurrencyDao().create(vActivatedCurrency);
             refreshLayout();
-            vSnackBarLabel = getString(R.string.sq_message_info_currency_activated, pSelected.getDisplayName(Locale
+            vSnackBarLabel = getString(R.string.sq_message_success_activate_currency, pSelected.getDisplayName(Locale
                     .getDefault()));
             SQDialogUtils.createSnackBarSuccess(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
         } catch (SQLException pException) {
             SQLog.e("fail to activate currency: " + pSelected.getCurrencyCode());
-            vSnackBarLabel = getString(R.string.sq_message_error_currency_activated, pSelected.getDisplayName(Locale
+            vSnackBarLabel = getString(R.string.sq_message_error_activate_currency, pSelected.getDisplayName(Locale
                     .getDefault()));
             SQDialogUtils.createSnackBarError(mSearchView, vSnackBarLabel, Snackbar.LENGTH_LONG).show();
         }
@@ -220,7 +283,7 @@ public class SQCurrenciesListActivity extends SQActivity {
 
             @Override
             public boolean onSuggestionClick(int pPosition) {
-                Currency vSelected = mActivableCurrencies.get(pPosition);
+                Currency vSelected = mAvailableCurrencies.get(pPosition);
                 SQLog.i("click on currency: " + vSelected.getCurrencyCode());
                 activateCurrency(vSelected);
                 collapseSearchView();
@@ -248,22 +311,47 @@ public class SQCurrenciesListActivity extends SQActivity {
         final MatrixCursor vCursor = new MatrixCursor(new String[]{BaseColumns._ID, "label"});
 
         List<String> vCodesList = new ArrayList<String>();
-        for (int vIndex = 0;vIndex < mActivatedCurrencies.size();vIndex++) {
+        for (int vIndex = 0; vIndex < mActivatedCurrencies.size(); vIndex++) {
             vCodesList.add(mActivatedCurrencies.get(vIndex).getCode());
         }
 
-        mActivableCurrencies.clear();
+        mAvailableCurrencies.clear();
         int vIndex = 0;
         for (Currency vCurrency : mAllCurrencies) {
             if ((vCurrency.getDisplayName(Locale.getDefault()).toLowerCase().contains(pQuery.toLowerCase()) ||
                     vCurrency.getCurrencyCode().toLowerCase().contains(pQuery.toLowerCase())) && !vCodesList.contains
-                            (vCurrency.getCurrencyCode())) {
+                    (vCurrency.getCurrencyCode())) {
                 vCursor.addRow(new Object[]{vIndex, vCurrency.getDisplayName(Locale.getDefault()) + " (" +
                         vCurrency.getCurrencyCode() + ", " + vCurrency.getSymbol(Locale.getDefault()) + ")"});
-                mActivableCurrencies.add(vCurrency);
+                mAvailableCurrencies.add(vCurrency);
                 vIndex++;
             }
         }
         mSearchViewCursorAdapter.changeCursor(vCursor);
     }
+
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode pActionMode, Menu pMenu) {
+            getMenuInflater().inflate(R.menu.sq_menu_deactivate, pMenu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode pActionMode, Menu pMenu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode pActionMode, MenuItem pMenuItem) {
+            deactivateCurrenciesSelection();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode pActionMode) {
+            mAdapter.clearSelection();
+            mActionMode = null;
+        }
+    };
 }

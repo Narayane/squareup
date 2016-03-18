@@ -55,9 +55,9 @@
         android:background="@drawable/sq_shape_drawer_background"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/sq_widget_drawer"
-        app:itemBackground="@drawable/sq_selector_navigation_view_item_background"
-        app:itemIconTint="@color/sq_selector_navigation_view_item"
-        app:itemTextColor="@color/sq_selector_navigation_view_item"
+        app:itemBackground="@drawable/sq_selector_navigationview_item_background"
+        app:itemIconTint="@drawable/sq_selector_navigationview_item"
+        app:itemTextColor="@drawable/sq_selector_navigationview_item"
         app:menu="@menu/sq_menu_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

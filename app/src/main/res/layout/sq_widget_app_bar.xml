@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sq_height_app_bar"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:theme="@style/SQTheme.ActionBar">
 
     <android.support.design.widget.CollapsingToolbarLayout
         android:id="@+id/sq_widget_app_bar_layout_collapsing"
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/SQTheme.Popup"/>
     </android.support.design.widget.CollapsingToolbarLayout>
 
 </android.support.design.widget.AppBarLayout>

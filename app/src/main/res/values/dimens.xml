@@ -1,9 +1,9 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- margins -->
     <dimen name="sq_margin_activity_horizontal">16dp</dimen>
     <dimen name="sq_margin_activity_vertical">16dp</dimen>
     <dimen name="sq_margin_fab">24dp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- heights -->
     <dimen name="sq_height_navigation_view">192dp</dimen>
     <dimen name="sq_height_app_bar">160dp</dimen>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>

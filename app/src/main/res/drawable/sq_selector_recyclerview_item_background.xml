@@ -18,9 +18,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<resources>
-    <plurals name="sq_cab_currencies_selected">
-        <item quantity="one">%d currency</item>
-        <item quantity="other">%d currencies</item>
-    </plurals>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/sq_color_pressed" android:state_pressed="true"/>
+    <item android:drawable="@color/sq_color_selected" android:state_selected="true"/>
+    <item android:drawable="@android:color/transparent"/>
+</selector>

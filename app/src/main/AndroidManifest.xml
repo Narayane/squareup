@@ -8,12 +8,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/sq_app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/SQTheme">
         <activity
             android:name=".ui.activities.SQHomeActivity"
             android:label="@string/sq_commons_my_events"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SQTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,19 +24,19 @@
             android:name=".ui.activities.SQCurrenciesListActivity"
             android:label="@string/sq_commons_my_currencies"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SQTheme.NoActionBar">
         </activity>
         <activity
             android:name=".ui.activities.SQSettingsActivity"
-            android:label="@string/sq_action_settings"
+            android:label="@string/sq_actions_settings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SQTheme.NoActionBar">
         </activity>
         <activity
             android:name=".ui.activities.SQAboutActivity"
-            android:label="@string/sq_action_about"
+            android:label="@string/sq_actions_about"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SQTheme.NoActionBar">
         </activity>
 
         <meta-data

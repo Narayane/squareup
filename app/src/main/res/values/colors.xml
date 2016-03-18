@@ -3,6 +3,8 @@
     <color name="sq_color_primary">@color/sq_color_blue_700</color>
     <color name="sq_color_primary_dark">@color/sq_color_blue_900</color>
     <color name="sq_color_accent">@color/sq_color_amber_800</color>
+    <color name="sq_color_pressed">@color/sq_color_orange_a700</color>
+    <color name="sq_color_selected">@color/sq_color_amber_800</color>
 
     <color name="sq_color_white">#ffffff</color>
     <color name="sq_color_blue_500">#2196f3</color>
@@ -12,4 +14,5 @@
     <color name="sq_color_green_500">#4caf50</color>
     <color name="sq_color_red_500">#f44336</color>
     <color name="sq_color_orange_500">#ff9800</color>
+    <color name="sq_color_orange_a700">#ff6d00</color>
 </resources>
