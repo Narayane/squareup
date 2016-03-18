@@ -129,7 +129,7 @@ public class SQCurrenciesListActivity extends SQActivity {
         mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_currency);
 
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
-        mSearchViewCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, new
+        mSearchViewCursorAdapter = new SimpleCursorAdapter(this, R.layout.sq_item_search_view, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mAvailableCurrencies = new ArrayList<Currency>();
 

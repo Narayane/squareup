@@ -4,6 +4,4 @@
         <item name="android:background">@color/sq_color_accent</item>
     </style>
 
-    <style name="Widget.Squareup.SearchView" parent="@style/Widget.AppCompat.SearchView"/>
-
 </resources>
