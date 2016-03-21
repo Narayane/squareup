@@ -126,7 +126,6 @@ public class SQCurrenciesListActivity extends SQActivity {
                 return true;
             }
         });
-        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_currency);
 
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
         mSearchViewCursorAdapter = new SimpleCursorAdapter(this, R.layout.sq_item_search_view, null, new
@@ -178,6 +177,7 @@ public class SQCurrenciesListActivity extends SQActivity {
     protected void onResume() {
         super.onResume();
         SQLog.v("onResume");
+        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_currency);
 
         refreshLayout();
     }
