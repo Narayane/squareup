@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.sebastien.balard.android.squareup"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.sebastien.balard.android.squareup"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:name=".SQApplication"
@@ -11,7 +12,6 @@
         android:theme="@style/SQTheme">
         <activity
             android:name=".ui.activities.SQHomeActivity"
-            android:label="@string/sq_commons_my_events"
             android:screenOrientation="portrait"
             android:theme="@style/SQTheme.NoActionBar">
             <intent-filter>
@@ -23,6 +23,12 @@
         <activity
             android:name=".ui.activities.SQCurrenciesListActivity"
             android:label="@string/sq_commons_my_currencies"
+            android:screenOrientation="portrait"
+            android:theme="@style/SQTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.activities.SQEditEventActivity"
+            android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/SQTheme.NoActionBar">
         </activity>
@@ -39,14 +45,14 @@
             android:theme="@style/SQTheme.NoActionBar">
         </activity>
 
+        <service
+            android:name=".ui.services.SQAsyncUpdateService"
+            android:exported="false">
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7988e6ed164e770bc103a2ffd3a6037c24bbc405"/>
-
-        <service
-            android:name=".ui.services.SQDataAsyncUpdateIntentService"
-            android:exported="false">
-        </service>
     </application>
 
 </manifest>

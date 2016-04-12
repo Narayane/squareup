@@ -97,7 +97,7 @@ public class SQSettingsFragment extends PreferenceFragment implements SharedPref
 
         DateTime vLastUpdate = null;
         try {
-            vLastUpdate = SQCurrencyUtils.getConversionBase().getLastUpdate();
+            vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

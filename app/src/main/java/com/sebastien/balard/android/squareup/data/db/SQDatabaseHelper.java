@@ -29,8 +29,10 @@ import com.j256.ormlite.table.TableUtils;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
+import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImpl;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
@@ -47,6 +49,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private SQCurrencyDaoImpl mCurrencyDao;
     private SQConversionBaseDaoImpl mConversionBaseDao;
+    private SQEventDaoImpl mEventDao;
 
     public static synchronized SQDatabaseHelper getInstance(Context pContext) {
         if (mInstance == null) {
@@ -72,6 +75,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
             TableUtils.createTable(pConnectionSource, SQConversionBase.class);
+            TableUtils.createTable(pConnectionSource, SQEvent.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create database", pException);
             throw new RuntimeException(pException);
@@ -84,9 +88,11 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         SQLog.v("onUpgrade");
         try {
             if (pOldVersion < 2) {
-                getCurrencyDao().executeRaw("ALTER TABLE `square_up_currency` RENAME TO `sq_currencies`");
+                String vRequestUpdateTableCurrency = "";
+                getCurrencyDao().executeRaw(vRequestUpdateTableCurrency);
                 /*getCurrencyDao().executeRaw("ALTER TABLE `sq_currency` ADD COLUMN `event_type` " + "INTEGER NOT " +
                         "NULL DEFAULT 0;");*/
+                //TODO: put start date in end date when end date is null
             }
         } catch (SQLException pException) {
             SQLog.e("database upgrade problem (" + pOldVersion + " => " + pNewVersion, pException);
@@ -116,5 +122,17 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
             }
         }
         return mConversionBaseDao;
+    }
+
+    public SQEventDaoImpl getEventDao() {
+        if (mEventDao == null) {
+            try {
+                mEventDao = getDao(SQEvent.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get event dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mEventDao;
     }
 }

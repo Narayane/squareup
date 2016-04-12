@@ -37,19 +37,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
+ * Created by Sebastien BALARD on 30/03/2016.
  */
-public class SQDataAsyncUpdateIntentService extends IntentService {
+public class SQAsyncUpdateService extends IntentService {
 
-    static final String TAG = SQDataAsyncUpdateIntentService.class.getSimpleName();
+    static final String TAG = SQAsyncUpdateService.class.getSimpleName();
 
-    public SQDataAsyncUpdateIntentService() {
+    public SQAsyncUpdateService() {
         super(TAG);
     }
 
     public static void startActionUpdateCurrenciesRates(Context pContext) {
-        Intent vIntent = new Intent(pContext, SQDataAsyncUpdateIntentService.class);
+        Intent vIntent = new Intent(pContext, SQAsyncUpdateService.class);
         vIntent.setAction(SQConstants.ACTION_UPDATE_CURRENCIES_RATES);
         pContext.startService(vIntent);
     }
@@ -97,11 +96,10 @@ public class SQDataAsyncUpdateIntentService extends IntentService {
         SQLog.v("last update: " + SQFormatUtils.formatDateAndTime(pUSDConversionBase.getLastUpdate()));
         SQLog.v("rates count: " + pUSDConversionBase.getRates().size());
         try {
-            SQDatabaseHelper.getInstance(SQDataAsyncUpdateIntentService.this).getConversionBaseDao()
-                    .createOrUpdate(pUSDConversionBase);
-            SQDatabaseHelper.getInstance(SQDataAsyncUpdateIntentService.this).getConversionBaseDao().updateDefault();
+            SQDatabaseHelper.getInstance(this).getConversionBaseDao().createOrUpdate(pUSDConversionBase);
+            SQDatabaseHelper.getInstance(this).getConversionBaseDao().updateDefault();
         } catch (SQLException pException) {
-            SQLog.e("fail to save conversion base: " + pUSDConversionBase.getCode());
+            SQLog.e("fail to update conversion base: " + pUSDConversionBase.getCode());
         }
     }
 }

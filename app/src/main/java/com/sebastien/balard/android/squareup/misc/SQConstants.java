@@ -36,8 +36,19 @@ public interface SQConstants {
     String TABLE_CONVERSION_BASE_COLUMN_NAME_RATES = "rates";
     String TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT = "is_default";
 
+    String TABLE_EVENT_NAME = "sq_events";
+    String TABLE_EVENT_COLUMN_NAME_ID = "event_id";
+    String TABLE_EVENT_COLUMN_NAME_NAME = "event_name";
+    String TABLE_EVENT_COLUMN_NAME_START_DATE = "event_start_date";
+    String TABLE_EVENT_COLUMN_NAME_END_DATE = "event_end_date";
+    String TABLE_EVENT_COLUMN_NAME_FK_CURRENCY = "fk_currency_id";
+
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 
     String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
     String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
+
+    int REQUEST_NEW_EVENT = 10000;
+
+    String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
 }

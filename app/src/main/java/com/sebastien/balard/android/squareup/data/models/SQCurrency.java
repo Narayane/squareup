@@ -1,23 +1,25 @@
 /**
  * Square up android app
  * Copyright (C) 2016  Sebastien BALARD
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package com.sebastien.balard.android.squareup.data.models;
+
+import android.support.annotation.NonNull;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -40,15 +42,14 @@ import java.util.Locale;
 public class SQCurrency implements Comparable<SQCurrency> {
 
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_ID, canBeNull = false)
-    Long mId;
-    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, width = 3, canBeNull = false, unique = true)
-    String mCode;
+    protected Long mId;
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, width = 3, canBeNull = false, unique =
+            true)
+    protected String mCode;
     @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, canBeNull = false)
-    Boolean mIsBase;
+    protected Boolean mIsBase;
 
-    private Currency mCurrency;
-
-    public SQCurrency() {
+    protected SQCurrency() {
         mIsBase = false;
     }
 
@@ -58,13 +59,13 @@ public class SQCurrency implements Comparable<SQCurrency> {
     }
 
     @Override
-    public int compareTo(SQCurrency pCurrency) {
-        if (isBase() == true && pCurrency.isBase() == false) {
+    public int compareTo(@NonNull SQCurrency pCurrency) {
+        if (isBase() && !pCurrency.isBase()) {
             return -1;
-        } else if (isBase() == false && pCurrency.isBase() == true) {
+        } else if (!isBase() && pCurrency.isBase()) {
             return 1;
         } else {
-            return  getRate().compareTo(pCurrency.getRate());
+            return getRate().compareTo(pCurrency.getRate());
         }
     }
 
@@ -74,9 +75,9 @@ public class SQCurrency implements Comparable<SQCurrency> {
 
         if (pObject == null || getClass() != pObject.getClass()) return false;
 
-        SQCurrency vCurrency = (SQCurrency) pObject;
+        SQCurrency vOther = (SQCurrency) pObject;
 
-        return new EqualsBuilder().append(mCode, vCurrency.mCode).isEquals();
+        return new EqualsBuilder().append(mCode, vOther.mCode).isEquals();
     }
 
     @Override
@@ -98,7 +99,7 @@ public class SQCurrency implements Comparable<SQCurrency> {
 
     public Float getRate() {
         try {
-            return SQCurrencyUtils.getConversionBase().getRates().get(mCode);
+            return SQCurrencyUtils.getDefaultConversionBase().getRates().get(mCode);
         } catch (SQLException pException) {
             SQLog.e("fail to get " + mCode + " currency rate");
             return null;
@@ -106,17 +107,15 @@ public class SQCurrency implements Comparable<SQCurrency> {
     }
 
     public String getName() {
-        if (mCurrency == null) {
-            mCurrency = SQCurrencyUtils.getCurrencyByCode(mCode);
-        }
-        return mCurrency.getDisplayName(Locale.getDefault());
+        return SQCurrencyUtils.getCurrencyByCode(mCode).getDisplayName(Locale.getDefault());
     }
 
     public String getSymbol() {
-        if (mCurrency == null) {
-            mCurrency = SQCurrencyUtils.getCurrencyByCode(mCode);
-        }
-        return mCurrency.getSymbol(Locale.getDefault());
+        return SQCurrencyUtils.getCurrencyByCode(mCode).getSymbol(Locale.getDefault());
+    }
+
+    public Currency getCurrency() {
+        return SQCurrencyUtils.getCurrencyByCode(mCode);
     }
 
     public void setIsBase(Boolean pIsBase) {

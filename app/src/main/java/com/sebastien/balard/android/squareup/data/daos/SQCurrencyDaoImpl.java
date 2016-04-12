@@ -41,23 +41,32 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
         super(pConnectionSource, pTableConfig);
     }
 
+    public SQCurrency findByCode(String pCode) throws SQLException {
+
+        QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, pCode);
+        SQCurrency vCurrency = vQueryBuilder.queryForFirst();
+
+        if (vCurrency == null) {
+            vCurrency = new SQCurrency(pCode);
+            create(vCurrency);
+            SQLog.i("create currency: " + pCode);
+        }
+        return vCurrency;
+    }
+
     public List<SQCurrency> getActivatedCurrencies() {
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
         vQueryBuilder.orderBy(SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, false);
 
-        List<SQCurrency> vList = null;
+        List<SQCurrency> vList = new ArrayList<>();
         try {
             vList = vQueryBuilder.query();
+            SQLog.d("activated currencies count: " + vList.size());
         } catch (SQLException pException) {
             SQLog.e("fail to get activated currencies");
-            vList = new ArrayList<SQCurrency>();
-        } finally {
-            if (vList == null) {
-                vList = new ArrayList<SQCurrency>();
-            }
-            SQLog.d("activated currencies count: " + vList.size());
-            return vList;
         }
+        return vList;
     }
 
     public SQCurrency getBase() throws SQLException {

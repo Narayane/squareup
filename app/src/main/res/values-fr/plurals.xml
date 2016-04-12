@@ -23,4 +23,8 @@
         <item quantity="one">%d monnaie</item>
         <item quantity="other">%d monnaies</item>
     </plurals>
+    <plurals name="sq_cab_events_selected">
+        <item quantity="one">%d événement</item>
+        <item quantity="other">%d événements</item>
+    </plurals>
 </resources>

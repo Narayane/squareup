@@ -25,19 +25,36 @@ import org.joda.time.DateTime;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Created by Sebastien BALARD on 10/03/2016.
  */
 public class SQFormatUtils {
 
-    public static String formatRate(Float pValue) {
+    public static String formatAmount(Float pValue, String pCurrencySymbol) {
 
-        DecimalFormat df = new DecimalFormat("###,###,###,##0.000000");
+        DecimalFormat vDecimalFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
+        DecimalFormatSymbols vDecimalFormatSymbols = vDecimalFormat.getDecimalFormatSymbols();
+        vDecimalFormatSymbols.setCurrencySymbol(pCurrencySymbol);
+        vDecimalFormat.setDecimalFormatSymbols(vDecimalFormatSymbols);
 
         String vLabel = "-";
         if (pValue != null) {
-            vLabel = df.format(pValue);
+            vLabel = vDecimalFormat.format(pValue);
+        }
+        return vLabel;
+    }
+
+    public static String formatRate(Float pValue) {
+
+        DecimalFormat vDecimalFormat = new DecimalFormat("###,###,###,##0.000000");
+
+        String vLabel = "-";
+        if (pValue != null) {
+            vLabel = vDecimalFormat.format(pValue);
         }
         return vLabel;
     }
@@ -61,8 +78,8 @@ public class SQFormatUtils {
     public static String formatDate(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
-            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(SQApplication.getContext());
-            vLabel = dateFormat.format(pDateTime.toDate());
+            DateFormat vDateFormat = android.text.format.DateFormat.getDateFormat(SQApplication.getContext());
+            vLabel = vDateFormat.format(pDateTime.toDate());
         }
         return vLabel;
     }
@@ -70,8 +87,8 @@ public class SQFormatUtils {
     public static String formatTime(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
-            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(SQApplication.getContext());
-            vLabel = timeFormat.format(pDateTime.toDate());
+            DateFormat vTimeFormat = android.text.format.DateFormat.getTimeFormat(SQApplication.getContext());
+            vLabel = vTimeFormat.format(pDateTime.toDate());
         }
         return vLabel;
     }
@@ -79,8 +96,8 @@ public class SQFormatUtils {
     public static String formatMediumDate(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
-            DateFormat dateFormat = android.text.format.DateFormat.getMediumDateFormat(SQApplication.getContext());
-            vLabel = dateFormat.format(pDateTime.toDate());
+            DateFormat vDateFormat = android.text.format.DateFormat.getMediumDateFormat(SQApplication.getContext());
+            vLabel = vDateFormat.format(pDateTime.toDate());
         }
         return vLabel;
     }
@@ -88,8 +105,8 @@ public class SQFormatUtils {
     public static String formatLongDate(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
-            DateFormat dateFormat = android.text.format.DateFormat.getLongDateFormat(SQApplication.getContext());
-            vLabel = dateFormat.format(pDateTime.toDate());
+            DateFormat vDateFormat = android.text.format.DateFormat.getLongDateFormat(SQApplication.getContext());
+            vLabel = vDateFormat.format(pDateTime.toDate());
         }
         return vLabel;
     }

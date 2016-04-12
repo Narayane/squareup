@@ -2,4 +2,6 @@
 <resources>
     <string name="sq_app_name">Square up</string>
     <string name="sq_app_version_label">Square up v%1$s (%2$s)</string>
+    <string name="sq_format_currency_label">%1$s (%2$s)</string>
+    <string name="sq_format_currency_code_symbol">%1$s (%2$s, %3$s)</string>
 </resources>

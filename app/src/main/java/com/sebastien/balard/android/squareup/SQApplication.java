@@ -31,7 +31,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
-import com.sebastien.balard.android.squareup.ui.services.SQDataAsyncUpdateIntentService;
+import com.sebastien.balard.android.squareup.ui.services.SQAsyncUpdateService;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -133,7 +133,7 @@ public class SQApplication extends Application {
                 int vFrequency = SQUserPreferencesUtils.getRatesUpdateFrequency();
                 SQLog.v("update frequency: " + vFrequency + " day(s)");
                 try {
-                    DateTime vLastUpdate = SQCurrencyUtils.getConversionBase().getLastUpdate();
+                    DateTime vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
                     SQLog.v("last update: " + SQFormatUtils.formatDate(vLastUpdate));
 
                     boolean vTimeToCheck = true;
@@ -141,7 +141,7 @@ public class SQApplication extends Application {
                         vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
                     }
                     if (vTimeToCheck) {
-                        SQDataAsyncUpdateIntentService.startActionUpdateCurrenciesRates(SQApplication.this);
+                        SQAsyncUpdateService.startActionUpdateCurrenciesRates(SQApplication.this);
                     } else {
                         SQLog.i("currencies rates are up-to-date");
                     }

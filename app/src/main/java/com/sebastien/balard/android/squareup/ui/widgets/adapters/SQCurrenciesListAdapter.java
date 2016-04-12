@@ -25,11 +25,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
 
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by sbalard on 03/03/2016.
@@ -49,30 +53,29 @@ public class SQCurrenciesListAdapter extends SQMultiChoiceModeAdapter<SQCurrency
     }
 
     @Override
-    public void onBindViewHolder(CurrenciesListItemViewHolder pHolder, int pPosition) {
+    public void onBindViewHolder(CurrenciesListItemViewHolder pViewHolder, int pPosition) {
         SQCurrency vCurrency = mItemsList.get(pPosition);
 
-        pHolder.mCodeTextView.setText(vCurrency.getCode());
-        String vLabel = vCurrency.getName();
-        vLabel += " (";
-        vLabel += vCurrency.getSymbol() + ")";
-        pHolder.mLabelTextView.setText(vLabel);
-        pHolder.mRateTextView.setText(SQFormatUtils.formatRate(vCurrency.getRate()));
-        pHolder.itemView.setSelected(mSelectedItems.get(pPosition, false));
+        pViewHolder.mTextViewCode.setText(vCurrency.getCode());
+        String vLabel = SQApplication.getContext().getString(R.string.sq_format_currency_label, vCurrency.getName(),
+                vCurrency.getSymbol());
+        pViewHolder.mTextViewLabel.setText(vLabel);
+        pViewHolder.mTextViewRate.setText(SQFormatUtils.formatRate(vCurrency.getRate()));
+        pViewHolder.itemView.setSelected(mSelectedItems.get(pPosition, false));
     }
 
     public static class CurrenciesListItemViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mCodeTextView;
-        TextView mLabelTextView;
-        TextView mRateTextView;
+        @Bind(R.id.sq_item_currencies_list_textview_code)
+        TextView mTextViewCode;
+        @Bind(R.id.sq_item_currencies_list_textview_label)
+        TextView mTextViewLabel;
+        @Bind(R.id.sq_item_currencies_list_textview_rate)
+        TextView mTextViewRate;
 
         public CurrenciesListItemViewHolder(View pView) {
             super(pView);
-
-            mCodeTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_code);
-            mLabelTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_label);
-            mRateTextView = (TextView) pView.findViewById(R.id.sq_item_currencies_list_textview_rate);
+            ButterKnife.bind(this, pView);
         }
     }
 }

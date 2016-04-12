@@ -4,4 +4,12 @@
         <item name="android:background">@color/sq_color_accent</item>
     </style>
 
+    <style name="Widget.SquareUp.EditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/sq_dimens_font_size_body</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorHint">#bdbdbd</item>
+    </style>
+
 </resources>

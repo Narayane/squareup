@@ -25,6 +25,11 @@
         <item name="colorPrimaryDark">@color/sq_color_primary_dark</item>
         <item name="colorAccent">@color/sq_color_accent</item>
         <item name="colorControlHighlight">@color/sq_color_orange_a700</item>
+
+        <item name="editTextStyle">@style/Widget.SquareUp.EditText</item>
+        <item name="android:editTextStyle">@style/Widget.SquareUp.EditText</item>
+        <!--<item name="autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>
+        <item name="android:autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>-->
     </style>
 
     <style name="SQTheme.NoActionBar">

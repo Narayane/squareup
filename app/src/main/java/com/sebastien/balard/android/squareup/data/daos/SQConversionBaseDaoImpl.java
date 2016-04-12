@@ -84,7 +84,9 @@ public class SQConversionBaseDaoImpl extends BaseDaoImpl<SQConversionBase, Long>
         if (vExisting != null) {
             vExisting.setLastUpdate(pConversionBase.getLastUpdate());
             vExisting.setRates(pConversionBase.getRates());
+            return super.createOrUpdate(vExisting);
+        } else {
+            return super.createOrUpdate(pConversionBase);
         }
-        return super.createOrUpdate(pConversionBase);
     }
 }

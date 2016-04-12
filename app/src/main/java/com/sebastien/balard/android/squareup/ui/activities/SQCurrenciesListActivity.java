@@ -82,10 +82,10 @@ public class SQCurrenciesListActivity extends SQActivity {
     private MenuItem mSearchViewMenuItem;
     private SearchView mSearchView;
     private SimpleCursorAdapter mSearchViewCursorAdapter;
+    private SQCurrenciesListAdapter mAdapter;
     private List<Currency> mAllCurrencies;
     private List<Currency> mAvailableCurrencies;
     private List<SQCurrency> mActivatedCurrencies;
-    private SQCurrenciesListAdapter mAdapter;
 
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQCurrenciesListActivity.class)/*.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent
@@ -105,7 +105,7 @@ public class SQCurrenciesListActivity extends SQActivity {
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
                 .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
-        mDrawerLayout.addDrawerListener(vDrawerToggle);
+        mDrawerLayout.setDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -130,9 +130,9 @@ public class SQCurrenciesListActivity extends SQActivity {
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
         mSearchViewCursorAdapter = new SimpleCursorAdapter(this, R.layout.sq_item_search_view, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        mAvailableCurrencies = new ArrayList<Currency>();
+        mAvailableCurrencies = new ArrayList<>();
 
-        mActivatedCurrencies = new ArrayList<SQCurrency>();
+        mActivatedCurrencies = new ArrayList<>();
         mAdapter = new SQCurrenciesListAdapter(mActivatedCurrencies);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -193,6 +193,7 @@ public class SQCurrenciesListActivity extends SQActivity {
     }
 
     private void performSelection(int pPosition) {
+        //FIXME: selection but no ripple
         mAdapter.toggleSelection(pPosition);
         if (mAdapter.getSelectedItemsCount() == 0) {
             mActionMode.finish();

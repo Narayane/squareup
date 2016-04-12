@@ -39,19 +39,19 @@ import java.util.HashMap;
 public class SQConversionBase {
 
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_ID, canBeNull = false)
-    Long mId;
+    protected Long mId;
     @SerializedName("timestamp")
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_LAST_UPDATE, dataType = DataType.DATE_TIME)
-    DateTime mLastUpdate;
+    protected DateTime mLastUpdate;
     @SerializedName("base")
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, width = 3, canBeNull = false,
             unique = true)
-    String mCode;
+    protected String mCode;
     @SerializedName("rates")
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_RATES, dataType = DataType.SERIALIZABLE)
-    HashMap<String, Float> mRates;
+    protected HashMap<String, Float> mRates;
     @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, canBeNull = false)
-    Boolean mIsDefault;
+    protected Boolean mIsDefault;
 
     public SQConversionBase() {
         mRates = new HashMap<>();
@@ -69,9 +69,9 @@ public class SQConversionBase {
 
         if (pObject == null || getClass() != pObject.getClass()) return false;
 
-        SQConversionBase vConversionBase = (SQConversionBase) pObject;
+        SQConversionBase vOther = (SQConversionBase) pObject;
 
-        return new EqualsBuilder().append(mCode, vConversionBase.mCode).isEquals();
+        return new EqualsBuilder().append(mCode, vOther.mCode).isEquals();
     }
 
     @Override

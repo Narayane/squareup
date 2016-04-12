@@ -24,7 +24,6 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/sq_activity_currencies_list_textview_empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

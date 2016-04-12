@@ -22,9 +22,9 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sq_menu_deactivate_item_deactivate"
-        android:orderInCategory="100"
-        android:icon="@drawable/sq_ic_deactivate_24dp"
-        android:title="@string/sq_actions_deactivate"
-        app:showAsAction="always|withText"/>
+    android:id="@+id/sq_menu_deactivate_item_deactivate"
+    android:orderInCategory="100"
+    android:icon="@drawable/sq_ic_deactivate_24dp"
+    android:title="@string/sq_actions_deactivate"
+    app:showAsAction="always|withText"/>
 </menu>

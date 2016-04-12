@@ -1,5 +1,5 @@
 #
-# generated on 2016/03/16 10:36:26
+# generated on 2016/04/01 10:49:05
 #
 # --table-start--
 dataClass=com.sebastien.balard.android.squareup.data.models.SQCurrency
@@ -57,6 +57,43 @@ dataPersister=SERIALIZABLE
 fieldName=mIsDefault
 columnName=is_default
 canBeNull=false
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.sebastien.balard.android.squareup.data.models.SQEvent
+tableName=sq_events
+# --table-fields-start--
+# --field-start--
+fieldName=mId
+columnName=event_id
+canBeNull=false
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=mName
+columnName=event_name
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mStartDate
+columnName=event_start_date
+dataPersister=DATE_TIME
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mEndDate
+columnName=event_end_date
+dataPersister=DATE_TIME
+# --field-end--
+# --field-start--
+fieldName=mCurrency
+columnName=fk_currency_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
 # --field-end--
 # --table-fields-end--
 # --table-end--
