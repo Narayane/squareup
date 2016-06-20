@@ -35,16 +35,16 @@ import org.joda.time.DateTime;
 @DatabaseTable(tableName = SQConstants.TABLE_EVENT_NAME, daoClass = SQEventDaoImpl.class)
 public class SQEvent {
 
-    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_EVENT_COLUMN_NAME_ID, canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_EVENT_COLUMN_ID, canBeNull = false)
     protected Long mId;
-    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_NAME_NAME, canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_NAME, canBeNull = false)
     protected String mName;
-    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_NAME_START_DATE, dataType = DataType.DATE_TIME,
+    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_START_DATE, dataType = DataType.DATE_TIME,
             canBeNull = false)
     protected DateTime mStartDate;
-    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_NAME_END_DATE, dataType = DataType.DATE_TIME)
+    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_END_DATE, dataType = DataType.DATE_TIME)
     protected DateTime mEndDate;
-    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_NAME_FK_CURRENCY, canBeNull = false, foreign = true,
+    @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_FK_CURRENCY_ID, canBeNull = false, foreign = true,
             foreignAutoCreate = true, foreignAutoRefresh = true)
     protected SQCurrency mCurrency;
 

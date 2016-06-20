@@ -32,9 +32,10 @@ import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 
 import java.sql.SQLException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observer;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Sebastien BALARD on 30/03/2016.
@@ -43,8 +44,24 @@ public class SQAsyncUpdateService extends IntentService {
 
     static final String TAG = SQAsyncUpdateService.class.getSimpleName();
 
+    protected CompositeSubscription mSubscriptions;
+
     public SQAsyncUpdateService() {
         super(TAG);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mSubscriptions = new CompositeSubscription();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mSubscriptions != null) {
+            mSubscriptions.unsubscribe();
+        }
+        super.onDestroy();
     }
 
     public static void startActionUpdateCurrenciesRates(Context pContext) {
@@ -67,39 +84,43 @@ public class SQAsyncUpdateService extends IntentService {
     }
 
     private void handleActionUpdateCurrenciesRates() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLog.v("update currencies rates");
-                WSFacade.getLatestRates(new Callback<SQConversionBase>() {
-                    @Override
-                    public void onResponse(Call<SQConversionBase> pCall, Response<SQConversionBase> pResponse) {
-                        if (pResponse.isSuccess()) {
-                            SQConversionBase vBaseUSD = pResponse.body();
-                            updateCurrenciesRates(vBaseUSD);
-                        } else {
-                            SQLog.e(pResponse);
-                        }
-                    }
+        SQLog.v("update currencies rates");
+        mSubscriptions.add(WSFacade.getLatestRates().observeOn(Schedulers.computation()).subscribe(mLoginCallObserver));
+    }
 
-                    @Override
-                    public void onFailure(Call<SQConversionBase> pCall, Throwable pException) {
-                        SQLog.e("fail to get latest rates: " + pException.getMessage());
-                    }
-                });
+    private Observer mLoginCallObserver = new Observer<SQConversionBase>() {
+        @Override
+        public void onCompleted() {
+            SQLog.v("onCompleted");
+            try {
+                SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().updateDefault();
+            } catch (SQLException pException) {
+                SQLog.e("fail to update default conversion base");
             }
-        }).start();
-    }
-
-    private void updateCurrenciesRates(SQConversionBase pUSDConversionBase) {
-        SQLog.v("conversion base: " + pUSDConversionBase.getCode());
-        SQLog.v("last update: " + SQFormatUtils.formatDateAndTime(pUSDConversionBase.getLastUpdate()));
-        SQLog.v("rates count: " + pUSDConversionBase.getRates().size());
-        try {
-            SQDatabaseHelper.getInstance(this).getConversionBaseDao().createOrUpdate(pUSDConversionBase);
-            SQDatabaseHelper.getInstance(this).getConversionBaseDao().updateDefault();
-        } catch (SQLException pException) {
-            SQLog.e("fail to update conversion base: " + pUSDConversionBase.getCode());
         }
-    }
+
+        @Override
+        public void onError(Throwable pThrowable) {
+            SQLog.v("onError");
+            if (pThrowable instanceof HttpException) {
+                SQLog.e("fail to get latest rates: " + pThrowable.getMessage());
+            } else {
+                SQLog.e("fail to get latest rates", pThrowable);
+            }
+        }
+
+        @Override
+        public void onNext(SQConversionBase pConversionBase) {
+            SQLog.v("onNext");
+            SQLog.d("conversion base: " + pConversionBase.getCode());
+            SQLog.d("last update: " + SQFormatUtils.formatDateAndTime(pConversionBase.getLastUpdate()));
+            SQLog.d("rates count: " + pConversionBase.getRates().size());
+            try {
+                SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().createOrUpdate
+                        (pConversionBase);
+            } catch (SQLException pException) {
+                SQLog.e("fail to update conversion base: " + pConversionBase.getCode());
+            }
+        }
+    };
 }

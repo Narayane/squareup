@@ -33,7 +33,9 @@ import java.util.Map;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Sebastien BALARD on 08/03/2016.
@@ -58,13 +60,13 @@ public class OpenExchangeRatesRestClient {
 
     private static void initRestClient() {
         mPublicApiService = new Retrofit.Builder().baseUrl("https://openexchangerates.org/api/").client
-                (mOkHttpClient).addConverterFactory(GsonConverterFactory.create(mGson)).build().create
-                (PublicResources.class);
+                (mOkHttpClient).addConverterFactory(GsonConverterFactory.create(mGson)).addCallAdapterFactory
+                (RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io())).build().create(PublicResources.class);
     }
 
     private static void initOkHttpClient() {
         HttpLoggingInterceptor vInterceptor = new HttpLoggingInterceptor();
-        vInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        vInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         mOkHttpClient = new OkHttpClient().newBuilder().addInterceptor(vInterceptor).build();
     }
 

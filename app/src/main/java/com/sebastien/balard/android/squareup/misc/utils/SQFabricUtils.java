@@ -31,7 +31,7 @@ import io.fabric.sdk.android.Fabric;
  */
 public class SQFabricUtils {
 
-    public static class SQCrashlyticsUtils {
+    public static class CrashlyticsUtils {
 
         public static void init(Context pContext) {
             if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS) {
@@ -39,9 +39,15 @@ public class SQFabricUtils {
             }
         }
 
-        public static void sendLog(String pMessage) {
+        public static void logMessage(String pMessage) {
             if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS && Fabric.isInitialized()) {
                 Crashlytics.log(pMessage);
+            }
+        }
+
+        public static void catchException(Throwable pThrowable) {
+            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS && Fabric.isInitialized()) {
+                Crashlytics.logException(pThrowable);
             }
         }
     }

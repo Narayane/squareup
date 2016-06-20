@@ -41,12 +41,12 @@ import java.util.Locale;
 @DatabaseTable(tableName = SQConstants.TABLE_CURRENCY_NAME, daoClass = SQCurrencyDaoImpl.class)
 public class SQCurrency implements Comparable<SQCurrency> {
 
-    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_ID, canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CURRENCY_COLUMN_ID, canBeNull = false)
     protected Long mId;
-    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, width = 3, canBeNull = false, unique =
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_CODE, width = 3, canBeNull = false, unique =
             true)
     protected String mCode;
-    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_CURRENCY_COLUMN_IS_BASE, canBeNull = false)
     protected Boolean mIsBase;
 
     protected SQCurrency() {

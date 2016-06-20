@@ -43,7 +43,7 @@ public class SQEventDaoImpl extends BaseDaoImpl<SQEvent, Long> {
 
     public List<SQEvent> getAll() {
         QueryBuilder<SQEvent, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.orderBy(SQConstants.TABLE_EVENT_COLUMN_NAME_START_DATE, false);
+        vQueryBuilder.orderBy(SQConstants.TABLE_EVENT_COLUMN_START_DATE, false);
 
         List<SQEvent> vList = new ArrayList<>();
         try {

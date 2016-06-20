@@ -38,19 +38,19 @@ import java.util.HashMap;
 @DatabaseTable(tableName = SQConstants.TABLE_CONVERSION_BASE_NAME, daoClass = SQConversionBaseDaoImpl.class)
 public class SQConversionBase {
 
-    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_ID, canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_ID, canBeNull = false)
     protected Long mId;
     @SerializedName("timestamp")
-    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_LAST_UPDATE, dataType = DataType.DATE_TIME)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_LAST_UPDATE, dataType = DataType.DATE_TIME)
     protected DateTime mLastUpdate;
     @SerializedName("base")
-    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, width = 3, canBeNull = false,
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_CODE, width = 3, canBeNull = false,
             unique = true)
     protected String mCode;
     @SerializedName("rates")
-    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_RATES, dataType = DataType.SERIALIZABLE)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_RATES, dataType = DataType.SERIALIZABLE)
     protected HashMap<String, Float> mRates;
-    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_CONVERSION_BASE_COLUMN_IS_DEFAULT, canBeNull = false)
     protected Boolean mIsDefault;
 
     public SQConversionBase() {

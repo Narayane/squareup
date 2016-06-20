@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Square up android app
+  ~ Copyright (C) 2016 Sebastien BALARD
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="16dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/sq_item_contacts_list_imageview_picture"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/sq_item_contacts_list_textview_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:text="Name"/>
+
+</LinearLayout>

@@ -44,7 +44,7 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
     public SQCurrency findByCode(String pCode) throws SQLException {
 
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_NAME_CODE, pCode);
+        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_CODE, pCode);
         SQCurrency vCurrency = vQueryBuilder.queryForFirst();
 
         if (vCurrency == null) {
@@ -57,7 +57,7 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
 
     public List<SQCurrency> getActivatedCurrencies() {
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.orderBy(SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, false);
+        vQueryBuilder.orderBy(SQConstants.TABLE_CURRENCY_COLUMN_IS_BASE, false);
 
         List<SQCurrency> vList = new ArrayList<>();
         try {
@@ -71,7 +71,7 @@ public class SQCurrencyDaoImpl extends BaseDaoImpl<SQCurrency, Long> {
 
     public SQCurrency getBase() throws SQLException {
         QueryBuilder<SQCurrency, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_NAME_IS_BASE, true);
+        vQueryBuilder.where().eq(SQConstants.TABLE_CURRENCY_COLUMN_IS_BASE, true);
         return vQueryBuilder.queryForFirst();
     }
 

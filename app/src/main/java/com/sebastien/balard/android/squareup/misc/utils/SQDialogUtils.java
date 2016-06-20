@@ -22,9 +22,16 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
@@ -56,5 +63,50 @@ public class SQDialogUtils {
                 .sq_color_green_500));
 
         return vSnackbar;
+    }
+
+    public static AlertDialog createDialogWithCustomView(final Activity pContext, int pTitle, int pView, Integer
+            pYesButtonLabel, Integer pNoButtonLabel, DialogInterface.OnClickListener pYesClickListener,
+                                                         DialogInterface.OnClickListener pNoClickListener, boolean
+                                                                 pIsCancelable) {
+
+        View vView = pContext.getLayoutInflater().inflate(pView, null);
+        float dpi = pContext.getResources().getDisplayMetrics().density;
+        int margin = Float.valueOf(24 * dpi).intValue();
+        AlertDialog.Builder vBuilder = new AlertDialog.Builder(pContext).setTitle(pTitle).setView(vView, margin,
+                margin, margin, margin);
+        if (pYesButtonLabel != null) {
+            vBuilder.setPositiveButton(pYesButtonLabel, pYesClickListener);
+        }
+        if (pNoButtonLabel != null) {
+            vBuilder.setNegativeButton(pNoButtonLabel, pNoClickListener);
+        }
+
+        AlertDialog vDialog = vBuilder.create();
+        vDialog.setCancelable(pIsCancelable);
+        vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        //showView(pContext, vDialog);
+
+        return vDialog;
+    }
+
+    private static void showView(final Context pContext, AlertDialog pAlertDialog) {
+        pAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface pDialogInterface) {
+
+                Dialog vDialog = ((Dialog) pDialogInterface);
+
+                /*View divider = vDialog.findViewById(vDialog.getContext().getResources().getIdentifier
+                        ("android:id/titleDivider", null, null));
+                divider.setBackgroundColor(ContextCompat.getColor(pContext, R.color.colorPrimaryDark));*/
+
+                TextView pTitleView = (TextView) vDialog.findViewById(vDialog.getContext().getResources()
+                        .getIdentifier("alertTitle", "id", "android"));
+                pTitleView.setTextColor(ContextCompat.getColor(pContext, R.color.sq_color_primary));
+            }
+        });
+        pAlertDialog.show();
     }
 }

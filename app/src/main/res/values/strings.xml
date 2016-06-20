@@ -30,6 +30,8 @@
     <string name="sq_screen_home_textview_empty_label">You have created no event yet</string>
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">You have activated no currency yet</string>
+    <!-- dialogs -->
+    <string name="sq_dialog_title_create_contact">New participant</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"You have activated the currency: %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"You have deactivated: %1$s"</string>

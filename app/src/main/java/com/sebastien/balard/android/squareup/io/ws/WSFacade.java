@@ -23,17 +23,15 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 
-import retrofit2.Call;
-import retrofit2.Callback;
+import rx.Observable;
 
 /**
  * Created by Sebastien BALARD on 08/03/2016.
  */
 public class WSFacade {
 
-    public static void getLatestRates(Callback<SQConversionBase> pCallback) {
-        Call<SQConversionBase> vCall = OpenExchangeRatesRestClient.getPublicApiService().getLatestRates
-                (SQApplication.getContext().getString(R.string.key_openexchangerates));
-        vCall.enqueue(pCallback);
+    public static Observable<SQConversionBase> getLatestRates() {
+        return OpenExchangeRatesRestClient.getPublicApiService().getLatestRates(SQApplication.getContext().getString
+                (R.string.key_openexchangerates));
     }
 }

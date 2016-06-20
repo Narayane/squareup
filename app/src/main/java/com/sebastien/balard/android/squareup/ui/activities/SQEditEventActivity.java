@@ -21,6 +21,7 @@ package com.sebastien.balard.android.squareup.ui.activities;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,18 +38,22 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
+import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.fragments.SQSearchContactFragment;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchCurrencyFragment;
+import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
 
 import org.joda.time.DateTime;
 
 import java.sql.SQLException;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -59,7 +64,8 @@ import butterknife.OnTextChanged;
 /**
  * Created by Sebastien BALARD on 22/03/2016.
  */
-public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyFragment.OnCurrencySelectionListener {
+public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyFragment.OnCurrencySelectionListener,
+        SQSearchContactFragment.OnContactsSelectionListener {
 
     @Bind(R.id.sq_widget_app_bar_toolbar)
     protected Toolbar mToolbar;
@@ -71,15 +77,20 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     protected TextView mTextViewEndDate;
     @Bind(R.id.sq_activity_edit_event_edittext_currency)
     protected EditText mEditTextCurrency;
+    @Bind(R.id.sq_activity_edit_event_chipsview_participants)
+    protected SQChipsView mChipsViewParticipants;
 
     private DateTime mStartDate;
     private DateTime mEndDate;
     private Currency mCurrency;
 
+    //region static methods
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQEditEventActivity.class);
     }
+    //endregion
 
+    //region activity lifecycle methods
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
@@ -100,6 +111,31 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         SQUIUtils.SoftInput.show(this, mEditTextName);
         mEditTextCurrency.setText(getString(R.string.sq_format_currency_label, mCurrency.getDisplayName(Locale
                 .getDefault()), mCurrency.getCurrencyCode()));
+
+        mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
+            @Override
+            public void onChipAdded(SQChipsView.SQChip pChip) {
+
+            }
+
+            @Override
+            public void onChipDeleted(SQChipsView.SQChip pChip) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence pCharSequence) {
+                if (pCharSequence.length() > 2) {
+                    openSearchContactFragment(pCharSequence.toString());
+                    mChipsViewParticipants.getEditText().getText().clear();
+                }
+            }
+
+            @Override
+            public void onContentValidated() {
+
+            }
+        });
     }
 
     @Override
@@ -131,8 +167,23 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         }
     }
 
-    // ui events
+    @Override
+    public void onBackPressed() {
+        SQLog.v("onBackPressed");
 
+        Fragment vSearchCurrencyFragment = getFragmentManager().findFragmentByTag(SQSearchCurrencyFragment.TAG);
+        Fragment vSearchContactFragment = getFragmentManager().findFragmentByTag(SQSearchContactFragment.TAG);
+        if (vSearchCurrencyFragment != null && vSearchCurrencyFragment.isVisible()) {
+            getFragmentManager().popBackStack();
+        } else if (vSearchContactFragment != null && vSearchContactFragment.isVisible()) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+    //endregion
+
+    //region ui events
     @OnTextChanged(value = R.id.sq_activity_edit_event_edittext_currency, callback = OnTextChanged.Callback
             .TEXT_CHANGED)
     protected void onCurrencyTextChanged(CharSequence pCharSequence, int pStart, int pBefore, int pCount) {
@@ -169,11 +220,20 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         vDatePickerDialog.getDatePicker().setMinDate(mStartDate.getMillis());
         vDatePickerDialog.show();
     }
+    //endregion
+
+    //region public methods
+    public void openSearchContactFragment(String pContent) {
+        SQSearchContactFragment vSearchContactFragment = SQSearchContactFragment.newInstance(pContent);
+        getFragmentManager().beginTransaction().replace(R.id.sq_activity_edit_event_layout_content,
+                vSearchContactFragment, SQSearchContactFragment.TAG).addToBackStack(SQSearchContactFragment.TAG)
+                .commit();
+    }
 
     public void openSearchCurrencyFragment(String pContent) {
-        SQSearchCurrencyFragment vCurrencySearchFragment = SQSearchCurrencyFragment.newInstance(pContent);
+        SQSearchCurrencyFragment vSearchCurrencyFragment = SQSearchCurrencyFragment.newInstance(pContent);
         getFragmentManager().beginTransaction().replace(R.id.sq_activity_edit_event_layout_content,
-                vCurrencySearchFragment, SQSearchCurrencyFragment.TAG).addToBackStack(SQSearchCurrencyFragment.TAG)
+                vSearchCurrencyFragment, SQSearchCurrencyFragment.TAG).addToBackStack(SQSearchCurrencyFragment.TAG)
                 .commit();
     }
 
@@ -185,10 +245,20 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                 .getDefault()), pCurrency.getCurrencyCode()));
     }
 
+    @Override
+    public void onContactsSelected(List<SQPerson> vContacts) {
+        for (SQPerson vPerson : vContacts) {
+            mChipsViewParticipants.addChip(vPerson.getName(), vPerson.getPhotoUri(), vPerson);
+        }
+    }
+    //endregion
+
+    //region private methods
     private void createEvent(String pName) throws SQLException {
-        SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(mCurrency.getCurrencyCode
-                ());
+        SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(mCurrency
+                .getCurrencyCode());
         SQEvent vNewEvent = new SQEvent(pName, mStartDate, mEndDate, vCurrency);
         SQDatabaseHelper.getInstance(this).getEventDao().create(vNewEvent);
     }
+    //endregion
 }

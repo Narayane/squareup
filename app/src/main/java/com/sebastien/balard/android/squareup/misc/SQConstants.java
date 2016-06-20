@@ -25,23 +25,30 @@ package com.sebastien.balard.android.squareup.misc;
 public interface SQConstants {
 
     String TABLE_CURRENCY_NAME = "sq_currencies";
-    String TABLE_CURRENCY_COLUMN_NAME_ID = "currency_id";
-    String TABLE_CURRENCY_COLUMN_NAME_CODE = "currency_code";
-    String TABLE_CURRENCY_COLUMN_NAME_IS_BASE = "is_reference";
+    String TABLE_CURRENCY_COLUMN_ID = "currency_id";
+    String TABLE_CURRENCY_COLUMN_CODE = "currency_code";
+    String TABLE_CURRENCY_COLUMN_IS_BASE = "is_reference";
 
     String TABLE_CONVERSION_BASE_NAME = "sq_conversion_bases";
-    String TABLE_CONVERSION_BASE_COLUMN_NAME_ID = "id";
-    String TABLE_CONVERSION_BASE_COLUMN_NAME_LAST_UPDATE = "last_update";
-    String TABLE_CONVERSION_BASE_COLUMN_NAME_CODE = "code";
-    String TABLE_CONVERSION_BASE_COLUMN_NAME_RATES = "rates";
-    String TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT = "is_default";
+    String TABLE_CONVERSION_BASE_COLUMN_ID = "id";
+    String TABLE_CONVERSION_BASE_COLUMN_LAST_UPDATE = "last_update";
+    String TABLE_CONVERSION_BASE_COLUMN_CODE = "code";
+    String TABLE_CONVERSION_BASE_COLUMN_RATES = "rates";
+    String TABLE_CONVERSION_BASE_COLUMN_IS_DEFAULT = "is_default";
 
     String TABLE_EVENT_NAME = "sq_events";
-    String TABLE_EVENT_COLUMN_NAME_ID = "event_id";
-    String TABLE_EVENT_COLUMN_NAME_NAME = "event_name";
-    String TABLE_EVENT_COLUMN_NAME_START_DATE = "event_start_date";
-    String TABLE_EVENT_COLUMN_NAME_END_DATE = "event_end_date";
-    String TABLE_EVENT_COLUMN_NAME_FK_CURRENCY = "fk_currency_id";
+    String TABLE_EVENT_COLUMN_ID = "event_id";
+    String TABLE_EVENT_COLUMN_NAME = "event_name";
+    String TABLE_EVENT_COLUMN_START_DATE = "event_start_date";
+    String TABLE_EVENT_COLUMN_END_DATE = "event_end_date";
+    String TABLE_EVENT_COLUMN_FK_CURRENCY_ID = "fk_currency_id";
+
+    String TABLE_PERSON_NAME = "sq_persons";
+    String TABLE_PERSON_COLUMN_ID = "person_id";
+    String TABLE_PERSON_COLUMN_NAME = "name";
+    String TABLE_PERSON_COLUMN_EMAIL = "email";
+    String TABLE_PERSON_COLUMN_WEIGHT = "weight";
+    String TABLE_PERSON_COLUMN_FK_CONTACT_ID = "fk_contact_id";
 
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 

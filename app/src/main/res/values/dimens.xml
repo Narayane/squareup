@@ -2,7 +2,7 @@
     <!-- margins -->
     <dimen name="sq_margin_activity_horizontal">16dp</dimen>
     <dimen name="sq_margin_activity_vertical">16dp</dimen>
-    <dimen name="sq_margin_fab">24dp</dimen>
+    <dimen name="sq_margin_fab">16dp</dimen>
     <!-- heights -->
     <dimen name="sq_height_navigation_view">192dp</dimen>
     <dimen name="sq_height_app_bar">160dp</dimen>

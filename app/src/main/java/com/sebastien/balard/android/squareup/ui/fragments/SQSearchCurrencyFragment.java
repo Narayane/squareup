@@ -44,6 +44,9 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Sebastien BALARD on 01/04/2016.
  */
@@ -51,7 +54,9 @@ public class SQSearchCurrencyFragment extends Fragment {
 
     public static final String TAG = SQSearchCurrencyFragment.class.getSimpleName();
 
+    @Bind(R.id.sq_fragment_search_currency_editext_currency)
     protected EditText mCurrencyEditText;
+    @Bind(R.id.sq_fragment_search_currency_recyclerview)
     protected RecyclerView mRecyclerView;
 
     private OnCurrencySelectionListener mListener;
@@ -87,14 +92,15 @@ public class SQSearchCurrencyFragment extends Fragment {
     public View onCreateView(LayoutInflater pInflater, @Nullable ViewGroup pContainer, @Nullable Bundle
             pSavedInstanceState) {
         SQLog.v("onCreateView");
-        return pInflater.inflate(R.layout.sq_fragment_search_currency, pContainer, false);
+        View vView = pInflater.inflate(R.layout.sq_fragment_search_currency, pContainer, false);
+        ButterKnife.bind(this, vView);
+        return vView;
     }
 
     @Override
     public void onViewCreated(View pView, @Nullable Bundle pSavedInstanceState) {
         SQLog.v("onViewCreated");
 
-        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.sq_fragment_search_currency_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -127,7 +133,6 @@ public class SQSearchCurrencyFragment extends Fragment {
             }
         }));
 
-        mCurrencyEditText = (EditText) pView.findViewById(R.id.sq_fragment_search_currency_editext_currency);
         mCurrencyEditText.addTextChangedListener(mTextWatcher);
         mCurrencyEditText.setText(getArguments().getString("START_CONTENT"));
         mCurrencyEditText.requestFocus();

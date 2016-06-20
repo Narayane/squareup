@@ -56,11 +56,10 @@ public class SQApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SQLog.v("onCreate");
+		SQLog.initWith(SQLog.SQLogLevel.fromName(BuildConfig.LOG_LEVEL));
         mInstance = this;
 
-        SQLog.initWithLevel(BuildConfig.LOG_LEVEL);
-        SQFabricUtils.SQCrashlyticsUtils.init(this);
+        SQFabricUtils.CrashlyticsUtils.init(this);
         JodaTimeAndroid.init(this);
 
         checkBaseCurrency();

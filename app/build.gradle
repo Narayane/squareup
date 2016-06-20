@@ -57,10 +57,15 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
     compile 'net.danlew:android.joda:2.9.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.makeramen:roundedimageview:2.2.1'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.3'
     // tool
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;

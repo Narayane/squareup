@@ -19,37 +19,39 @@
   -->
 
 <LinearLayout
-    android:id="@+id/sq_fragment_search_currency_layout_main"
+    android:id="@+id/sq_fragment_search_contact_layout_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/sq_color_white">
+    android:background="@color/sq_color_white"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/sq_fragment_search_currency_layout_currency"
+        android:id="@+id/sq_fragment_search_contact_layout_currency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp">
 
         <ImageView
-            android:id="@+id/sq_fragment_search_currency_imageview_currency"
+            android:id="@+id/sq_fragment_search_contact_imageview_participants"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/sq_ic_currency_24dp"/>
+            android:src="@drawable/sq_ic_group_24dp"/>
 
-        <EditText
-            android:id="@+id/sq_fragment_search_currency_editext_currency"
+        <com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView
+            android:id="@+id/sq_fragment_search_contact_chipsview_participants"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="16dp"
-            android:layout_toEndOf="@+id/sq_fragment_search_currency_imageview_currency"
-            android:hint="Select currency"
-            android:imeOptions="actionDone"/>
+            android:layout_toEndOf="@+id/sq_fragment_search_contact_imageview_participants"/>
     </RelativeLayout>
 
     <View
@@ -59,9 +61,8 @@
         android:background="#bdbdbd"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/sq_fragment_search_currency_recyclerview"
+        android:id="@+id/sq_fragment_search_contact_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp"/>
+        android:layout_weight="1"/>
 </LinearLayout>

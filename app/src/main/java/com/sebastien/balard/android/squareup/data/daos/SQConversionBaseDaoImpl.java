@@ -68,13 +68,13 @@ public class SQConversionBaseDaoImpl extends BaseDaoImpl<SQConversionBase, Long>
 
     public SQConversionBase findByCode(String pCode) throws SQLException {
         QueryBuilder<SQConversionBase, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_CODE, pCode);
+        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_CODE, pCode);
         return vQueryBuilder.queryForFirst();
     }
 
     public SQConversionBase getDefault() throws SQLException {
         QueryBuilder<SQConversionBase, Long> vQueryBuilder = queryBuilder();
-        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_NAME_IS_DEFAULT, true);
+        vQueryBuilder.where().eq(SQConstants.TABLE_CONVERSION_BASE_COLUMN_IS_DEFAULT, true);
         return vQueryBuilder.queryForFirst();
     }
 

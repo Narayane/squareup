@@ -1,6 +1,6 @@
 /*
  * Square up android app
- * Copyright (C) 2016  Sebastien BALARD
+ * Copyright (C) 2016 Sebastien BALARD
  *
  * This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,19 +17,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.sebastien.balard.android.squareup.io.ws.openexchangerates;
+package com.sebastien.balard.android.squareup.data.daos;
 
-import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTableConfig;
+import com.sebastien.balard.android.squareup.data.models.SQPerson;
 
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import rx.Observable;
+import java.sql.SQLException;
 
 /**
- * Created by Sebastien BALARD on 08/03/2016.
+ * Created by Sebastien BALARD on 20/06/2016.
  */
-public interface PublicResources {
+public class SQPersonDaoImpl extends BaseDaoImpl<SQPerson, Long> {
 
-    @GET("latest.json")
-    Observable<SQConversionBase> getLatestRates(@Query("app_id") String pToken);
+    public SQPersonDaoImpl(ConnectionSource pConnectionSource, DatabaseTableConfig<SQPerson> pTableConfig) throws
+            SQLException {
+        super(pConnectionSource, pTableConfig);
+    }
 }
