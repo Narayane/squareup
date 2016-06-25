@@ -33,7 +33,14 @@ public class SQUIUtils {
 
         public static void show(Activity pContext, View pView) {
             InputMethodManager vImm = (InputMethodManager) pContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            vImm.showSoftInput(pView, InputMethodManager.SHOW_IMPLICIT);
+            if (!vImm.isAcceptingText()) {
+                vImm.showSoftInput(pView, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }
+
+        public static void showForced(Activity pContext) {
+            InputMethodManager vImm = (InputMethodManager) pContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            vImm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
 
         public static void hide(Activity pContext) {

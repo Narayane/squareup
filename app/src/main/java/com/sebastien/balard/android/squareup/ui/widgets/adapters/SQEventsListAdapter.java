@@ -71,7 +71,10 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
             pViewHolder.mTextViewEndDate.setText(SQApplication.getContext().getString(R.string.sq_commons_to,
                     SQFormatUtils.formatLongDate(vEvent.getEndDate())));
         }
-        pViewHolder.mTextViewAmount.setText(SQFormatUtils.formatAmount(1000f, vEvent.getCurrency().getSymbol()));
+        pViewHolder.mTextViewParticipantsCount.setText(SQApplication.getContext().getResources().getQuantityString
+                (R.plurals.sq_commons_participants_count, vEvent.getParticipants().size(), vEvent.getParticipants()
+                        .size()));
+        pViewHolder.mTextViewAmount.setText(SQFormatUtils.formatAmount(0f, vEvent.getCurrency().getSymbol()));
     }
 
     public static class EventsListItemViewHolder extends RecyclerView.ViewHolder {
@@ -82,6 +85,8 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
         TextView mTextViewStartDate;
         @Bind(R.id.sq_item_events_list_textview_end_date)
         TextView mTextViewEndDate;
+        @Bind(R.id.sq_item_events_list_textview_participants_count)
+        TextView mTextViewParticipantsCount;
         @Bind(R.id.sq_item_events_list_textview_amout)
         TextView mTextViewAmount;
 

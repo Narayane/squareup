@@ -22,9 +22,12 @@ package com.sebastien.balard.android.squareup.data.daos;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
+import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Sebastien BALARD on 20/06/2016.
@@ -34,5 +37,17 @@ public class SQPersonDaoImpl extends BaseDaoImpl<SQPerson, Long> {
     public SQPersonDaoImpl(ConnectionSource pConnectionSource, DatabaseTableConfig<SQPerson> pTableConfig) throws
             SQLException {
         super(pConnectionSource, pTableConfig);
+    }
+
+    public void createAll(List<SQPerson> pPeople, SQEvent pEvent) throws SQLException {
+        for (SQPerson vPerson : pPeople) {
+            try {
+                vPerson.setEvent(pEvent);
+                createOrUpdate(vPerson);
+                SQLog.v("create person: " + vPerson.getName());
+            } catch (SQLException pException) {
+                SQLog.e("fail to create person: " + vPerson.getName(), pException);
+            }
+        }
     }
 }

@@ -51,11 +51,12 @@
                 android:layout_gravity="bottom"
                 android:layout_margin="16dp">
 
-                <EditText
+                <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/sq_activity_edit_event_edittext_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Name"
+                    android:inputType="textCapSentences"
                     android:imeOptions="actionDone"
                     android:textSize="@dimen/sq_dimens_font_size_headline"/>
             </android.support.design.widget.TextInputLayout>

@@ -19,8 +19,10 @@
 
 package com.sebastien.balard.android.squareup.data.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImpl;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
@@ -28,6 +30,9 @@ import com.sebastien.balard.android.squareup.misc.SQConstants;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sebastien BALARD on 27/03/2016.
@@ -47,6 +52,8 @@ public class SQEvent {
     @DatabaseField(columnName = SQConstants.TABLE_EVENT_COLUMN_FK_CURRENCY_ID, canBeNull = false, foreign = true,
             foreignAutoCreate = true, foreignAutoRefresh = true)
     protected SQCurrency mCurrency;
+    @ForeignCollectionField(eager = true, foreignFieldName = "mEvent")
+    protected ForeignCollection<SQPerson> mParticipants;
 
     protected Float mAmount;
 
@@ -55,6 +62,7 @@ public class SQEvent {
     }
 
     public SQEvent(String pName, DateTime pStartDate, DateTime pEndDate, SQCurrency pCurrency) {
+        this();
         mName = pName;
         mStartDate = pStartDate;
         mEndDate = pEndDate;
@@ -69,13 +77,14 @@ public class SQEvent {
 
         SQEvent vOther = (SQEvent) pObject;
 
-        return new EqualsBuilder().append(mName, vOther.mName).append(mStartDate, vOther.mStartDate).append
-                (mEndDate, vOther.mEndDate).append(mCurrency, vOther.mCurrency).isEquals();
+        return new EqualsBuilder().append(mName, vOther.mName).append(mStartDate, vOther.mStartDate).append(mEndDate,
+                vOther.mEndDate).append(mCurrency, vOther.mCurrency).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(mName).append(mStartDate).append(mEndDate).append(mCurrency).toHashCode();
+        return new HashCodeBuilder(17, 37).append(mName).append(mStartDate).append(mEndDate).append(mCurrency)
+                .toHashCode();
     }
 
     public SQCurrency getCurrency() {
@@ -100,5 +109,13 @@ public class SQEvent {
 
     public Float getAmount() {
         return mAmount;
+    }
+
+    public List<SQPerson> getParticipants() {
+        if (mParticipants != null) {
+            return new ArrayList<>(mParticipants);
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

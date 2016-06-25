@@ -49,6 +49,7 @@ public interface SQConstants {
     String TABLE_PERSON_COLUMN_EMAIL = "email";
     String TABLE_PERSON_COLUMN_WEIGHT = "weight";
     String TABLE_PERSON_COLUMN_FK_CONTACT_ID = "fk_contact_id";
+    String TABLE_PERSON_COLUMN_FK_EVENT_ID = "fk_event_id";
 
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 

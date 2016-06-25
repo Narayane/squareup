@@ -19,26 +19,17 @@
 
 package com.sebastien.balard.android.squareup;
 
-import android.app.Application;
-import android.content.Context;
+import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImplTest;
+import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImplTest;
+import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImplTest;
 
-import com.sebastien.balard.android.squareup.misc.SQLog;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Created by Sébastien BALARD on 25/12/2015.
+ * Created by Sebastien BALARD on 24/06/2016.
  */
-public class SQTestApplication extends Application {
-
-    private static SQTestApplication mInstance;
-
-    public static Context getContext() {
-        return mInstance.getApplicationContext();
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        SQLog.initWith(SQLog.SQLogLevel.fromName(BuildConfig.LOG_LEVEL));
-        mInstance = this;
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({SQCurrencyDaoImplTest.class, SQConversionBaseDaoImplTest.class, SQEventDaoImplTest.class})
+public class UnitTestsSuite {
 }

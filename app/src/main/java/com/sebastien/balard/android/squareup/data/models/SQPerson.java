@@ -28,6 +28,10 @@ import com.sebastien.balard.android.squareup.data.daos.SQPersonDaoImpl;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -38,7 +42,7 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_PERSON_COLUMN_ID, canBeNull = false)
     protected Long mId;
-    @DatabaseField(columnName = SQConstants.TABLE_PERSON_COLUMN_ID, canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_PERSON_COLUMN_NAME, canBeNull = false)
     protected String mName;
     @DatabaseField(columnName = SQConstants.TABLE_PERSON_COLUMN_EMAIL)
     protected String mEmail;
@@ -46,8 +50,12 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
     protected Integer mWeight;
     @DatabaseField(columnName = SQConstants.TABLE_PERSON_COLUMN_FK_CONTACT_ID)
     protected Long mContactId;
+    @DatabaseField(columnName = SQConstants.TABLE_PERSON_COLUMN_FK_EVENT_ID, canBeNull = false, foreign = true,
+            foreignAutoCreate = true, foreignAutoRefresh = true, columnDefinition = "integer references " +
+            SQConstants.TABLE_EVENT_NAME + "(" + SQConstants.TABLE_EVENT_COLUMN_ID + ") on delete cascade")
+    protected SQEvent mEvent;
 
-    protected Uri mPhotoUri;
+    protected String mPhotoUriString;
 
     protected SQPerson() {
         mWeight = 1;
@@ -66,16 +74,33 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
     }
 
     @Override
+    public boolean equals(Object pObject) {
+        if (this == pObject) return true;
+
+        if (pObject == null || getClass() != pObject.getClass()) return false;
+
+        SQPerson vOther = (SQPerson) pObject;
+
+        return new EqualsBuilder().append(mEmail, vOther.mEmail).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(mEmail).toHashCode();
+    }
+
+    @Override
     public int compareTo(SQPerson pOther) {
-        int order = 0;
-        /*if (this.balance < person.balance) {
+        /*int order = 0;
+        if (this.balance < person.balance) {
             order = -1;
         } else if (this.balance > person.balance) {
             order = 1;
-        } else {*/
+        } else {
             order = mName.compareTo(pOther.mName);
-        //}
-        return order;
+        }
+        return order;*/
+        return new CompareToBuilder().append(this.mName, pOther.mName).toComparison();
     }
 
     public Long getContactId() {
@@ -100,14 +125,21 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
         return mEmail;
     }
 
-    public Uri getPhotoUri() {
-        if (mContactId != null && mPhotoUri == null) {
-            mPhotoUri = SQContactUtils.getPhotoUri(SQApplication.getContext(), mContactId);
+    public String getPhotoUriString() {
+        if (mContactId != null && mPhotoUriString == null) {
+            Uri vUri = SQContactUtils.getPhotoUri(SQApplication.getContext(), mContactId);
+            if (vUri != null) {
+                mPhotoUriString = vUri.toString();
+            }
         }
-        return mPhotoUri;
+        return mPhotoUriString;
     }
 
     public Long getId() {
         return mId;
+    }
+
+    public void setEvent(SQEvent pEvent) {
+        mEvent = pEvent;
     }
 }

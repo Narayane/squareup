@@ -27,4 +27,8 @@
         <item quantity="one">%d événement</item>
         <item quantity="other">%d événements</item>
     </plurals>
+    <plurals name="sq_commons_participants_count">
+        <item quantity="one">%d participant</item>
+        <item quantity="other">%d participants</item>
+    </plurals>
 </resources>

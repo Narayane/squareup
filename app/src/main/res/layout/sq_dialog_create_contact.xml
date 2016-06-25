@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:imeOptions="actionNext"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:singleLine="true"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -61,6 +61,7 @@
             android:layout_height="wrap_content"
             android:hint="Poids"
             android:imeOptions="actionDone"
+            android:inputType="number"
             android:singleLine="true"/>
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

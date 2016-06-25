@@ -20,29 +20,19 @@
 package com.sebastien.balard.android.squareup;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
-import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
-import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
-import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
-import com.sebastien.balard.android.squareup.data.models.SQCurrency;
-import com.sebastien.balard.android.squareup.misc.SQLog;
-
-import java.sql.SQLException;
+import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 
 /**
  * Created by sbalard on 06/03/2016.
  */
-public class SQTestDatabaseHelper extends OrmLiteSqliteOpenHelper {
+public class SQTestDatabaseHelper extends SQDatabaseHelper {
 
-    private static SQTestDatabaseHelper mInstance;
+    /*private static SQTestDatabaseHelper mInstance;
 
     private SQCurrencyDaoImpl mCurrencyDao;
     private SQConversionBaseDaoImpl mConversionBaseDao;
+    private SQEventDaoImpl mEventDao;
 
     public static synchronized SQTestDatabaseHelper getInstance(Context pContext) {
         if (mInstance == null) {
@@ -56,18 +46,19 @@ public class SQTestDatabaseHelper extends OrmLiteSqliteOpenHelper {
             OpenHelperManager.releaseHelper();
             mInstance = null;
         }
-    }
+    }*/
 
     public SQTestDatabaseHelper(Context pContext) {
         super(pContext, null, null, 1, R.raw.sq_config_ormlite);
     }
 
-    @Override
+    /*@Override
     public void onCreate(SQLiteDatabase pDatabase, ConnectionSource pConnectionSource) {
         SQLog.v("onCreate");
         try {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
             TableUtils.createTable(pConnectionSource, SQConversionBase.class);
+            TableUtils.createTable(pConnectionSource, SQEvent.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create test database", pException);
             throw new RuntimeException(pException);
@@ -79,16 +70,25 @@ public class SQTestDatabaseHelper extends OrmLiteSqliteOpenHelper {
         SQLog.v("onUpgrade");
     }
 
-    public SQCurrencyDaoImpl getCurrencyDao() {
-        if (mCurrencyDao == null) {
+    @Override
+    public void onOpen(SQLiteDatabase pSQLiteDatabase) {
+        super.onOpen(pSQLiteDatabase);
+        SQLog.v("onOpen");
+        if (!pSQLiteDatabase.isReadOnly()){
+            pSQLiteDatabase.setForeignKeyConstraintsEnabled(true);
+        }
+    }
+
+    public SQEventDaoImpl getEventDao() {
+        if (mEventDao == null) {
             try {
-                mCurrencyDao = getDao(SQCurrency.class);
+                mEventDao = getDao(SQEvent.class);
             } catch (SQLException pException) {
-                SQLog.e("fail to get currency dao");
+                SQLog.e("fail to get event dao");
                 throw new RuntimeException(pException);
             }
         }
-        return mCurrencyDao;
+        return mEventDao;
     }
 
     public SQConversionBaseDaoImpl getConversionBaseDao() {
@@ -102,4 +102,16 @@ public class SQTestDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
         return mConversionBaseDao;
     }
+
+    public SQCurrencyDaoImpl getCurrencyDao() {
+        if (mCurrencyDao == null) {
+            try {
+                mCurrencyDao = getDao(SQCurrency.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get currency dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mCurrencyDao;
+    }*/
 }

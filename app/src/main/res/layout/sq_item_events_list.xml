@@ -55,6 +55,13 @@
             android:gravity="center_vertical"
             android:text="to 03/05/2015"
             android:textIsSelectable="false"/>
+
+        <TextView
+            android:id="@+id/sq_item_events_list_textview_participants_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 participant"
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
 
     <TextView
@@ -62,6 +69,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="right|center_vertical"
-        android:text="1000 EUR"/>
+        android:text="0,00 €"/>
 
 </LinearLayout>

@@ -24,6 +24,7 @@ import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -108,10 +109,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         mTextViewEndDate.setText(SQFormatUtils.formatLongDate(mStartDate));
         mCurrency = SQCurrencyUtils.getLocaleCurrency();
 
-        SQUIUtils.SoftInput.show(this, mEditTextName);
         mEditTextCurrency.setText(getString(R.string.sq_format_currency_label, mCurrency.getDisplayName(Locale
                 .getDefault()), mCurrency.getCurrencyCode()));
-
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {
@@ -136,6 +135,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
 
             }
         });
+        SQUIUtils.SoftInput.showForced(this);
     }
 
     @Override
@@ -248,7 +248,11 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     @Override
     public void onContactsSelected(List<SQPerson> vContacts) {
         for (SQPerson vPerson : vContacts) {
-            mChipsViewParticipants.addChip(vPerson.getName(), vPerson.getPhotoUri(), vPerson);
+            Uri vUri = null;
+            if (vPerson.getPhotoUriString() != null) {
+                vUri = Uri.parse(vPerson.getPhotoUriString()) ;
+            }
+            mChipsViewParticipants.addChip(vPerson.getName(), vUri, vPerson);
         }
     }
     //endregion
@@ -258,7 +262,14 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(mCurrency
                 .getCurrencyCode());
         SQEvent vNewEvent = new SQEvent(pName, mStartDate, mEndDate, vCurrency);
-        SQDatabaseHelper.getInstance(this).getEventDao().create(vNewEvent);
+        List<SQPerson> vParticipants = mChipsViewParticipants.getContacts();
+        if (vParticipants.size() > 0) {
+            SQDatabaseHelper.getInstance(this).getPersonDao().createAll(vParticipants, vNewEvent);
+            SQLog.d("create new event with " + vParticipants.size() + " participants");
+        } else {
+            SQDatabaseHelper.getInstance(this).getEventDao().createOrUpdate(vNewEvent);
+            SQLog.d("create new event");
+        }
     }
     //endregion
 }

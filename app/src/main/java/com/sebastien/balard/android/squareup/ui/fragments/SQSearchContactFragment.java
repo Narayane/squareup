@@ -37,6 +37,7 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQContactCursorAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
@@ -113,6 +114,7 @@ public class SQSearchContactFragment extends Fragment {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {
                 mAdapter.getFilter().filter("zzzz");
+                SQUIUtils.SoftInput.show(getActivity(), mChipsViewParticipants.getEditText());
             }
 
             @Override
@@ -132,6 +134,7 @@ public class SQSearchContactFragment extends Fragment {
             @Override
             public void onContentValidated() {
                 mListener.onContactsSelected(mChipsViewParticipants.getContacts());
+                SQUIUtils.SoftInput.hide(getActivity());
                 getFragmentManager().popBackStack();
             }
         });

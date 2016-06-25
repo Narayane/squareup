@@ -48,14 +48,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, application = SQTestApplication.class)
-public class SQConversionBaseDaoImplUnitTest {
+public class SQConversionBaseDaoImplTest {
 
-    private SQTestDatabaseHelper mDatabaseHelperTest;
+    SQConversionBaseDaoImpl vConversionBaseDao;
 
     @Before
     public void setUp() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        mDatabaseHelperTest = SQTestDatabaseHelper.getInstance(context);
+        vConversionBaseDao = SQTestDatabaseHelper.getInstance(context).getConversionBaseDao();
     }
 
     @After
@@ -66,9 +66,7 @@ public class SQConversionBaseDaoImplUnitTest {
     @Test
     public void testCreateConversionBase() throws Exception {
 
-        SQConversionBaseDaoImpl vConversionBaseDao = mDatabaseHelperTest.getConversionBaseDao();
-        List<SQConversionBase> vList = vConversionBaseDao.queryForAll();
-        assertThat(vList.size(), is(equalTo(0)));
+        assertThat(vConversionBaseDao.queryForAll().size(), is(equalTo(0)));
 
         vConversionBaseDao.createDefaultWithCode("USD");
 
@@ -82,7 +80,7 @@ public class SQConversionBaseDaoImplUnitTest {
         assertThat(vStatus.isCreated(), is(false));
         assertThat(vStatus.isUpdated(), is(true));
 
-        vList = vConversionBaseDao.queryForAll();
+        List<SQConversionBase> vList = vConversionBaseDao.queryForAll();
         assertThat(vList.size(), is(equalTo(1)));
         assertThat(vList.get(0).getRates().size(), is(equalTo(2)));
     }
@@ -90,9 +88,7 @@ public class SQConversionBaseDaoImplUnitTest {
     @Test
     public void testUpdateCurrenciesRates() throws Exception {
 
-        SQConversionBaseDaoImpl vConversionBaseDao = mDatabaseHelperTest.getConversionBaseDao();
-        List<SQConversionBase> vList = vConversionBaseDao.queryForAll();
-        assertThat(vList.size(), is(equalTo(0)));
+        assertThat(vConversionBaseDao.queryForAll().size(), is(equalTo(0)));
 
         vConversionBaseDao.createDefaultWithCode("EUR");
 

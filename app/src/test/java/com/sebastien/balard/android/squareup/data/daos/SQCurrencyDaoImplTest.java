@@ -34,8 +34,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -46,14 +44,14 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, application = SQTestApplication.class)
-public class SQCurrencyDaoImplUnitTest {
+public class SQCurrencyDaoImplTest {
 
-    private SQTestDatabaseHelper mDatabaseHelperTest;
+    SQCurrencyDaoImpl mCurrencyDao;
 
     @Before
     public void setUp() {
         Context context = RuntimeEnvironment.application.getApplicationContext();
-        mDatabaseHelperTest = SQTestDatabaseHelper.getInstance(context);
+        mCurrencyDao = SQTestDatabaseHelper.getInstance(context).getCurrencyDao();
     }
 
     @After
@@ -62,17 +60,32 @@ public class SQCurrencyDaoImplUnitTest {
     }
 
     @Test
+    public void testCreateCurrency() throws Exception {
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(0)));
+
+        SQCurrency vCurrency = new SQCurrency("EUR");
+        mCurrencyDao.create(vCurrency);
+
+        assertThat(vCurrency.getId(), notNullValue());
+        assertThat(vCurrency.getCode(), is(equalTo("EUR")));
+        assertThat(vCurrency.isBase(), is(false));
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(1)));
+    }
+
+    @Test
     public void testCreateBaseCurrency() throws Exception {
 
-        SQCurrencyDaoImpl vCurrencyDao = mDatabaseHelperTest.getCurrencyDao();
-        List<SQCurrency> list = vCurrencyDao.getActivatedCurrencies();
-        assertThat(list.size(), is(equalTo(0)));
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(0)));
 
-        vCurrencyDao.createBaseWithCode("EUR");
+        mCurrencyDao.createBaseWithCode("EUR");
 
-        SQCurrency vBase = vCurrencyDao.getBase();
+        SQCurrency vBase = mCurrencyDao.getBase();
         assertThat(vBase.getId(), notNullValue());
         assertThat(vBase.getCode(), is(equalTo("EUR")));
         assertThat(vBase.isBase(), is(true));
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(1)));
     }
 }

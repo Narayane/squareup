@@ -30,9 +30,11 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImpl;
+import com.sebastien.balard.android.squareup.data.daos.SQPersonDaoImpl;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
+import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
@@ -50,6 +52,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private SQCurrencyDaoImpl mCurrencyDao;
     private SQConversionBaseDaoImpl mConversionBaseDao;
     private SQEventDaoImpl mEventDao;
+    private SQPersonDaoImpl mPersonDao;
 
     public static synchronized SQDatabaseHelper getInstance(Context pContext) {
         if (mInstance == null) {
@@ -65,6 +68,11 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    protected SQDatabaseHelper(Context pContext, String pDatabaseName, SQLiteDatabase.CursorFactory pCursorFactory, int
+            pDatabaseVersion, int pConfigFileId) {
+        super(pContext, pDatabaseName, pCursorFactory, pDatabaseVersion, pConfigFileId);
+    }
+
     public SQDatabaseHelper(Context pContext) {
         super(pContext, DATABASE_NAME, null, DATABASE_VERSION, R.raw.sq_config_ormlite);
     }
@@ -76,6 +84,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(pConnectionSource, SQCurrency.class);
             TableUtils.createTable(pConnectionSource, SQConversionBase.class);
             TableUtils.createTable(pConnectionSource, SQEvent.class);
+            TableUtils.createTable(pConnectionSource, SQPerson.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create database", pException);
             throw new RuntimeException(pException);
@@ -100,16 +109,37 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public SQCurrencyDaoImpl getCurrencyDao() {
-        if (mCurrencyDao == null) {
+    @Override
+    public void onOpen(SQLiteDatabase pSQLiteDatabase) {
+        super.onOpen(pSQLiteDatabase);
+        SQLog.v("onOpen");
+        if (!pSQLiteDatabase.isReadOnly()){
+            pSQLiteDatabase.setForeignKeyConstraintsEnabled(true);
+        }
+    }
+
+    public SQPersonDaoImpl getPersonDao() {
+        if (mPersonDao == null) {
             try {
-                mCurrencyDao = getDao(SQCurrency.class);
+                mPersonDao = getDao(SQPerson.class);
             } catch (SQLException pException) {
-                SQLog.e("fail to get currency dao");
+                SQLog.e("fail to get person dao");
                 throw new RuntimeException(pException);
             }
         }
-        return mCurrencyDao;
+        return mPersonDao;
+    }
+
+    public SQEventDaoImpl getEventDao() {
+        if (mEventDao == null) {
+            try {
+                mEventDao = getDao(SQEvent.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get event dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mEventDao;
     }
 
     public SQConversionBaseDaoImpl getConversionBaseDao() {
@@ -124,15 +154,15 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mConversionBaseDao;
     }
 
-    public SQEventDaoImpl getEventDao() {
-        if (mEventDao == null) {
+    public SQCurrencyDaoImpl getCurrencyDao() {
+        if (mCurrencyDao == null) {
             try {
-                mEventDao = getDao(SQEvent.class);
+                mCurrencyDao = getDao(SQCurrency.class);
             } catch (SQLException pException) {
-                SQLog.e("fail to get event dao");
+                SQLog.e("fail to get currency dao");
                 throw new RuntimeException(pException);
             }
         }
-        return mEventDao;
+        return mCurrencyDao;
     }
 }

@@ -1,5 +1,5 @@
 #
-# generated on 2016/04/01 10:49:05
+# generated on 2016/06/25 10:25:46
 #
 # --table-start--
 dataClass=com.sebastien.balard.android.squareup.data.models.SQCurrency
@@ -93,6 +93,51 @@ columnName=fk_currency_id
 canBeNull=false
 foreign=true
 foreignAutoRefresh=true
+foreignAutoCreate=true
+# --field-end--
+# --field-start--
+fieldName=mParticipants
+foreignCollection=true
+foreignCollectionEager=true
+foreignCollectionForeignFieldName=mEvent
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.sebastien.balard.android.squareup.data.models.SQPerson
+tableName=sq_persons
+# --table-fields-start--
+# --field-start--
+fieldName=mId
+columnName=person_id
+canBeNull=false
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=mName
+columnName=name
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mEmail
+columnName=email
+# --field-end--
+# --field-start--
+fieldName=mWeight
+columnName=weight
+# --field-end--
+# --field-start--
+fieldName=mContactId
+columnName=fk_contact_id
+# --field-end--
+# --field-start--
+fieldName=mEvent
+columnName=fk_event_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+columnDefinition=integer references sq_events(event_id) on delete cascade
 foreignAutoCreate=true
 # --field-end--
 # --table-fields-end--

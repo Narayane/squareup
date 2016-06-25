@@ -520,43 +520,52 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
                 mChipsListener.onContentValidated();
             } else if (s.toString().endsWith("\n")) {
                 SQLog.d("new person");
+                Dialog vNewPersonDialog = createNewPersonDialog();
+                vNewPersonDialog.show();
+                AppCompatEditText vEditTextName = (AppCompatEditText) vNewPersonDialog.findViewById(R
+                        .id.sq_dialog_create_contact_edittext_name);
+                String vTypedText = s.toString().substring(0, s.toString().length() - 1);
+                vEditTextName.setText(vTypedText);
+                vEditTextName.setSelection(vTypedText.length());
                 s.clear();
                 mEditText.setSelection(0);
-
-                SQDialogUtils.createDialogWithCustomView(mContext, R.string
-                        .sq_dialog_title_create_contact, R.layout.sq_dialog_create_contact, android.R.string.ok,
-                        null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface pDialogInterface, int pWhich) {
-                        Dialog vDialog = (Dialog) pDialogInterface;
-                        AppCompatEditText vEditTextName = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_name);
-                        AppCompatEditText vEditTextEmail = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_email);
-                        AppCompatEditText vEditTextWeight = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_weight);
-                        String vName = vEditTextName.getText().toString();
-                        String vEmail = vEditTextEmail.getText().toString();
-                        int vWeight = Integer.valueOf(vEditTextWeight.getText().toString());
-                        SQPerson vChipsContact = new SQPerson(vName, vEmail, vWeight);
-                        SQChip chip = new SQChip(vName, null, vChipsContact);
-                        mChipList.add(chip);
-                        if (mChipsListener != null) {
-                            mChipsListener.onChipAdded(chip);
-                        }
-                        post(new Runnable() {
-                            @Override
-                            public void run() {
-                                onChipsChanged(true);
-                            }
-                        });
-                    }
-                }, null, false).show();
             } else {
                 if (mChipsListener != null) {
                     mChipsListener.onTextChanged(s);
                 }
             }
+        }
+
+        private Dialog createNewPersonDialog() {
+             return SQDialogUtils.createDialogWithCustomView(mContext, R.string
+                    .sq_dialog_title_create_contact, R.layout.sq_dialog_create_contact, android.R.string.ok,
+                    null, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface pDialogInterface, int pWhich) {
+                    Dialog vDialog = (Dialog) pDialogInterface;
+                    AppCompatEditText vEditTextName = (AppCompatEditText) vDialog.findViewById(R
+                            .id.sq_dialog_create_contact_edittext_name);
+                    AppCompatEditText vEditTextEmail = (AppCompatEditText) vDialog.findViewById(R
+                            .id.sq_dialog_create_contact_edittext_email);
+                    AppCompatEditText vEditTextWeight = (AppCompatEditText) vDialog.findViewById(R
+                            .id.sq_dialog_create_contact_edittext_weight);
+                    String vName = vEditTextName.getText().toString();
+                    String vEmail = vEditTextEmail.getText().toString();
+                    int vWeight = Integer.valueOf(vEditTextWeight.getText().toString());
+                    SQPerson vChipsContact = new SQPerson(vName, vEmail, vWeight);
+                    SQChip chip = new SQChip(vName, null, vChipsContact);
+                    mChipList.add(chip);
+                    if (mChipsListener != null) {
+                        mChipsListener.onChipAdded(chip);
+                    }
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onChipsChanged(true);
+                        }
+                    });
+                }
+            }, null, false);
         }
     }
 

@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQAboutActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQSettingsActivity;
 
@@ -48,6 +49,7 @@ public class SQActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem pMenuItem) {
         switch (pMenuItem.getItemId()) {
             case android.R.id.home:
+                SQUIUtils.SoftInput.hide(this);
                 onBackPressed();
                 return true;
             case R.id.sq_menu_default_item_settings:
