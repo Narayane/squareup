@@ -26,12 +26,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.SQHomeActivity">
 
-    <include layout="@layout/sq_widget_app_bar"/>
+    <include layout="@layout/sq_widget_appbar"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/sq_height_app_bar"
+        android:paddingBottom="@dimen/sq_height_appbar"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout

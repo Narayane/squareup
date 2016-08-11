@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         tools:context=".ui.activities.SQCurrenciesListActivity">
 
-        <include layout="@layout/sq_widget_app_bar"/>
+        <include layout="@layout/sq_widget_appbar"/>
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/sq_activity_currencies_list_nestedscrollview_empty"

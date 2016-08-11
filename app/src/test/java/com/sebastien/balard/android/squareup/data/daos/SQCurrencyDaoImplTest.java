@@ -34,6 +34,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -87,5 +89,33 @@ public class SQCurrencyDaoImplTest {
         assertThat(vBase.isBase(), is(true));
 
         assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(1)));
+    }
+
+    @Test
+    public void testGetActivatedCurrencies() throws Exception {
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(0)));
+
+        mCurrencyDao.createBaseWithCode("EUR");
+        mCurrencyDao.createOrUpdate(new SQCurrency("USD"));
+
+        List<SQCurrency> vList = mCurrencyDao.getActivatedCurrencies();
+        assertThat(vList, notNullValue());
+        assertThat(vList.size(), is(equalTo(2)));
+        assertThat(vList.get(0).isBase(), is(true));
+        assertThat(vList.get(1).isBase(), is(false));
+    }
+
+    @Test
+    public void testDeleteCurrency() throws Exception {
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(0)));
+
+        SQCurrency vCurrency = new SQCurrency("EUR");
+        mCurrencyDao.create(vCurrency);
+
+        mCurrencyDao.delete(vCurrency);
+
+        assertThat(mCurrencyDao.getActivatedCurrencies().size(), is(equalTo(0)));
     }
 }

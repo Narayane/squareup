@@ -108,5 +108,7 @@ public class SQConversionBaseDaoImplTest {
         assertThat(vEURConversionBase.getRates().size(), is(equalTo(2)));
         assertThat(vEURConversionBase.getRates().get("EUR"), is(equalTo(1.0f)));
         assertThat(vEURConversionBase.getRates().get("USD"), is(equalTo(2.0f)));
+
+        assertThat(vConversionBaseDao.queryForAll().size(), is(equalTo(2)));
     }
 }

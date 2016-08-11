@@ -20,15 +20,12 @@
 
 <resources>
     <!-- margins -->
-    <dimen name="sq_margin_activity_horizontal">16dp</dimen>
-    <dimen name="sq_margin_activity_vertical">16dp</dimen>
-    <dimen name="sq_margin_fab">16dp</dimen>
-    <!-- heights -->
-    <dimen name="sq_height_navigationview">200dp</dimen>
-    <dimen name="sq_height_appbar">160dp</dimen>
+    <dimen name="sq_margin_activity_horizontal">24dp</dimen>
+    <dimen name="sq_margin_activity_vertical">24dp</dimen>
+    <dimen name="sq_margin_fab">24dp</dimen>
     <!-- text sizes -->
-    <dimen name="sq_size_font_headline">24sp</dimen>
-    <dimen name="sq_size_font_subhead">17sp</dimen>
-    <dimen name="sq_size_font_body">14sp</dimen>
-    <dimen name="sq_size_font_caption">11sp</dimen>
+    <dimen name="sq_size_font_headline">28sp</dimen>
+    <dimen name="sq_size_font_subhead">21sp</dimen>
+    <dimen name="sq_size_font_body">18sp</dimen>
+    <dimen name="sq_size_font_caption">16sp</dimen>
 </resources>

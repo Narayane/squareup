@@ -1,15 +1,20 @@
 <resources>
 
-    <style name="Widget.Squareup.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+    <style name="SQTheme.Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="android:background">@color/sq_color_accent</item>
     </style>
 
-    <style name="Widget.SquareUp.EditText" parent="@style/Widget.AppCompat.EditText">
-        <item name="android:textSize">@dimen/sq_dimens_font_size_body</item>
+    <style name="SQTheme.Widget.EditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/sq_size_font_body</item>
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColorHint">#bdbdbd</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.Condensed.Bold" parent="@style/TextAppearance.AppCompat">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

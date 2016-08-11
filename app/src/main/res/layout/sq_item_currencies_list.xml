@@ -6,27 +6,28 @@
               android:clickable="true"
               android:focusable="true"
               android:background="@drawable/sq_selector_recyclerview_item_background"
-              android:padding="16dp">
+              android:padding="@dimen/sq_margin_activity_horizontal">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/sq_item_currencies_list_textview_code"
-        android:layout_width="48dp"
+        style="@style/SQTheme.TextAppearance.Condensed.Bold"
+        android:layout_width="36dp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="18dp"
         android:text="EUR"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/sq_item_currencies_list_textview_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="euro (€)"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/sq_item_currencies_list_textview_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
         android:text="1,00000"/>
 
 </LinearLayout>

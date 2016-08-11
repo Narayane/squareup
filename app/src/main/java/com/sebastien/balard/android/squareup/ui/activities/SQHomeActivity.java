@@ -92,6 +92,7 @@ public class SQHomeActivity extends SQActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
                 .sq_actions_open_drawer, R.string.sq_actions_close_drawer);

@@ -58,6 +58,7 @@ public class SQEventDaoImplTest {
     private Context mApplicationContext;
     private SQEventDaoImpl mEventDao;
     private SQPersonDaoImpl mPersonDao;
+    private SQCurrencyDaoImpl mCurrencyDao;
     private SQEvent mEvent;
 
     @Before
@@ -65,6 +66,7 @@ public class SQEventDaoImplTest {
         mApplicationContext = RuntimeEnvironment.application.getApplicationContext();
         mEventDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getEventDao();
         mPersonDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getPersonDao();
+        mCurrencyDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getCurrencyDao();
         mEvent = new SQEvent(EVENT_NAME, new DateTime(), null, new SQCurrency("EUR"));
     }
 
@@ -90,6 +92,7 @@ public class SQEventDaoImplTest {
         assertThat(mEvent.getParticipants().size(), is(equalTo(0)));
 
         assertThat(mEventDao.getAll().size(), is(equalTo(1)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
     }
 
     @Test
@@ -113,6 +116,7 @@ public class SQEventDaoImplTest {
 
         assertThat(mEventDao.getAll().size(), is(equalTo(1)));
         assertThat(mPersonDao.queryForAll().size(), is(equalTo(1)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
     }
 
     @Test
@@ -140,6 +144,7 @@ public class SQEventDaoImplTest {
 
         assertThat(mEventDao.getAll().size(), is(equalTo(1)));
         assertThat(mPersonDao.queryForAll().size(), is(equalTo(2)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
     }
 
     @Test
@@ -157,5 +162,6 @@ public class SQEventDaoImplTest {
 
         assertThat(mEventDao.getAll().size(), is(equalTo(0)));
         assertThat(mPersonDao.queryForAll().size(), is(equalTo(0)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
     }
 }

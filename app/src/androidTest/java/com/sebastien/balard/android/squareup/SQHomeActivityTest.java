@@ -23,15 +23,17 @@ import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.sebastien.balard.android.squareup.ui.activities.SQCurrenciesListActivity;
+import com.sebastien.balard.android.squareup.ui.activities.SQHomeActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.DrawerMatchers.isOpen;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -41,17 +43,24 @@ import static org.hamcrest.core.IsNot.not;
  * Created by Sebastien BALARD on 20/03/2016.
  */
 @RunWith(AndroidJUnit4.class)
-public class SQCurrenciesListActivityTest {
+public class SQHomeActivityTest {
 
     @Rule
-    public ActivityTestRule<SQCurrenciesListActivity> mActivityRule = new ActivityTestRule<>(SQCurrenciesListActivity
+    public ActivityTestRule<SQHomeActivity> mActivityRule = new ActivityTestRule<>(SQHomeActivity
             .class);
 
     @Test
     public void testDrawerMenuChecked() {
-        onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).perform(DrawerActions.open());
-        onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).check(matches(isOpen()));
-        onView(withText(R.string.sq_commons_my_events)).check(matches(not(isSelected())));
-        //onView(withText(R.string.sq_commons_my_currencies)).check(matches(isSelected()));
+        onView(withId(R.id.sq_activity_home_layout_drawer)).perform(DrawerActions.open());
+        onView(withId(R.id.sq_activity_home_layout_drawer)).check(matches(isOpen()));
+        //onView(withText(R.string.sq_commons_my_events)).check(matches(isSelected()));
+        onView(withText(R.string.sq_commons_my_currencies)).check(matches(not(isSelected())));
+    }
+
+    @Test
+    public void testFabClicked() {
+        onView(withId(R.id.sq_activity_home_nestedscrollview_empty)).check(matches(isDisplayed()));
+        onView(withId(R.id.sq_activity_home_fab)).perform(click());
+        onView(withId(R.id.sq_activity_home_nestedscrollview_empty)).check(matches(not(isDisplayed())));
     }
 }

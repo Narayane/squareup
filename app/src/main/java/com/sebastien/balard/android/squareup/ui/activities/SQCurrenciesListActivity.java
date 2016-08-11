@@ -128,7 +128,7 @@ public class SQCurrenciesListActivity extends SQActivity {
         });
 
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
-        mSearchViewCursorAdapter = new SimpleCursorAdapter(this, R.layout.sq_item_search_view, null, new
+        mSearchViewCursorAdapter = new SimpleCursorAdapter(this, R.layout.sq_item_searchview, null, new
                 String[]{"label"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mAvailableCurrencies = new ArrayList<>();
 

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.SQAboutActivity">
 
-    <include layout="@layout/sq_widget_app_bar"/>
+    <include layout="@layout/sq_widget_appbar"/>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/sq_activity_about_nestedscrollview"
