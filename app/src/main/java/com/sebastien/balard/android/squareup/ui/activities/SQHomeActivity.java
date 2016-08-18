@@ -22,6 +22,7 @@ package com.sebastien.balard.android.squareup.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -39,13 +40,21 @@ import android.view.View;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
+import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
+import com.sebastien.balard.android.squareup.io.ws.WSFacade;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventsListAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,6 +63,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observer;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Sébastien BALARD on 27/02/2016.
@@ -75,15 +88,18 @@ public class SQHomeActivity extends SQActivity {
     private SQEventsListAdapter mAdapter;
     private List<SQEvent> mEvents;
 
-    public final static Intent getIntent(Context pContext) {
+    //region static methods
+    public static final Intent getIntent(Context pContext) {
         return new Intent(pContext, SQHomeActivity.class)/*.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent
                 .FLAG_ACTIVITY_CLEAR_TOP)*/;
     }
 
-    public final static Intent getIntentFromNewEvent(String pName) {
+    public static final Intent getIntentForNewEvent(String pName) {
         return new Intent().putExtra(SQConstants.EXTRA_EVENT_NAME, pName);
     }
+    //endregion
 
+    //region activity lifecycle methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,12 +112,12 @@ public class SQHomeActivity extends SQActivity {
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
                 .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
-        mDrawerLayout.setDrawerListener(vDrawerToggle);
+        mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem pMenuItem) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem pMenuItem) {
                 switch (pMenuItem.getItemId()) {
                     case R.id.sq_menu_drawer_item_event:
                         SQLog.i("click on drawer menu item: events list");
@@ -173,10 +189,13 @@ public class SQHomeActivity extends SQActivity {
         super.onResume();
         SQLog.v("onResume");
         mToolbar.setTitle(getString(R.string.sq_commons_my_events));
+        checkCurrenciesRates();
 
         refreshLayout();
     }
+    //endregion
 
+    //region ui events
     @Override
     public void onBackPressed() {
         SQLog.v("onBackPressed");
@@ -192,7 +211,9 @@ public class SQHomeActivity extends SQActivity {
         SQLog.i("click on button: new event");
         startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.REQUEST_NEW_EVENT);
     }
+    //endregion
 
+    //region private methods
     private void performSelection(int pPosition) {
         //FIXME: ripple but not selection
         mAdapter.toggleSelection(pPosition);
@@ -233,6 +254,34 @@ public class SQHomeActivity extends SQActivity {
         }
     }
 
+    private void checkCurrenciesRates() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SQLog.d("check currencies rates last update");
+                DateTime vNow = DateTime.now();
+                int vFrequency = SQUserPreferencesUtils.getRatesUpdateFrequency();
+                SQLog.v("update frequency: " + vFrequency + " day(s)");
+                try {
+                    DateTime vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
+                    SQLog.v("last update: " + SQFormatUtils.formatDate(vLastUpdate));
+
+                    boolean vTimeToCheck = true;
+                    if (vLastUpdate != null) {
+                        vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
+                    }
+                    if (vTimeToCheck) {
+                        mSubscriptions.add(subscribeToGetLatestRates());
+                    } else {
+                        SQLog.i("currencies rates are up-to-date");
+                    }
+                } catch (SQLException pException) {
+                    SQLog.e("fail to get default conversion base");
+                }
+            }
+        }).start();
+    }
+
     private void refreshLayout() {
         mEvents.clear();
         mEvents.addAll(SQDatabaseHelper.getInstance(this).getEventDao().getAll());
@@ -245,6 +294,55 @@ public class SQHomeActivity extends SQActivity {
             mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
+    //endregion
+
+    //region rx.Subscriptions
+    private Subscription subscribeToGetLatestRates() {
+        SQLog.v("update currencies rates");
+        return WSFacade.getLatestRates().observeOn(Schedulers.computation()).subscribe(getObserverForGetLastestRates());
+    }
+    //endregion
+
+    //region rx.Observers
+    @NonNull
+    private Observer<SQConversionBase> getObserverForGetLastestRates() {
+        return new Observer<SQConversionBase>() {
+            @Override
+            public void onCompleted() {
+                SQLog.v("onCompleted");
+                try {
+                    SQDatabaseHelper.getInstance(SQHomeActivity.this).getConversionBaseDao().updateDefault();
+                } catch (SQLException pException) {
+                    SQLog.e("fail to update default conversion base");
+                }
+            }
+
+            @Override
+            public void onError(Throwable pThrowable) {
+                SQLog.v("onError");
+                if (pThrowable instanceof HttpException) {
+                    SQLog.e("fail to get latest rates: " + pThrowable.getMessage());
+                } else {
+                    SQLog.e("fail to get latest rates", pThrowable);
+                }
+            }
+
+            @Override
+            public void onNext(SQConversionBase pConversionBase) {
+                SQLog.v("onNext");
+                SQLog.d("conversion base: " + pConversionBase.getCode());
+                SQLog.d("last update: " + SQFormatUtils.formatDateAndTime(pConversionBase.getLastUpdate()));
+                SQLog.d("rates count: " + pConversionBase.getRates().size());
+                try {
+                    SQDatabaseHelper.getInstance(SQHomeActivity.this).getConversionBaseDao().createOrUpdate
+                            (pConversionBase);
+                } catch (SQLException pException) {
+                    SQLog.e("fail to update conversion base: " + pConversionBase.getCode());
+                }
+            }
+        };
+    }
+    //endregion
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override

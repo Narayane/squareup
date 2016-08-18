@@ -28,15 +28,20 @@ import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQAboutActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQSettingsActivity;
 
+import rx.subscriptions.CompositeSubscription;
+
 /**
  * Created by Sébastien BALARD on 27/02/2016.
  */
 public class SQActivity extends AppCompatActivity {
 
+    protected CompositeSubscription mSubscriptions;
+
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
         overridePendingTransition(0, 0);
+        mSubscriptions = new CompositeSubscription();
     }
 
     @Override
@@ -61,5 +66,13 @@ public class SQActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(pMenuItem);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mSubscriptions != null) {
+            mSubscriptions.unsubscribe();
+        }
+        super.onDestroy();
     }
 }

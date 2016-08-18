@@ -19,24 +19,17 @@
 
 package com.sebastien.balard.android.squareup;
 
-import android.app.Application;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.misc.SQLog;
-import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
-import com.sebastien.balard.android.squareup.ui.services.SQAsyncUpdateService;
 
 import net.danlew.android.joda.JodaTimeAndroid;
-
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 import java.sql.SQLException;
 import java.util.Currency;
@@ -45,7 +38,7 @@ import java.util.Locale;
 /**
  * Created by Sébastien BALARD on 25/12/2015.
  */
-public class SQApplication extends Application {
+public class SQApplication extends MultiDexApplication {
 
     private static SQApplication mInstance;
 
@@ -64,7 +57,6 @@ public class SQApplication extends Application {
 
         checkBaseCurrency();
         checkDefaultConversionBase();
-        checkCurrenciesRates();
     }
 
     @Override
@@ -120,34 +112,5 @@ public class SQApplication extends Application {
         } catch (SQLException pException) {
             SQLog.e("fail to create base currency: " + vLocaleCurrency.getCurrencyCode());
         }
-    }
-
-    private void checkCurrenciesRates() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLog.d("check currencies rates last update");
-                DateTime vNow = DateTime.now();
-                int vFrequency = SQUserPreferencesUtils.getRatesUpdateFrequency();
-                SQLog.v("update frequency: " + vFrequency + " day(s)");
-                try {
-                    DateTime vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
-                    SQLog.v("last update: " + SQFormatUtils.formatDate(vLastUpdate));
-
-                    boolean vTimeToCheck = true;
-                    if (vLastUpdate != null) {
-                        vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
-                    }
-                    if (vTimeToCheck) {
-                        SQAsyncUpdateService.startActionUpdateCurrenciesRates(SQApplication.this);
-                    } else {
-                        SQLog.i("currencies rates are up-to-date");
-                    }
-                } catch (SQLException pException) {
-                    SQLog.e("fail to get default conversion base");
-                }
-            }
-        }).start();
     }
 }

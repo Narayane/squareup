@@ -22,6 +22,7 @@ package com.sebastien.balard.android.squareup.ui.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
@@ -34,6 +35,7 @@ import java.sql.SQLException;
 
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observer;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -50,28 +52,17 @@ public class SQAsyncUpdateService extends IntentService {
         super(TAG);
     }
 
+    //region activity lifecycle methods
     @Override
     public void onCreate() {
         super.onCreate();
+        SQLog.v("onCreate");
         mSubscriptions = new CompositeSubscription();
     }
 
     @Override
-    public void onDestroy() {
-        if (mSubscriptions != null) {
-            mSubscriptions.unsubscribe();
-        }
-        super.onDestroy();
-    }
-
-    public static void startActionUpdateCurrenciesRates(Context pContext) {
-        Intent vIntent = new Intent(pContext, SQAsyncUpdateService.class);
-        vIntent.setAction(SQConstants.ACTION_UPDATE_CURRENCIES_RATES);
-        pContext.startService(vIntent);
-    }
-
-    @Override
     protected void onHandleIntent(Intent pIntent) {
+        SQLog.v("onHandleIntent");
         if (pIntent != null) {
             switch (pIntent.getAction()) {
                 case SQConstants.ACTION_UPDATE_CURRENCIES_RATES:
@@ -83,44 +74,75 @@ public class SQAsyncUpdateService extends IntentService {
         }
     }
 
-    private void handleActionUpdateCurrenciesRates() {
-        SQLog.v("update currencies rates");
-        mSubscriptions.add(WSFacade.getLatestRates().observeOn(Schedulers.computation()).subscribe(mLoginCallObserver));
+    @Override
+    public void onDestroy() {
+        SQLog.v("onDestroy");
+        if (mSubscriptions != null) {
+            mSubscriptions.unsubscribe();
+        }
+        super.onDestroy();
     }
+    //endregion
 
-    private Observer mLoginCallObserver = new Observer<SQConversionBase>() {
-        @Override
-        public void onCompleted() {
-            SQLog.v("onCompleted");
-            try {
-                SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().updateDefault();
-            } catch (SQLException pException) {
-                SQLog.e("fail to update default conversion base");
-            }
-        }
+    //region public methods
+    public static void startActionUpdateCurrenciesRates(Context pContext) {
+        Intent vIntent = new Intent(pContext, SQAsyncUpdateService.class);
+        vIntent.setAction(SQConstants.ACTION_UPDATE_CURRENCIES_RATES);
+        pContext.startService(vIntent);
+    }
+    //endregion
 
-        @Override
-        public void onError(Throwable pThrowable) {
-            SQLog.v("onError");
-            if (pThrowable instanceof HttpException) {
-                SQLog.e("fail to get latest rates: " + pThrowable.getMessage());
-            } else {
-                SQLog.e("fail to get latest rates", pThrowable);
-            }
-        }
+    //region private methods
+    private void handleActionUpdateCurrenciesRates() {
+        mSubscriptions.add(subscribeToGetLatestRates());
+    }
+    //endregion
 
-        @Override
-        public void onNext(SQConversionBase pConversionBase) {
-            SQLog.v("onNext");
-            SQLog.d("conversion base: " + pConversionBase.getCode());
-            SQLog.d("last update: " + SQFormatUtils.formatDateAndTime(pConversionBase.getLastUpdate()));
-            SQLog.d("rates count: " + pConversionBase.getRates().size());
-            try {
-                SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().createOrUpdate
-                        (pConversionBase);
-            } catch (SQLException pException) {
-                SQLog.e("fail to update conversion base: " + pConversionBase.getCode());
+    //region rx.Subscriptions
+    private Subscription subscribeToGetLatestRates() {
+        SQLog.v("update currencies rates");
+        return WSFacade.getLatestRates().observeOn(Schedulers.computation()).subscribe(getObserverForGetLastestRates());
+    }
+    //endregion
+
+    //region rx.Observers
+    @NonNull
+    private Observer<SQConversionBase> getObserverForGetLastestRates() {
+        return new Observer<SQConversionBase>() {
+            @Override
+            public void onCompleted() {
+                SQLog.v("onCompleted");
+                try {
+                    SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().updateDefault();
+                } catch (SQLException pException) {
+                    SQLog.e("fail to update default conversion base");
+                }
             }
-        }
-    };
+
+            @Override
+            public void onError(Throwable pThrowable) {
+                SQLog.v("onError");
+                if (pThrowable instanceof HttpException) {
+                    SQLog.e("fail to get latest rates: " + pThrowable.getMessage());
+                } else {
+                    SQLog.e("fail to get latest rates", pThrowable);
+                }
+            }
+
+            @Override
+            public void onNext(SQConversionBase pConversionBase) {
+                SQLog.v("onNext");
+                SQLog.d("conversion base: " + pConversionBase.getCode());
+                SQLog.d("last update: " + SQFormatUtils.formatDateAndTime(pConversionBase.getLastUpdate()));
+                SQLog.d("rates count: " + pConversionBase.getRates().size());
+                try {
+                    SQDatabaseHelper.getInstance(SQAsyncUpdateService.this).getConversionBaseDao().createOrUpdate
+                            (pConversionBase);
+                } catch (SQLException pException) {
+                    SQLog.e("fail to update conversion base: " + pConversionBase.getCode());
+                }
+            }
+        };
+    }
+    //endregion
 }

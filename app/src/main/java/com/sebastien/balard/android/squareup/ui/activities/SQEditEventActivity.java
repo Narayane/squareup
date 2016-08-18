@@ -154,7 +154,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                     //TODO: validation
                     String vName = mEditTextName.getText().toString();
                     createEvent(vName);
-                    setResult(Activity.RESULT_OK, SQHomeActivity.getIntentFromNewEvent(vName));
+                    setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(vName));
                     finish();
                 } catch (SQLException pException) {
                     SQLog.e("fail to create event", pException);
