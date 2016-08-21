@@ -23,6 +23,7 @@ import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 import com.sebastien.balard.android.squareup.BuildConfig;
+import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -35,19 +36,26 @@ public class SQFabricUtils {
 
         public static void init(Context pContext) {
             if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS) {
+                SQLog.i("start crashlytics");
                 Fabric.with(pContext, new Crashlytics());
             }
         }
 
         public static void logMessage(String pMessage) {
-            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS && Fabric.isInitialized()) {
+            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS) {
                 Crashlytics.log(pMessage);
             }
         }
 
         public static void catchException(Throwable pThrowable) {
-            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS && Fabric.isInitialized()) {
+            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS) {
                 Crashlytics.logException(pThrowable);
+            }
+        }
+
+        public static void sendCustomKey(String pKey, Integer pValue) {
+            if (BuildConfig.ENABLE_FABRIC_CRASHLYTICS) {
+                Crashlytics.setInt(pKey, pValue);
             }
         }
     }

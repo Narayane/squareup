@@ -26,6 +26,7 @@
         <item name="colorAccent">@color/sq_color_accent</item>
         <item name="colorControlHighlight">@color/sq_color_orange_a700</item>
         <item name="android:textSize">@dimen/sq_size_font_body</item>
+        <item name="android:textColor">@color/sq_color_text_primary</item>
 
         <item name="editTextStyle">@style/SQTheme.Widget.EditText</item>
         <!--<item name="autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>
@@ -43,4 +44,9 @@
     <style name="SQTheme.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="SQTheme.Popup" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="SQTheme.PopupMenu" parent="@style/Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownHorizontalOffset">-24dp</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
 </resources>

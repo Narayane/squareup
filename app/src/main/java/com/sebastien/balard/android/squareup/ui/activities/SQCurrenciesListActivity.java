@@ -41,7 +41,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
@@ -66,17 +65,15 @@ import butterknife.ButterKnife;
 public class SQCurrenciesListActivity extends SQActivity {
 
     @Bind(R.id.sq_activity_currencies_list_layout_drawer)
-    DrawerLayout mDrawerLayout;
+    protected DrawerLayout mDrawerLayout;
     @Bind(R.id.sq_activity_currencies_list_navigation_view)
-    NavigationView mNavigationView;
-    @Bind(R.id.sq_widget_app_bar_imageview)
-    ImageView mAppBarImageView;
+    protected NavigationView mNavigationView;
     @Bind(R.id.sq_widget_app_bar_toolbar)
-    Toolbar mToolbar;
+    protected Toolbar mToolbar;
     @Bind(R.id.sq_activity_currencies_list_nestedscrollview_empty)
-    NestedScrollView mEmptyView;
+    protected NestedScrollView mEmptyView;
     @Bind(R.id.sq_activity_currencies_list_recyclerview)
-    RecyclerView mRecyclerView;
+    protected RecyclerView mRecyclerView;
 
     private ActionMode mActionMode;
     private MenuItem mSearchViewMenuItem;
@@ -105,7 +102,7 @@ public class SQCurrenciesListActivity extends SQActivity {
 
         ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
                 .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
-        mDrawerLayout.setDrawerListener(vDrawerToggle);
+        mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

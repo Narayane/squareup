@@ -12,9 +12,26 @@
         <item name="android:textColorHint">#bdbdbd</item>
     </style>
 
-    <style name="SQTheme.TextAppearance.Condensed.Bold" parent="@style/TextAppearance.AppCompat">
+    <style name="SQTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">@dimen/sq_size_font_subhead</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/sq_size_font_body</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.Condensed.Bold" parent="SQTheme.TextAppearance">
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.SubHead.Condensed.Bold" parent="SQTheme.TextAppearance.Condensed.Bold">
+        <item name="android:textSize">@dimen/sq_size_font_subhead</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.HeadLine" parent="SQTheme.TextAppearance">
+        <item name="android:textSize">@dimen/sq_size_font_headline</item>
     </style>
 
 </resources>

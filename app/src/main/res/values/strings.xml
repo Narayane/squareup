@@ -8,6 +8,9 @@
     <string name="sq_actions_deactivate">Deactivate</string>
     <string name="sq_actions_create">Create</string>
     <string name="sq_actions_delete">Delete</string>
+    <string name="sq_actions_allow">Allow</string>
+    <string name="sq_actions_duplicate">Duplicate</string>
+    <string name="sq_actions_share">Share</string>
     <!-- commons -->
     <string name="sq_commons_my_events">My events</string>
     <string name="sq_commons_my_currencies">My active currencies</string>
@@ -19,6 +22,9 @@
     <string name="sq_commons_the">the %1$s</string>
     <string name="sq_commons_from">from %1$s</string>
     <string name="sq_commons_to">to %1$s</string>
+    <string name="sq_commons_name">Name</string>
+    <string name="sq_commons_email">Email</string>
+    <string name="sq_commons_weight">Weight</string>
     <!-- settings screen -->
     <string name="sq_screen_settings_category_currencies_title">Currencies</string>
     <string name="sq_screen_settings_category_currencies_label_update_frequency">Update frequency</string>
@@ -31,7 +37,9 @@
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">You have activated no currency yet</string>
     <!-- dialogs -->
-    <string name="sq_dialog_title_create_contact">New participant</string>
+    <string name="sq_dialog_title_create_contact">New contact</string>
+    <!-- hints -->
+    <string name="sq_hint_add_participants">Add participants</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"You have activated the currency: %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"You have deactivated: %1$s"</string>
@@ -43,4 +51,6 @@
     <string name="sq_message_error_create_event">"This event could not be created"</string>
     <string name="sq_message_error_remove_events_selection">"One or many events of your selection could
         not be removed"</string>
+    <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos
+        contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
 </resources>

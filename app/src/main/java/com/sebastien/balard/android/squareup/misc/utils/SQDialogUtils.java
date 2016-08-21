@@ -41,6 +41,17 @@ import com.sebastien.balard.android.squareup.SQApplication;
  */
 public class SQDialogUtils {
 
+    public static Snackbar createSnackBarWithAction(Context pContext, View pAnchorView, int pDuration, int
+            pBackgroundColor, int pTextColor, int pMessage, int pActionName, int pActionColor, View.OnClickListener pActionListener) {
+        Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration).setAction(pActionName, pActionListener)
+                .setActionTextColor(pActionColor);
+        vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(pContext, pBackgroundColor));
+        TextView textView = (TextView) vSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(3);
+        textView.setTextColor(pTextColor);
+        return vSnackbar;
+    }
+
     public static Snackbar createSnackBarError(View pAnchorView, String pMessage, int pDuration) {
         Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
         vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color

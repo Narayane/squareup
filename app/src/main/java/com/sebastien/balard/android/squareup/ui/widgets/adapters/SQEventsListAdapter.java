@@ -20,15 +20,20 @@
 package com.sebastien.balard.android.squareup.ui.widgets.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
+import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
 
@@ -43,9 +48,12 @@ import butterknife.ButterKnife;
 public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEventsListAdapter
         .EventsListItemViewHolder> {
 
-    public SQEventsListAdapter(List<SQEvent> pEventList) {
+    private Activity mActivity;
+
+    public SQEventsListAdapter(Activity pActivity, List<SQEvent> pEventList) {
         super();
         mItemsList = pEventList;
+        mActivity = pActivity;
     }
 
     @Override
@@ -56,7 +64,7 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
 
     @SuppressLint("StringFormatInvalid")
     @Override
-    public void onBindViewHolder(EventsListItemViewHolder pViewHolder, int pPosition) {
+    public void onBindViewHolder(final EventsListItemViewHolder pViewHolder, int pPosition) {
         SQEvent vEvent = mItemsList.get(pPosition);
 
         pViewHolder.mTextViewName.setText(vEvent.getName());
@@ -75,20 +83,46 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
                 (R.plurals.sq_commons_participants_count, vEvent.getParticipants().size(), vEvent.getParticipants()
                         .size()));
         pViewHolder.mTextViewAmount.setText(SQFormatUtils.formatAmount(0f, vEvent.getCurrency().getSymbol()));
+        pViewHolder.mImageButtonMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View pView) {
+                SQLog.i("click on button: more action");
+                PopupMenu vPopupMenu = new PopupMenu(mActivity, pViewHolder.mImageButtonMore, Gravity.END);
+                vPopupMenu.getMenuInflater().inflate(R.menu.sq_menu_contextual_event, vPopupMenu.getMenu());
+                vPopupMenu.setOnMenuItemClickListener(pMenuItem -> {
+                    switch (pMenuItem.getItemId()) {
+                        case R.id.sq_menu_contextual_event_item_duplicate:
+                            SQLog.i("click on button: duplicate");
+                            return true;
+                        case R.id.sq_menu_contextual_event_item_share:
+                            SQLog.i("click on button: share");
+                            return true;
+                        case R.id.sq_menu_contextual_event_item_delete:
+                            SQLog.i("click on button: delete");
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+                vPopupMenu.show();
+            }
+        });
     }
 
     public static class EventsListItemViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.sq_item_events_list_textview_name)
-        TextView mTextViewName;
+        AppCompatTextView mTextViewName;
         @Bind(R.id.sq_item_events_list_textview_start_date)
-        TextView mTextViewStartDate;
+        AppCompatTextView mTextViewStartDate;
         @Bind(R.id.sq_item_events_list_textview_end_date)
-        TextView mTextViewEndDate;
+        AppCompatTextView mTextViewEndDate;
         @Bind(R.id.sq_item_events_list_textview_participants_count)
-        TextView mTextViewParticipantsCount;
+        AppCompatTextView mTextViewParticipantsCount;
         @Bind(R.id.sq_item_events_list_textview_amout)
-        TextView mTextViewAmount;
+        AppCompatTextView mTextViewAmount;
+        @Bind(R.id.sq_item_events_list_button_more)
+        AppCompatImageButton mImageButtonMore;
 
         public EventsListItemViewHolder(View pView) {
             super(pView);

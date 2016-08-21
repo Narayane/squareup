@@ -55,9 +55,9 @@
                     android:id="@+id/sq_activity_edit_event_edittext_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Name"
+                    android:hint="@string/sq_commons_name"
                     android:inputType="textCapSentences"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionNext"
                     android:textSize="@dimen/sq_size_font_headline"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp">
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/fragment_card_new_event_imageview_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
                         android:layout_marginTop="8dp"
                         android:src="@drawable/sq_ic_event_24dp"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/sq_activity_edit_event_textview_start_date"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
@@ -99,7 +99,7 @@
                         android:gravity="center"
                         android:text="Select start date"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/sq_activity_edit_event_textview_end_date"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
@@ -120,10 +120,9 @@
                     android:id="@+id/fragment_card_new_event_layout_currency"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:transitionName="layout_currency">
+                    android:padding="16dp">
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/fragment_card_new_event_imageview_currency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -131,7 +130,7 @@
                         android:layout_centerInParent="true"
                         android:src="@drawable/sq_ic_currency_24dp"/>
 
-                    <EditText
+                    <android.support.v7.widget.AppCompatEditText
                         android:id="@+id/sq_activity_edit_event_edittext_currency"
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
@@ -154,25 +153,14 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp">
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/sq_activity_edit_event_imageview_participants"
                         android:layout_width="24dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_centerInParent="true"
+                        android:layout_alignParentTop="true"
                         android:src="@drawable/sq_ic_group_24dp"/>
 
-                    <!--<EditText
-                        android:id="@+id/fragment_card_new_event_edittext_participants"
-                        android:layout_width="match_parent"
-                        android:layout_height="36dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginStart="16dp"
-                        android:layout_toEndOf="@+id/fragment_card_new_event_imageview_participants"
-                        android:hint="Add participants"
-                        android:imeOptions="actionDone"
-                        android:inputType="textMultiLine"/>-->
                     <com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView
                         android:id="@+id/sq_activity_edit_event_chipsview_participants"
                         android:layout_width="match_parent"

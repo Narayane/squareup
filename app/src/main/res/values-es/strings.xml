@@ -8,10 +8,12 @@
     <string name="sq_actions_deactivate">Desactivar</string>
     <string name="sq_actions_create">Crear</string>
     <string name="sq_actions_delete">Suprimir</string>
+    <string name="sq_actions_duplicate">Duplicate</string>
+    <string name="sq_actions_share">Share</string>
     <!-- commons -->
     <string name="sq_commons_my_events">Mis acontecimientos</string>
     <string name="sq_commons_my_currencies">Mis monedas activas</string>
-    <string name="sq_commons_activate_currency">Activate a currency</string>
+    <string name="sq_commons_activate_currency">Activar una moneda</string>
     <string name="sq_commons_one_day">1 día</string>
     <string name="sq_commons_two_days">2 días</string>
     <string name="sq_commons_three_days">3 días</string>
@@ -19,10 +21,13 @@
     <string name="sq_commons_the">el</string>
     <string name="sq_commons_from">de</string>
     <string name="sq_commons_to">al</string>
+    <string name="sq_commons_name">Nombre</string>
+    <string name="sq_commons_email">Correo electrónico</string>
+    <string name="sq_commons_weight">Peso</string>
     <!-- settings screen -->
     <string name="sq_screen_settings_category_currencies_title">Monedas</string>
     <string name="sq_screen_settings_category_currencies_label_update_frequency">Frecuencia de actualización</string>
-    <string name="sq_screen_settings_category_currencies_dialog_select_frequency">Seleccionar une fréquence</string>
+    <string name="sq_screen_settings_category_currencies_dialog_select_frequency">Seleccionar una frecuencia</string>
     <string name="sq_screen_settings_category_currencies_label_last_update">Fecha de última actualización</string>
     <string name="sq_screen_settings_category_debts_title">Deudas</string>
     <string name="sq_screen_settings_category_debts_label_minimize">Minimizar</string>
@@ -30,6 +35,10 @@
     <string name="sq_screen_home_textview_empty_label">You have not created event yet</string>
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">You have not activated currency yet</string>
+    <!-- dialogs -->
+    <string name="sq_dialog_title_create_contact">Nuevo contacto</string>
+    <!-- hints -->
+    <string name="sq_hint_add_participants">Añadir participantes</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"You have activated the currency: %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"You have deactivated: %1$s"</string>
@@ -41,4 +50,6 @@
     <string name="sq_message_error_create_event">"This event could not be created"</string>
     <string name="sq_message_error_remove_events_selection">"One or many events of your selection could
         not be removed"</string>
+    <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos
+        contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
 </resources>

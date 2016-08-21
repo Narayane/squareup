@@ -8,6 +8,8 @@
     <string name="sq_actions_deactivate">Désactiver</string>
     <string name="sq_actions_create">Créer</string>
     <string name="sq_actions_delete">Supprimer</string>
+    <string name="sq_actions_duplicate">Dupliquer</string>
+    <string name="sq_actions_share">Partager</string>
     <!-- commons -->
     <string name="sq_commons_my_events">Mes événements</string>
     <string name="sq_commons_my_currencies">Mes monnaies</string>
@@ -19,6 +21,9 @@
     <string name="sq_commons_the">le %1$s</string>
     <string name="sq_commons_from">du %1$s</string>
     <string name="sq_commons_to">au %1$s</string>
+    <string name="sq_commons_name">Nom</string>
+    <string name="sq_commons_email">Email</string>
+    <string name="sq_commons_weight">Poids</string>
     <!-- settings screen -->
     <string name="sq_screen_settings_category_currencies_title">Monnaies</string>
     <string name="sq_screen_settings_category_currencies_label_update_frequency">Fréquence de mise à jour</string>
@@ -30,6 +35,10 @@
     <string name="sq_screen_home_textview_empty_label">Vous n\'avez pas encore créé d\'événement</string>
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
+    <!-- dialogs -->
+    <string name="sq_dialog_title_create_contact">Nouveau contact</string>
+    <!-- hints -->
+    <string name="sq_hint_add_participants">Ajouter des participants</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"Vous venez de créer la monnaie : %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"Vous avez désactivé : %1$s"</string>
@@ -41,4 +50,6 @@
     <string name="sq_message_error_create_event">"Cet événement n\'a pas pu être crée"</string>
     <string name="sq_message_error_remove_events_selection">"Un ou plusieurs événements de votre
         sélection n'ont pu être désactivées"</string>
+    <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos
+        contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
 </resources>

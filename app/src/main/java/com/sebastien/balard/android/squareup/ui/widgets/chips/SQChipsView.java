@@ -137,8 +137,8 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
         mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
 
-        mChipsTextColor = ContextCompat.getColor(context, Color.BLACK);
-        mChipsTextColorClicked = ContextCompat.getColor(context, Color.WHITE);
+        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
+        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
 
         mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
         mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
@@ -156,8 +156,8 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
         mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
 
-        mChipsTextColor = ContextCompat.getColor(context, Color.BLACK);
-        mChipsTextColorClicked = ContextCompat.getColor(context, Color.WHITE);
+        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
+        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
 
         mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
         mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
@@ -267,7 +267,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         });
 
         mEditTextListener = new EditTextListener();
-        mEditText.setHint("Add participants");
+        mEditText.setHint(R.string.sq_hint_add_participants);
         mEditText.addTextChangedListener(mEditTextListener);
         mEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
@@ -518,7 +518,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
             if (s.toString().equals("\n")) {
                 SQLog.d("back");
                 mChipsListener.onContentValidated();
-            } else if (s.toString().endsWith("\n")) {
+            } else if (s.toString().endsWith("\n") || s.toString().endsWith(",") || s.toString().endsWith(";")) {
                 SQLog.d("new person");
                 Dialog vNewPersonDialog = createNewPersonDialog();
                 vNewPersonDialog.show();

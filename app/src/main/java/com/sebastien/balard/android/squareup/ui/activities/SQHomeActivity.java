@@ -136,7 +136,7 @@ public class SQHomeActivity extends SQActivity {
         mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
 
         mEvents = new ArrayList<>();
-        mAdapter = new SQEventsListAdapter(mEvents);
+        mAdapter = new SQEventsListAdapter(this, mEvents);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
@@ -153,10 +153,10 @@ public class SQHomeActivity extends SQActivity {
             @Override
             public void onLongClick(View pView, int pPosition) {
                 SQLog.v("onLongClick");
-                if (mActionMode == null) {
+                /*if (mActionMode == null) {
                     mActionMode = startSupportActionMode(mActionModeCallback);
                 }
-                performSelection(pPosition);
+                performSelection(pPosition);*/
             }
         }));
     }
@@ -172,7 +172,7 @@ public class SQHomeActivity extends SQActivity {
     protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
         SQLog.v("onActivityResult");
         switch (pRequestCode) {
-            case SQConstants.REQUEST_NEW_EVENT:
+            case SQConstants.NOTIFICATION_REQUEST_NEW_EVENT:
                 if (pResultCode == RESULT_OK) {
                     String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
                     SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
@@ -209,7 +209,7 @@ public class SQHomeActivity extends SQActivity {
     @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
-        startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.REQUEST_NEW_EVENT);
+        startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_NEW_EVENT);
     }
     //endregion
 

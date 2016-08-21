@@ -31,24 +31,11 @@
             android:id="@+id/sq_dialog_create_contact_edittext_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nom"
+            android:hint="@string/sq_commons_name"
             android:imeOptions="actionNext"
             android:inputType="text"
-            android:singleLine="true"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/sq_dialog_create_contact_edittext_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:imeOptions="actionNext"
-            android:inputType="textEmailAddress"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:layout_marginBottom="16dp"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -59,9 +46,25 @@
             android:id="@+id/sq_dialog_create_contact_edittext_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Poids"
-            android:imeOptions="actionDone"
+            android:hint="@string/sq_commons_weight"
+            android:imeOptions="actionNext"
             android:inputType="number"
+            android:singleLine="true"
+            android:text="1"
+            android:layout_marginBottom="16dp"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/sq_dialog_create_contact_edittext_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sq_commons_email"
+            android:imeOptions="actionDone"
+            android:inputType="textEmailAddress"
             android:singleLine="true"/>
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>
