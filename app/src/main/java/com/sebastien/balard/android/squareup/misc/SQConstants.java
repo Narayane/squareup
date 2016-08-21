@@ -56,7 +56,8 @@ public interface SQConstants {
     String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
     String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
 
-    int REQUEST_NEW_EVENT = 10000;
+    int NOTIFICATION_REQUEST_NEW_EVENT = 10000;
+    int NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS = 10001;
 
     String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
 }

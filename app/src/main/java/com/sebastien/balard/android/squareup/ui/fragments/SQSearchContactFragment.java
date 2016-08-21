@@ -19,24 +19,33 @@
 
 package com.sebastien.balard.android.squareup.ui.fragments;
 
+import android.Manifest;
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FilterQueryProvider;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQContactCursorAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
@@ -101,19 +110,95 @@ public class SQSearchContactFragment extends Fragment {
     public void onViewCreated(View pView, @Nullable Bundle pSavedInstanceState) {
         SQLog.v("onViewCreated");
 
+        initChipsView();
+        initRecyclerView();
+        if (!hasContactsPermissions()) {
+            requestContactsPermissions();
+        } else {
+            loadCursor();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int pRequestCode, @NonNull String[] pPermissions, @NonNull int[]
+            pGrantResults) {
+        super.onRequestPermissionsResult(pRequestCode, pPermissions, pGrantResults);
+        switch (pRequestCode) {
+            case SQConstants.NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS:
+                if (pGrantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    loadCursor();
+                } else {
+                    SQDialogUtils.createSnackBarWithAction(getActivity(), mRecyclerView, Snackbar
+                            .LENGTH_LONG, R.color.sq_color_warning, R.color.sq_color_white, R.string
+                            .sq_message_warning_request_contacts_permission, R.string.sq_actions_allow, R.color
+                            .sq_color_white, pView -> {
+                        startActivityForResult(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse
+                                ("package:" + getActivity().getPackageName())).addCategory(Intent.CATEGORY_DEFAULT)
+                                .setFlags(Intent
+                                .FLAG_ACTIVITY_NEW_TASK), SQConstants.NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS);
+                    }).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void loadCursor() {
+        mAdapter = new SQContactCursorAdapter(getActivity(), R.layout.sq_item_contacts_list, getCursor(null));
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setFilterQueryProvider(this::getCursor);
+        mAdapter.getFilter().filter(getArguments().getString("START_CONTENT"));
+    }
+
+    private void initRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(getActivity(), mRecyclerView, new
+                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
+                    @Override
+                    public void onClick(View pView, int pPosition) {
+                        Cursor vCursor = mAdapter.getCursor();
+                        vCursor.moveToPosition(pPosition);
+
+                        long vContactId = vCursor.getLong(vCursor.getColumnIndex(ContactsContract.Contacts._ID));
+                        String vDisplayName = SQContactUtils.getDisplayName(getActivity(), vContactId);
+                        Uri vPhotoUri = SQContactUtils.getPhotoUri(getActivity(), vContactId);
+
+                        SQPerson vChipsContact = new SQPerson(vContactId);
+                        mChipsViewParticipants.addChip(vDisplayName, vPhotoUri, vChipsContact);
+                    }
+
+                    @Override
+                    public void onLongClick(View pView, int pPosition) {
+
+                    }
+                }));
+    }
+
+    private void initChipsView() {
         mChipsViewParticipants.mContext = getActivity();
         mChipsViewParticipants.getEditText().setHint("Add participants");
         mChipsViewParticipants.getEditText().setText(getArguments().getString("START_CONTENT"));
-        mChipsViewParticipants.getEditText().post(new Runnable() {
-            public void run() {
-                mChipsViewParticipants.getEditText().requestFocus();
-                mChipsViewParticipants.getEditText().setSelection(3);
-            }
+        mChipsViewParticipants.getEditText().post(() -> {
+            mChipsViewParticipants.getEditText().requestFocus();
+            mChipsViewParticipants.getEditText().setSelection(3);
+            /*mChipsViewParticipants.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View pView, boolean pHasFocus) {
+                    if (pHasFocus) {
+                        SQUIUtils.SoftInput.show(getActivity(), pView);
+                    }
+                }
+            });*/
         });
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {
-                mAdapter.getFilter().filter("zzzz");
+                if (mAdapter != null) {
+                    mAdapter.getFilter().filter("zzzz");
+                }
+                mChipsViewParticipants.requestFocus();
                 SQUIUtils.SoftInput.show(getActivity(), mChipsViewParticipants.getEditText());
             }
 
@@ -124,10 +209,12 @@ public class SQSearchContactFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence pCharSequence) {
-                if (pCharSequence.length() > 2) {
-                    mAdapter.getFilter().filter(pCharSequence);
-                } else {
-                    mAdapter.getFilter().filter("zzzz");
+                if (mAdapter != null) {
+                    if (pCharSequence.length() > 2) {
+                        mAdapter.getFilter().filter(pCharSequence);
+                    } else {
+                        mAdapter.getFilter().filter("zzzz");
+                    }
                 }
             }
 
@@ -138,40 +225,26 @@ public class SQSearchContactFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
+    }
 
-        mAdapter = new SQContactCursorAdapter(getActivity(), R.layout.sq_item_contacts_list, getCursor(null));
-        mAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+    private boolean hasContactsPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) ==
+                    PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
 
-            @Override
-            public Cursor runQuery(CharSequence pConstraint) {
-                return getCursor(pConstraint);
+    private void requestContactsPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager
+                    .PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, SQConstants
+                        .NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS);
+                return;
             }
-        });
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(getActivity(), mRecyclerView, new
-                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
-            @Override
-            public void onClick(View pView, int pPosition) {
-                Cursor vCursor = mAdapter.getCursor();
-                vCursor.moveToPosition(pPosition);
-
-                long vContactId = vCursor.getLong(vCursor.getColumnIndex(ContactsContract.Contacts._ID));
-                String vDisplayName = SQContactUtils.getDisplayName(getActivity(), vContactId);
-                Uri vPhotoUri = SQContactUtils.getPhotoUri(getActivity(), vContactId);
-
-                SQPerson vChipsContact = new SQPerson(vContactId);
-                mChipsViewParticipants.addChip(vDisplayName, vPhotoUri, vChipsContact);
-            }
-
-            @Override
-            public void onLongClick(View pView, int pPosition) {
-
-            }
-        }));
-        mAdapter.getFilter().filter(getArguments().getString("START_CONTENT"));
+        }
     }
 
     private Cursor getCursor(CharSequence pConstraint) {
