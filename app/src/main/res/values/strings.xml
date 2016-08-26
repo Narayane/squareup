@@ -11,6 +11,7 @@
     <string name="sq_actions_allow">Allow</string>
     <string name="sq_actions_duplicate">Duplicate</string>
     <string name="sq_actions_share">Share</string>
+    <string name="sq_actions_update">Update</string>
     <!-- commons -->
     <string name="sq_commons_my_events">My events</string>
     <string name="sq_commons_my_currencies">My active currencies</string>
@@ -40,17 +41,21 @@
     <string name="sq_dialog_title_create_contact">New contact</string>
     <!-- hints -->
     <string name="sq_hint_add_participants">Add participants</string>
+    <string name="sq_hint_select_currency">Select a currency</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"You have activated the currency: %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"You have deactivated: %1$s"</string>
     <string name="sq_message_success_create_event">"You have created the event: %1$s"</string>
+    <string name="sq_message_success_update_event">"You have updated the event: %1$s"</string>
     <string name="sq_message_success_remove_events_selection">"You have removed: %1$s"</string>
     <string name="sq_message_error_activate_currency">"The currency %1$s has not been activated"</string>
     <string name="sq_message_error_deactivate_currencies_selection">"One or many currencies of your selection could
         not be deactivated"</string>
     <string name="sq_message_error_create_event">"This event could not be created"</string>
+    <string name="sq_message_error_update_event">"This event could not be updated"</string>
     <string name="sq_message_error_remove_events_selection">"One or many events of your selection could
         not be removed"</string>
     <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos
         contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
+    <string name="sq_message_warning_not_yet_implemented">Available shortly</string>
 </resources>

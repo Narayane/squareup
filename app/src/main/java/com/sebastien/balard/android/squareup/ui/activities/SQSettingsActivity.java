@@ -22,23 +22,18 @@ package com.sebastien.balard.android.squareup.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSettingsFragment;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * Created by Sebastien BALARD on 14/03/2016.
  */
 public class SQSettingsActivity extends SQActivity {
-
-    @Bind(R.id.sq_widget_app_bar_toolbar)
-    protected Toolbar mToolbar;
 
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQSettingsActivity.class);

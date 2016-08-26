@@ -61,21 +61,6 @@ public class SQEventDaoImplTest {
     private SQCurrencyDaoImpl mCurrencyDao;
     private SQEvent mEvent;
 
-    @Before
-    public void setUp() {
-        mApplicationContext = RuntimeEnvironment.application.getApplicationContext();
-        mEventDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getEventDao();
-        mPersonDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getPersonDao();
-        mCurrencyDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getCurrencyDao();
-        mEvent = new SQEvent(EVENT_NAME, new DateTime(), null, new SQCurrency("EUR"));
-    }
-
-    @After
-    public void tearDown() {
-        mEvent = null;
-        SQTestDatabaseHelper.release();
-    }
-
     @Test
     public void testCreateEvent() throws Exception {
 
@@ -148,6 +133,39 @@ public class SQEventDaoImplTest {
     }
 
     @Test
+    public void testUpdateEventWithSeveralParticipants() throws Exception {
+
+        assertThat(mEventDao.getAll().size(), is(equalTo(0)));
+
+        List<SQPerson> vParticipants = new ArrayList<>();
+        vParticipants.add(new SQPerson("name1", "email1@gmail.com", 1));
+        vParticipants.add(new SQPerson("name2", "email2@gmail.com", 1));
+        vParticipants.add(new SQPerson("name3", "email3@gmail.com", 1));
+
+        mPersonDao.createAll(vParticipants, mEvent);
+        mEventDao.refresh(mEvent);
+
+        List<SQPerson> vPeopleToRemove = new ArrayList<>();
+        vPeopleToRemove.add(mEvent.getParticipants().get(0));
+        vPeopleToRemove.add(mEvent.getParticipants().get(2));
+        mPersonDao.deleteAll(vPeopleToRemove);
+        vParticipants = new ArrayList<>();
+        vParticipants.add(new SQPerson("name4", "email4@gmail.com", 1));
+        mPersonDao.createAll(vParticipants, mEvent);
+        mEventDao.refresh(mEvent);
+
+        assertThat(mEventDao.getAll().size(), is(equalTo(1)));
+        assertThat(mPersonDao.queryForAll().size(), is(equalTo(2)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
+
+        mEventDao.delete(mEvent);
+
+        assertThat(mEventDao.getAll().size(), is(equalTo(0)));
+        assertThat(mPersonDao.queryForAll().size(), is(equalTo(0)));
+        assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
+    }
+
+    @Test
     public void testDeleteEventWithTwoParticipants() throws Exception {
 
         assertThat(mEventDao.getAll().size(), is(equalTo(0)));
@@ -163,5 +181,20 @@ public class SQEventDaoImplTest {
         assertThat(mEventDao.getAll().size(), is(equalTo(0)));
         assertThat(mPersonDao.queryForAll().size(), is(equalTo(0)));
         assertThat(mCurrencyDao.queryForAll().size(), is(equalTo(1)));
+    }
+
+    @Before
+    public void setUp() {
+        mApplicationContext = RuntimeEnvironment.application.getApplicationContext();
+        mEventDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getEventDao();
+        mPersonDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getPersonDao();
+        mCurrencyDao = SQTestDatabaseHelper.getInstance(mApplicationContext).getCurrencyDao();
+        mEvent = new SQEvent(EVENT_NAME, new DateTime(), null, new SQCurrency("EUR"));
+    }
+
+    @After
+    public void tearDown() {
+        mEvent = null;
+        SQTestDatabaseHelper.release();
     }
 }

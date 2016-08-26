@@ -138,7 +138,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="16dp"
                         android:layout_toEndOf="@+id/fragment_card_new_event_imageview_currency"
-                        android:hint="Select event currency"
+                        android:hint="@string/sq_hint_select_currency"
                         android:imeOptions="actionNext"
                         android:inputType="text"/>
                 </RelativeLayout>

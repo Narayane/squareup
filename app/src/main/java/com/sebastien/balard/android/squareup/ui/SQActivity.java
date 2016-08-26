@@ -21,6 +21,7 @@ package com.sebastien.balard.android.squareup.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sebastien.balard.android.squareup.R;
@@ -28,12 +29,16 @@ import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQAboutActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQSettingsActivity;
 
+import butterknife.Bind;
 import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Sébastien BALARD on 27/02/2016.
  */
 public class SQActivity extends AppCompatActivity {
+
+    @Bind(R.id.sq_widget_app_bar_toolbar)
+    protected Toolbar mToolbar;
 
     protected CompositeSubscription mSubscriptions;
 
@@ -74,5 +79,9 @@ public class SQActivity extends AppCompatActivity {
             mSubscriptions.unsubscribe();
         }
         super.onDestroy();
+    }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
     }
 }

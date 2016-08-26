@@ -118,4 +118,24 @@ public class SQEvent {
             return new ArrayList<>();
         }
     }
+
+    public void setAmount(Float pAmount) {
+        mAmount = pAmount;
+    }
+
+    public void setCurrency(SQCurrency pCurrency) {
+        mCurrency = pCurrency;
+    }
+
+    public void setEndDate(DateTime pEndDate) {
+        mEndDate = pEndDate;
+    }
+
+    public void setName(String pName) {
+        mName = pName;
+    }
+
+    public void setStartDate(DateTime pStartDate) {
+        mStartDate = pStartDate;
+    }
 }

@@ -33,7 +33,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,8 +76,6 @@ public class SQHomeActivity extends SQActivity {
     protected DrawerLayout mDrawerLayout;
     @Bind(R.id.sq_activity_home_navigationview)
     protected NavigationView mNavigationView;
-    @Bind(R.id.sq_widget_app_bar_toolbar)
-    protected Toolbar mToolbar;
     @Bind(R.id.sq_activity_home_nestedscrollview_empty)
     protected NestedScrollView mEmptyView;
     @Bind(R.id.sq_activity_home_recyclerview)
@@ -172,12 +169,23 @@ public class SQHomeActivity extends SQActivity {
     protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
         SQLog.v("onActivityResult");
         switch (pRequestCode) {
-            case SQConstants.NOTIFICATION_REQUEST_NEW_EVENT:
+            case SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
                     String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
                     SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
                             vName), Snackbar.LENGTH_LONG).show();
                 }
+                break;
+            case SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT:
+                if (pResultCode == RESULT_OK) {
+                    String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
+                    SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_update_event,
+                            vName), Snackbar.LENGTH_LONG).show();
+                }/* else {
+                    String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
+                    SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
+                            vName), Snackbar.LENGTH_LONG).show();
+                }*/
                 break;
             default:
                 break;
@@ -209,7 +217,7 @@ public class SQHomeActivity extends SQActivity {
     @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
-        startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_NEW_EVENT);
+        startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
     }
     //endregion
 

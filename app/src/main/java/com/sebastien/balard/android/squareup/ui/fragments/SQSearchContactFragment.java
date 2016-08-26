@@ -19,20 +19,12 @@
 
 package com.sebastien.balard.android.squareup.ui.fragments;
 
-import android.Manifest;
 import android.app.Fragment;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,10 +34,8 @@ import android.view.ViewGroup;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
-import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQContactCursorAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
@@ -112,36 +102,7 @@ public class SQSearchContactFragment extends Fragment {
 
         initChipsView();
         initRecyclerView();
-        if (!hasContactsPermissions()) {
-            requestContactsPermissions();
-        } else {
-            loadCursor();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int pRequestCode, @NonNull String[] pPermissions, @NonNull int[]
-            pGrantResults) {
-        super.onRequestPermissionsResult(pRequestCode, pPermissions, pGrantResults);
-        switch (pRequestCode) {
-            case SQConstants.NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS:
-                if (pGrantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    loadCursor();
-                } else {
-                    SQDialogUtils.createSnackBarWithAction(getActivity(), mRecyclerView, Snackbar
-                            .LENGTH_LONG, R.color.sq_color_warning, R.color.sq_color_white, R.string
-                            .sq_message_warning_request_contacts_permission, R.string.sq_actions_allow, R.color
-                            .sq_color_white, pView -> {
-                        startActivityForResult(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse
-                                ("package:" + getActivity().getPackageName())).addCategory(Intent.CATEGORY_DEFAULT)
-                                .setFlags(Intent
-                                .FLAG_ACTIVITY_NEW_TASK), SQConstants.NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS);
-                    }).show();
-                }
-                break;
-            default:
-                break;
-        }
+        loadCursor();
     }
 
     private void loadCursor() {
@@ -178,7 +139,7 @@ public class SQSearchContactFragment extends Fragment {
 
     private void initChipsView() {
         mChipsViewParticipants.mContext = getActivity();
-        mChipsViewParticipants.getEditText().setHint("Add participants");
+        mChipsViewParticipants.getEditText().setHint(getString(R.string.sq_hint_add_participants));
         mChipsViewParticipants.getEditText().setText(getArguments().getString("START_CONTENT"));
         mChipsViewParticipants.getEditText().post(() -> {
             mChipsViewParticipants.getEditText().requestFocus();
@@ -225,26 +186,6 @@ public class SQSearchContactFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
-    }
-
-    private boolean hasContactsPermissions() {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) ==
-                    PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-    private void requestContactsPermissions() {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager
-                    .PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, SQConstants
-                        .NOTIFICATION_REQUEST_ASK_CONTACTS_PERMISSIONS);
-                return;
-            }
-        }
     }
 
     private Cursor getCursor(CharSequence pConstraint) {

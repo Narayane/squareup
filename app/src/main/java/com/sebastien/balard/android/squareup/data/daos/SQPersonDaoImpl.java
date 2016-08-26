@@ -50,4 +50,15 @@ public class SQPersonDaoImpl extends BaseDaoImpl<SQPerson, Long> {
             }
         }
     }
+
+    public void deleteAll(List<SQPerson> pPeople) throws SQLException {
+        for (SQPerson vPerson : pPeople) {
+            try {
+                delete(vPerson);
+                SQLog.v("delete person: " + vPerson.getName());
+            } catch (SQLException pException) {
+                SQLog.e("fail to delete person: " + vPerson.getName(), pException);
+            }
+        }
+    }
 }

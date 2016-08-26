@@ -37,7 +37,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,8 +67,6 @@ public class SQCurrenciesListActivity extends SQActivity {
     protected DrawerLayout mDrawerLayout;
     @Bind(R.id.sq_activity_currencies_list_navigation_view)
     protected NavigationView mNavigationView;
-    @Bind(R.id.sq_widget_app_bar_toolbar)
-    protected Toolbar mToolbar;
     @Bind(R.id.sq_activity_currencies_list_nestedscrollview_empty)
     protected NestedScrollView mEmptyView;
     @Bind(R.id.sq_activity_currencies_list_recyclerview)

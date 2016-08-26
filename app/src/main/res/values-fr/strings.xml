@@ -8,8 +8,10 @@
     <string name="sq_actions_deactivate">Désactiver</string>
     <string name="sq_actions_create">Créer</string>
     <string name="sq_actions_delete">Supprimer</string>
+    <string name="sq_actions_allow">Autoriser</string>
     <string name="sq_actions_duplicate">Dupliquer</string>
     <string name="sq_actions_share">Partager</string>
+    <string name="sq_actions_update">Modifier</string>
     <!-- commons -->
     <string name="sq_commons_my_events">Mes événements</string>
     <string name="sq_commons_my_currencies">Mes monnaies</string>
@@ -38,18 +40,22 @@
     <!-- dialogs -->
     <string name="sq_dialog_title_create_contact">Nouveau contact</string>
     <!-- hints -->
-    <string name="sq_hint_add_participants">Ajouter des participants</string>
+    <string name="sq_hint_add_participants">Ajoutez des participants</string>
+    <string name="sq_hint_select_currency">Sélectionnez une monnaie</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"Vous venez de créer la monnaie : %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"Vous avez désactivé : %1$s"</string>
     <string name="sq_message_success_create_event">"Vous venez de créer l'événement : %1$s"</string>
+    <string name="sq_message_success_update_event">"Vous venez de mettre à jour l'événement: %1$s"</string>
     <string name="sq_message_success_remove_events_selection">"Vous avez supprimé : %1$s"</string>
     <string name="sq_message_error_activate_currency">"La monnaie %1$s n\'a pas pu être activée"</string>
     <string name="sq_message_error_deactivate_currencies_selection">"Une ou plusieurs monnaies de votre
         sélection n'ont pu être désactivées"</string>
     <string name="sq_message_error_create_event">"Cet événement n\'a pas pu être crée"</string>
+    <string name="sq_message_error_update_event">"Cet événement n\'a pas pu être mis à jour"</string>
     <string name="sq_message_error_remove_events_selection">"Un ou plusieurs événements de votre
         sélection n'ont pu être désactivées"</string>
-    <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos
-        contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
+    <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer des
+        correspondances si vous ne lui permettez pas d\'accéder à vos contacts</string>
+    <string name="sq_message_warning_not_yet_implemented">Bientôt disponible</string>
 </resources>

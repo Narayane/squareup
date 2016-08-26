@@ -38,8 +38,6 @@ import butterknife.ButterKnife;
  */
 public class SQAboutActivity extends SQActivity {
 
-    @Bind(R.id.sq_widget_app_bar_toolbar)
-    Toolbar mToolbar;
     @Bind(R.id.sq_activity_about_textview_version)
     TextView mVersionTextView;
 

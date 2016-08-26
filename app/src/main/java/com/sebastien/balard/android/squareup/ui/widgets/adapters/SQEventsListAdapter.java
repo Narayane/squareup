@@ -20,7 +20,8 @@
 package com.sebastien.balard.android.squareup.ui.widgets.adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.PopupMenu;
@@ -33,8 +34,12 @@ import android.view.ViewGroup;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
+import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.activities.SQEditEventActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
 
 import java.util.List;
@@ -48,9 +53,9 @@ import butterknife.ButterKnife;
 public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEventsListAdapter
         .EventsListItemViewHolder> {
 
-    private Activity mActivity;
+    private SQActivity mActivity;
 
-    public SQEventsListAdapter(Activity pActivity, List<SQEvent> pEventList) {
+    public SQEventsListAdapter(SQActivity pActivity, List<SQEvent> pEventList) {
         super();
         mItemsList = pEventList;
         mActivity = pActivity;
@@ -83,29 +88,33 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
                 (R.plurals.sq_commons_participants_count, vEvent.getParticipants().size(), vEvent.getParticipants()
                         .size()));
         pViewHolder.mTextViewAmount.setText(SQFormatUtils.formatAmount(0f, vEvent.getCurrency().getSymbol()));
-        pViewHolder.mImageButtonMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View pView) {
-                SQLog.i("click on button: more action");
-                PopupMenu vPopupMenu = new PopupMenu(mActivity, pViewHolder.mImageButtonMore, Gravity.END);
-                vPopupMenu.getMenuInflater().inflate(R.menu.sq_menu_contextual_event, vPopupMenu.getMenu());
-                vPopupMenu.setOnMenuItemClickListener(pMenuItem -> {
-                    switch (pMenuItem.getItemId()) {
-                        case R.id.sq_menu_contextual_event_item_duplicate:
-                            SQLog.i("click on button: duplicate");
-                            return true;
-                        case R.id.sq_menu_contextual_event_item_share:
-                            SQLog.i("click on button: share");
-                            return true;
-                        case R.id.sq_menu_contextual_event_item_delete:
-                            SQLog.i("click on button: delete");
-                            return true;
-                        default:
-                            return false;
-                    }
-                });
-                vPopupMenu.show();
-            }
+        pViewHolder.mButtonEdit.setOnClickListener(pView1 -> {
+            SQLog.i("click on button: edit event");
+            mActivity.startActivityForResult(SQEditEventActivity.getIntentToEdit(mActivity, vEvent.getId()),
+                    SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
+        });
+        pViewHolder.mImageButtonMore.setOnClickListener(pView -> {
+            SQLog.i("click on button: more action");
+            PopupMenu vPopupMenu = new PopupMenu(mActivity, pViewHolder.mImageButtonMore, Gravity.END);
+            vPopupMenu.getMenuInflater().inflate(R.menu.sq_menu_contextual_event, vPopupMenu.getMenu());
+            vPopupMenu.setOnMenuItemClickListener(pMenuItem -> {
+                switch (pMenuItem.getItemId()) {
+                    case R.id.sq_menu_contextual_event_item_duplicate:
+                        SQLog.i("click on button: duplicate event");
+                        return true;
+                    case R.id.sq_menu_contextual_event_item_share:
+                        SQLog.i("click on button: share event");
+                        SQDialogUtils.createSnackBarWarning(mActivity.getToolbar(), mActivity.getString(R.string
+                                .sq_message_warning_not_yet_implemented), Snackbar.LENGTH_LONG).show();
+                        return true;
+                    case R.id.sq_menu_contextual_event_item_delete:
+                        SQLog.i("click on button: delete event");
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            vPopupMenu.show();
         });
     }
 
@@ -121,6 +130,8 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
         AppCompatTextView mTextViewParticipantsCount;
         @Bind(R.id.sq_item_events_list_textview_amout)
         AppCompatTextView mTextViewAmount;
+        @Bind(R.id.sq_item_events_list_button_edit)
+        AppCompatButton mButtonEdit;
         @Bind(R.id.sq_item_events_list_button_more)
         AppCompatImageButton mImageButtonMore;
 
