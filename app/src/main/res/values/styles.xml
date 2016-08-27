@@ -21,9 +21,21 @@
         <item name="android:textSize">@dimen/sq_size_font_body</item>
     </style>
 
+    <style name="SQTheme.TextAppearance.Bold" parent="SQTheme.TextAppearance">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.Italic" parent="SQTheme.TextAppearance">
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <style name="SQTheme.TextAppearance.Condensed.Bold" parent="SQTheme.TextAppearance">
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.SubHead.Bold" parent="SQTheme.TextAppearance.Bold">
+        <item name="android:textSize">@dimen/sq_size_font_subhead</item>
     </style>
 
     <style name="SQTheme.TextAppearance.SubHead.Condensed.Bold" parent="SQTheme.TextAppearance.Condensed.Bold">
@@ -32,6 +44,11 @@
 
     <style name="SQTheme.TextAppearance.HeadLine" parent="SQTheme.TextAppearance">
         <item name="android:textSize">@dimen/sq_size_font_headline</item>
+    </style>
+
+    <style name="SQTheme.TextAppearance.Caption.Italic" parent="SQTheme.TextAppearance">
+        <item name="android:textSize">@dimen/sq_size_font_caption</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
 </resources>

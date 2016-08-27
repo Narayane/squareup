@@ -18,7 +18,7 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -28,14 +28,31 @@
         android:id="@+id/sq_item_contacts_list_imageview_picture"
         android:layout_width="36dp"
         android:layout_height="36dp"
+        android:layout_centerVertical="true"
         android:src="@mipmap/ic_launcher"/>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/sq_item_contacts_list_textview_name"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Name"/>
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_toEndOf="@+id/sq_item_contacts_list_imageview_picture">
 
-</LinearLayout>
+        <android.support.v7.widget.AppCompatTextView
+            style="@style/SQTheme.TextAppearance.SubHead.Bold"
+            android:id="@+id/sq_item_contacts_list_textview_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/sq_item_contacts_list_textview_email"
+            style="@style/SQTheme.TextAppearance.Italic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

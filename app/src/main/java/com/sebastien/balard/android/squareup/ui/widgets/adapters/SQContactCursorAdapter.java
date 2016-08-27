@@ -65,8 +65,8 @@ public class SQContactCursorAdapter extends SQAbstractCursorAdapter<SQContactCur
         } else {
             pViewHolder.mImageViewPicture.setImageResource(R.mipmap.ic_launcher);
         }
-        pViewHolder.mTextViewName.setText(SQContactUtils.getDisplayName(mContext, vContactId) + "\n" + SQContactUtils
-                .getEmail(mContext, vContactId));
+        pViewHolder.mTextViewName.setText(SQContactUtils.getDisplayName(mContext, vContactId));
+        pViewHolder.mTextViewEmail.setText(SQContactUtils.getEmail(mContext, vContactId));
     }
 
     @Override
@@ -80,6 +80,8 @@ public class SQContactCursorAdapter extends SQAbstractCursorAdapter<SQContactCur
         public AppCompatImageView mImageViewPicture;
         @Bind(R.id.sq_item_contacts_list_textview_name)
         public AppCompatTextView mTextViewName;
+        @Bind(R.id.sq_item_contacts_list_textview_email)
+        public AppCompatTextView mTextViewEmail;
 
         public ViewHolder(View pView) {
             super(pView);

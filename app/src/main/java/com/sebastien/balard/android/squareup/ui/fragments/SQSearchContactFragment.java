@@ -71,6 +71,16 @@ public class SQSearchContactFragment extends Fragment {
         SQSearchContactFragment vFragment = new SQSearchContactFragment();
         Bundle vBundle = new Bundle(1);
         vBundle.putString("START_CONTENT", pStartContent);
+        vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", true);
+        vFragment.setArguments(vBundle);
+        return vFragment;
+    }
+
+    public static final SQSearchContactFragment newInstanceWithoutContactsPermissions(String pStartContent) {
+        SQSearchContactFragment vFragment = new SQSearchContactFragment();
+        Bundle vBundle = new Bundle(1);
+        vBundle.putString("START_CONTENT", pStartContent);
+        vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", false);
         vFragment.setArguments(vBundle);
         return vFragment;
     }
@@ -101,8 +111,10 @@ public class SQSearchContactFragment extends Fragment {
         SQLog.v("onViewCreated");
 
         initChipsView();
-        initRecyclerView();
-        loadCursor();
+        if (getArguments().getBoolean("HAS_CONTACTS_PERMISSIONS")) {
+            initRecyclerView();
+            loadCursor();
+        }
     }
 
     private void loadCursor() {
@@ -132,7 +144,7 @@ public class SQSearchContactFragment extends Fragment {
 
                     @Override
                     public void onLongClick(View pView, int pPosition) {
-
+                        // do nothing
                     }
                 }));
     }

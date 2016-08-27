@@ -35,7 +35,7 @@
         android:paddingStart="16dp"
         android:paddingTop="16dp">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/sq_fragment_search_contact_imageview_participants"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,13 +52,23 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@+id/sq_fragment_search_contact_imageview_participants"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        style="@style/SQTheme.TextAppearance.Caption.Italic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/sq_color_text_secondary"
+        android:layout_alignStart="@+id/sq_fragment_search_contact_chipsview_participants"
+        android:layout_below="@+id/sq_fragment_search_contact_chipsview_participants"
+        android:text="@string/sq_message_info_add_participants"/>
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="56dp"
-        android:background="#bdbdbd"/>
+        android:background="#bdbdbd"
+        android:layout_marginBottom="8dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sq_fragment_search_contact_recyclerview"

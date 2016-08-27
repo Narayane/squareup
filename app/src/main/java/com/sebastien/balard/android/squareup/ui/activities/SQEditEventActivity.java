@@ -178,8 +178,6 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         }
     }
 
-
-
     @Override
     public void onRequestPermissionsResult(int pRequestCode, @NonNull String[] pPermissions, @NonNull int[]
             pGrantResults) {
@@ -197,6 +195,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                         startActivityForResult(SQPermissionsUtils.getIntentForApplicationSettings(this),
                                 SQConstants.NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
                     }).show();
+                    openSearchContactFragmentWithoutContactsPermissions(mSearchPattern);
+                    mSearchPattern = null;
                 }
                 break;
             default:
@@ -255,6 +255,13 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     //endregion
 
     //region public methods
+    public void openSearchContactFragmentWithoutContactsPermissions(String pContent) {
+        SQSearchContactFragment vSearchContactFragment = SQSearchContactFragment.newInstanceWithoutContactsPermissions(pContent);
+        getFragmentManager().beginTransaction().replace(R.id.sq_activity_edit_event_layout_content,
+                vSearchContactFragment, SQSearchContactFragment.TAG).addToBackStack(SQSearchContactFragment.TAG)
+                .commit();
+    }
+
     public void openSearchContactFragment(String pContent) {
         if (!SQPermissionsUtils.hasPermission(this, Manifest.permission.READ_CONTACTS)) {
             mSearchPattern = pContent;
