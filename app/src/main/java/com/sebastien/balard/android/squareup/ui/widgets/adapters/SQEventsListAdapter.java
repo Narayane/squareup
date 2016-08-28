@@ -40,6 +40,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQEditEventActivity;
+import com.sebastien.balard.android.squareup.ui.activities.SQHomeActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
 
 import java.util.List;
@@ -109,6 +110,12 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
                         return true;
                     case R.id.sq_menu_contextual_event_item_delete:
                         SQLog.i("click on button: delete event");
+                        SQDialogUtils.showDialogYesNo(mActivity, R.string.sq_dialog_title_warning, R
+                                .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
+                                (pDialogInterface, pWhich) -> {
+                                    ((SQHomeActivity) mActivity).deleteEvent(vEvent);
+                            pDialogInterface.dismiss();
+                        }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
                         return true;
                     default:
                         return false;

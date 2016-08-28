@@ -222,6 +222,22 @@ public class SQHomeActivity extends SQActivity {
     //endregion
 
     //region private methods
+    public void deleteEvent(SQEvent pEvent) {
+        try {
+            int vPosition = mEvents.indexOf(pEvent);
+            SQDatabaseHelper.getInstance(this).getEventDao().delete(pEvent);
+            mEvents.remove(vPosition);
+            mAdapter.notifyItemRemoved(vPosition);
+            mAdapter.notifyItemRangeChanged(vPosition, mAdapter.getItemCount());
+            SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_delete_event),
+                    Snackbar.LENGTH_LONG);
+        } catch (SQLException pException) {
+            SQLog.e("fail to delete event", pException);
+            SQDialogUtils.createSnackBarError(mToolbar, getString(R.string.sq_message_error_delete_event),
+                    Snackbar.LENGTH_LONG);
+        }
+    }
+
     private void performSelection(int pPosition) {
         //FIXME: ripple but not selection
         mAdapter.toggleSelection(pPosition);

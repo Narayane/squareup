@@ -76,6 +76,19 @@ public class SQDialogUtils {
         return vSnackbar;
     }
 
+    public static AlertDialog showDialogYesNo(Context pContext, int pTitle, int pMessage, int pYesButtonLabel, int
+            pNoButtonLabel, DialogInterface.OnClickListener pYesClickListener, DialogInterface.OnClickListener
+                                                      pNoClickListener) {
+
+        AlertDialog vDialog = new AlertDialog.Builder(pContext).setTitle(pTitle).setMessage(pMessage)
+                .setPositiveButton(pYesButtonLabel, pYesClickListener).setNegativeButton(pNoButtonLabel,
+                        pNoClickListener).create();
+
+        //setText(pContext, vDialog);
+        vDialog.show();
+        return vDialog;
+    }
+
     public static AlertDialog createDialogWithCustomView(final Activity pContext, int pTitle, int pView, Integer
             pYesButtonLabel, Integer pNoButtonLabel, DialogInterface.OnClickListener pYesClickListener,
                                                          DialogInterface.OnClickListener pNoClickListener, boolean
@@ -97,7 +110,7 @@ public class SQDialogUtils {
         vDialog.setCancelable(pIsCancelable);
         vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-        //showView(pContext, vDialog);
+        showView(pContext, vDialog);
 
         return vDialog;
     }

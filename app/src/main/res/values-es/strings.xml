@@ -38,7 +38,9 @@
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">You have not activated currency yet</string>
     <!-- dialogs -->
+    <string name="sq_dialog_title_warning">Warning</string>
     <string name="sq_dialog_title_create_contact">Nuevo contacto</string>
+    <string name="sq_dialog_message_delete_event">Êtes-vous certain(e) de vouloir supprimer cet évènement ?</string>
     <!-- hints -->
     <string name="sq_hint_add_participants">Añadir participantes</string>
     <string name="sq_hint_select_currency">Select a currency</string>
@@ -53,6 +55,7 @@
         not be deactivated"</string>
     <string name="sq_message_error_create_event">"This event could not be created"</string>
     <string name="sq_message_error_update_event">"This event could not be updated"</string>
+    <string name="sq_message_error_delete_event">"This event could not be deleted"</string>
     <string name="sq_message_error_remove_events_selection">"One or many events of your selection could
         not be removed"</string>
     <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer un de vos

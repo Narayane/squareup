@@ -38,21 +38,26 @@
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
     <!-- dialogs -->
+    <string name="sq_dialog_title_warning">Alerte</string>
     <string name="sq_dialog_title_create_contact">Nouveau contact</string>
+    <string name="sq_dialog_message_delete_event">Êtes-vous certain(e) de vouloir supprimer définitivement cet
+        évènement ?</string>
     <!-- hints -->
     <string name="sq_hint_add_participants">Ajoutez des participants</string>
     <string name="sq_hint_select_currency">Sélectionnez une monnaie</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"Vous venez de créer la monnaie : %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"Vous avez désactivé : %1$s"</string>
-    <string name="sq_message_success_create_event">"Vous venez de créer l'événement : %1$s"</string>
-    <string name="sq_message_success_update_event">"Vous venez de mettre à jour l'événement: %1$s"</string>
+    <string name="sq_message_success_create_event">"Vous venez de créer l\'événement : %1$s"</string>
+    <string name="sq_message_success_update_event">"Vous venez de mettre à jour l\'événement: %1$s"</string>
+    <string name="sq_message_success_delete_event">"Vous venez de supprimer l\'évènement : %1$s"</string>
     <string name="sq_message_success_remove_events_selection">"Vous avez supprimé : %1$s"</string>
     <string name="sq_message_error_activate_currency">"La monnaie %1$s n\'a pas pu être activée"</string>
     <string name="sq_message_error_deactivate_currencies_selection">"Une ou plusieurs monnaies de votre
         sélection n'ont pu être désactivées"</string>
     <string name="sq_message_error_create_event">"Cet événement n\'a pas pu être crée"</string>
     <string name="sq_message_error_update_event">"Cet événement n\'a pas pu être mis à jour"</string>
+    <string name="sq_message_error_delete_event">"Cet événement n\'a pas pu être supprimé"</string>
     <string name="sq_message_error_remove_events_selection">"Un ou plusieurs événements de votre
         sélection n'ont pu être désactivées"</string>
     <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer des
