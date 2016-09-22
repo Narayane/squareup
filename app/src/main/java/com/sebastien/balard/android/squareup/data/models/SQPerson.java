@@ -81,12 +81,12 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
         SQPerson vOther = (SQPerson) pObject;
 
-        return new EqualsBuilder().append(mEmail, vOther.mEmail).isEquals();
+        return new EqualsBuilder().append(getEmail(), vOther.getEmail()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(mEmail).toHashCode();
+        return new HashCodeBuilder(17, 37).append(getEmail()).toHashCode();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
             order = mName.compareTo(pOther.mName);
         }
         return order;*/
-        return new CompareToBuilder().append(this.mName, pOther.mName).toComparison();
+        return new CompareToBuilder().append(this.getName(), pOther.getName()).toComparison();
     }
 
     public Long getContactId() {

@@ -62,6 +62,8 @@
         sélection n'ont pu être désactivées"</string>
     <string name="sq_message_warning_request_contacts_permission">L\'application ne peut vous proposer des
         correspondances si vous ne lui permettez pas d\'accéder à vos contacts</string>
+    <string name="sq_message_warning_open_event_with_contacts_without_contacts_permissions">L\'application ne peut
+        ouvrir un évènement avec des contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
     <string name="sq_message_warning_not_yet_implemented">Bientôt disponible</string>
     <string name="sq_message_info_add_participants">Sélectionnez un contact dans la liste ci-dessous ou appuyer sur , ou entrée à la fin de votre saisie pour en créer un nouveau</string>
 </resources>

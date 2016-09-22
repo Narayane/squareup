@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
@@ -73,15 +73,15 @@ import butterknife.OnTextChanged;
 public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyFragment.OnCurrencySelectionListener,
         SQSearchContactFragment.OnContactsSelectionListener {
 
-    @Bind(R.id.sq_activity_edit_event_edittext_name)
+    @BindView(R.id.sq_activity_edit_event_edittext_name)
     protected EditText mEditTextName;
-    @Bind(R.id.sq_activity_edit_event_textview_start_date)
+    @BindView(R.id.sq_activity_edit_event_textview_start_date)
     protected TextView mTextViewStartDate;
-    @Bind(R.id.sq_activity_edit_event_textview_end_date)
+    @BindView(R.id.sq_activity_edit_event_textview_end_date)
     protected TextView mTextViewEndDate;
-    @Bind(R.id.sq_activity_edit_event_edittext_currency)
+    @BindView(R.id.sq_activity_edit_event_edittext_currency)
     protected EditText mEditTextCurrency;
-    @Bind(R.id.sq_activity_edit_event_chipsview_participants)
+    @BindView(R.id.sq_activity_edit_event_chipsview_participants)
     protected SQChipsView mChipsViewParticipants;
 
     private SQEvent mEvent;
@@ -138,7 +138,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                     SQLog.v("click on menu item: update event");
                     try {
                         updateEvent(vName);
-                        setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(vName));
+                        setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(mEvent.getId(), vName));
                         finish();
                     } catch (SQLException pException) {
                         SQLog.e("fail to update event", pException);
@@ -148,8 +148,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                 } else {
                     SQLog.v("click on menu item: create event");
                     try {
-                        createEvent(vName);
-                        setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(vName));
+                        Long vEventId = createEvent(vName);
+                        setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(vEventId, vName));
                         finish();
                     } catch (SQLException pException) {
                         SQLog.e("fail to create event", pException);
@@ -157,6 +157,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                                 Snackbar.LENGTH_LONG);
                     }
                 }
+                SQUIUtils.SoftInput.hide(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(pMenuItem);
@@ -185,7 +186,11 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS:
                 if (pGrantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openSearchContactFragment(mSearchPattern);
+                    if (mIsEditMode) {
+                        openSearchContactFragment(mEvent.getParticipants(), mSearchPattern);
+                    } else {
+                        openSearchContactFragment(mSearchPattern);
+                    }
                     mSearchPattern = null;
                 } else {
                     SQDialogUtils.createSnackBarWithAction(this, mToolbar, Snackbar.LENGTH_LONG, R
@@ -208,7 +213,6 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     protected void onPause() {
         super.onPause();
         SQLog.v("onPause");
-        SQUIUtils.SoftInput.hide(this);
     }
     //endregion
 
@@ -275,6 +279,20 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         }
     }
 
+    public void openSearchContactFragment(List<SQPerson> pParticipants, String pContent) {
+        if (!SQPermissionsUtils.hasPermission(this, Manifest.permission.READ_CONTACTS)) {
+            mSearchPattern = pContent;
+            SQPermissionsUtils.requestPermission(this, Manifest.permission.READ_CONTACTS, SQConstants
+                    .NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
+        } else {
+            SQSearchContactFragment vSearchContactFragment = SQSearchContactFragment.newInstance(pParticipants,
+                    pContent);
+            getFragmentManager().beginTransaction().replace(R.id.sq_activity_edit_event_layout_content,
+                    vSearchContactFragment, SQSearchContactFragment.TAG).addToBackStack(SQSearchContactFragment.TAG)
+                    .commit();
+        }
+    }
+
     public void openSearchCurrencyFragment(String pContent) {
         SQSearchCurrencyFragment vSearchCurrencyFragment = SQSearchCurrencyFragment.newInstance(pContent);
         getFragmentManager().beginTransaction().replace(R.id.sq_activity_edit_event_layout_content,
@@ -300,6 +318,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
 
     @Override
     public void onContactsSelected(List<SQPerson> vContacts) {
+        mChipsViewParticipants.clear();
         for (SQPerson vPerson : vContacts) {
             Uri vUri = null;
             if (vPerson.getPhotoUriString() != null) {
@@ -312,11 +331,25 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
 
     //region private methods
     private void updateEvent(String pName) throws SQLException {
-        mEvent.setName(pName);
-        SQDatabaseHelper.getInstance(this).getEventDao().createOrUpdate(mEvent);
-        if (mListPeopleToDelete.size() > 0) {
+        List<SQPerson> mListContactsSelected = mChipsViewParticipants.getContacts();
+        for (SQPerson vPerson : mEvent.getParticipants()) {
+            if (!mListContactsSelected.contains(vPerson)) {
+                //mListPeopleToDelete.add(vPerson);
+                SQLog.v("delete participant: " + vPerson.getName());
+                SQDatabaseHelper.getInstance(SQEditEventActivity.this).getPersonDao().delete(vPerson);
+            }
+        }
+        /*if (mListPeopleToDelete.size() > 0) {
             SQDatabaseHelper.getInstance(SQEditEventActivity.this).getPersonDao().deleteAll(mListPeopleToDelete);
             mListPeopleToDelete.clear();
+        }*/
+        SQDatabaseHelper.getInstance(this).getEventDao().refresh(mEvent);
+        mEvent.setName(pName);
+        SQDatabaseHelper.getInstance(this).getEventDao().createOrUpdate(mEvent);
+        for (SQPerson vPerson : mListContactsSelected) {
+            if (!mEvent.getParticipants().contains(vPerson)) {
+                mListPeopleToCreate.add(vPerson);
+            }
         }
         if (mListPeopleToCreate.size() > 0) {
             SQDatabaseHelper.getInstance(this).getPersonDao().createAll(mListPeopleToCreate, mEvent);
@@ -325,7 +358,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         SQLog.v("event has been updated");
     }
 
-    private void createEvent(String pName) throws SQLException {
+    private Long createEvent(String pName) throws SQLException {
         mEvent.setName(pName);
         List<SQPerson> vParticipants = mChipsViewParticipants.getContacts();
         if (vParticipants.size() > 0) {
@@ -335,6 +368,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             SQDatabaseHelper.getInstance(this).getEventDao().createOrUpdate(mEvent);
             SQLog.d("new event has been created");
         }
+        SQDatabaseHelper.getInstance(this).getEventDao().refresh(mEvent);
+        return mEvent.getId();
     }
 
     private void initEvent() {
@@ -386,22 +421,26 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {
-                if (mIsEditMode) {
+                /*if (mIsEditMode) {
                     mListPeopleToCreate.add(pChip.getContact());
-                }
+                }*/
             }
 
             @Override
             public void onChipDeleted(SQChipsView.SQChip pChip) {
-                if (mIsEditMode) {
+                /*if (mIsEditMode) {
                     mListPeopleToDelete.add(pChip.getContact());
-                }
+                }*/
             }
 
             @Override
             public void onTextChanged(CharSequence pCharSequence) {
                 if (pCharSequence.length() > 2) {
-                    openSearchContactFragment(pCharSequence.toString());
+                    if (mIsEditMode) {
+                        openSearchContactFragment(mEvent.getParticipants(), pCharSequence.toString());
+                    } else {
+                        openSearchContactFragment(pCharSequence.toString());
+                    }
                     mChipsViewParticipants.getEditText().getText().clear();
                 }
             }

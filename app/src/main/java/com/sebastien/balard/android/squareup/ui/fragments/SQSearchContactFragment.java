@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
@@ -41,10 +42,11 @@ import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQContactCursor
 import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -54,9 +56,9 @@ public class SQSearchContactFragment extends Fragment {
 
     public static final String TAG = SQSearchContactFragment.class.getSimpleName();
 
-    @Bind(R.id.sq_fragment_search_contact_chipsview_participants)
+    @BindView(R.id.sq_fragment_search_contact_chipsview_participants)
     protected SQChipsView mChipsViewParticipants;
-    @Bind(R.id.sq_fragment_search_contact_recyclerview)
+    @BindView(R.id.sq_fragment_search_contact_recyclerview)
     protected RecyclerView mRecyclerView;
 
     private OnContactsSelectionListener mListener;
@@ -69,7 +71,7 @@ public class SQSearchContactFragment extends Fragment {
 
     public static final SQSearchContactFragment newInstance(String pStartContent) {
         SQSearchContactFragment vFragment = new SQSearchContactFragment();
-        Bundle vBundle = new Bundle(1);
+        Bundle vBundle = new Bundle(2);
         vBundle.putString("START_CONTENT", pStartContent);
         vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", true);
         vFragment.setArguments(vBundle);
@@ -78,9 +80,25 @@ public class SQSearchContactFragment extends Fragment {
 
     public static final SQSearchContactFragment newInstanceWithoutContactsPermissions(String pStartContent) {
         SQSearchContactFragment vFragment = new SQSearchContactFragment();
-        Bundle vBundle = new Bundle(1);
+        Bundle vBundle = new Bundle(2);
         vBundle.putString("START_CONTENT", pStartContent);
         vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", false);
+        vFragment.setArguments(vBundle);
+        return vFragment;
+    }
+
+    public static final SQSearchContactFragment newInstance(List<SQPerson> pParticipants, String pStartContent) {
+        SQSearchContactFragment vFragment = new SQSearchContactFragment();
+        Bundle vBundle = new Bundle(3);
+        vBundle.putString("START_CONTENT", pStartContent);
+        long[] vIds = new long[pParticipants.size()];
+        for (int vIndex = 0;vIndex < pParticipants.size();vIndex++) {
+            vIds[vIndex] = pParticipants.get(vIndex).getId();
+        }
+        vBundle.putLongArray("EXISTING_PARTICIPANTS_IDS", vIds);
+        /*vBundle.putLongArray("EXISTING_PARTICIPANTS_IDS", pParticipants.stream().map(SQPerson::getId).collect
+                (Collectors.<long>toList()).toArray());*/
+        vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", true);
         vFragment.setArguments(vBundle);
         return vFragment;
     }
@@ -111,9 +129,42 @@ public class SQSearchContactFragment extends Fragment {
         SQLog.v("onViewCreated");
 
         initChipsView();
+        long[] vExistingParticipantsIds = getArguments().getLongArray("EXISTING_PARTICIPANTS_IDS");
+        if (vExistingParticipantsIds != null) {
+            try {
+                fillChipsView(vExistingParticipantsIds);
+            } catch (SQLException pException) {
+                SQLog.e("fail to load existing people", pException);
+            }
+        }
+        mChipsViewParticipants.getEditText().setText(getArguments().getString("START_CONTENT"));
+        mChipsViewParticipants.getEditText().post(() -> {
+            mChipsViewParticipants.getEditText().requestFocus();
+            mChipsViewParticipants.getEditText().setSelection(3);
+            /*mChipsViewParticipants.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View pView, boolean pHasFocus) {
+                    if (pHasFocus) {
+                        SQUIUtils.SoftInput.show(getActivity(), pView);
+                    }
+                }
+            });*/
+        });
         if (getArguments().getBoolean("HAS_CONTACTS_PERMISSIONS")) {
             initRecyclerView();
             loadCursor();
+        }
+    }
+
+    private void fillChipsView(long[] pPeopleIds) throws SQLException {
+        SQPerson vPerson;
+        for (long vId : pPeopleIds) {
+            vPerson = SQDatabaseHelper.getInstance(getActivity()).getPersonDao().queryForId(vId);
+            Uri vUri = null;
+            if (vPerson.getPhotoUriString() != null) {
+                vUri = Uri.parse(vPerson.getPhotoUriString()) ;
+            }
+            mChipsViewParticipants.addChip(vPerson.getName(), vUri, vPerson);
         }
     }
 
@@ -146,25 +197,17 @@ public class SQSearchContactFragment extends Fragment {
                     public void onLongClick(View pView, int pPosition) {
                         // do nothing
                     }
+
+                    @Override
+                    public boolean isEnabled(int pPosition) {
+                        return true;
+                    }
                 }));
     }
 
     private void initChipsView() {
         mChipsViewParticipants.mContext = getActivity();
         mChipsViewParticipants.getEditText().setHint(getString(R.string.sq_hint_add_participants));
-        mChipsViewParticipants.getEditText().setText(getArguments().getString("START_CONTENT"));
-        mChipsViewParticipants.getEditText().post(() -> {
-            mChipsViewParticipants.getEditText().requestFocus();
-            mChipsViewParticipants.getEditText().setSelection(3);
-            /*mChipsViewParticipants.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View pView, boolean pHasFocus) {
-                    if (pHasFocus) {
-                        SQUIUtils.SoftInput.show(getActivity(), pView);
-                    }
-                }
-            });*/
-        });
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {

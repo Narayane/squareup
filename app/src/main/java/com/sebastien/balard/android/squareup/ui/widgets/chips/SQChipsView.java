@@ -341,6 +341,11 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         return false;
     }
 
+    public void clear() {
+        mChipList.clear();
+        onChipsChanged(true);
+    }
+
     /*public Contact tryToRecognizeAddress() {
         String text = mEditText.getText().toString();
         if (!TextUtils.isEmpty(text)) {
