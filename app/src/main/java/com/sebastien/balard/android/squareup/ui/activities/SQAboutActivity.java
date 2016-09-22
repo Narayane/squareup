@@ -22,7 +22,6 @@ package com.sebastien.balard.android.squareup.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.BuildConfig;
@@ -30,7 +29,7 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -38,7 +37,7 @@ import butterknife.ButterKnife;
  */
 public class SQAboutActivity extends SQActivity {
 
-    @Bind(R.id.sq_activity_about_textview_version)
+    @BindView(R.id.sq_activity_about_textview_version)
     TextView mVersionTextView;
 
     public final static Intent getIntent(Context pContext) {

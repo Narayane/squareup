@@ -32,7 +32,7 @@ import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -66,11 +66,11 @@ public class SQCurrenciesListAdapter extends SQMultiChoiceModeAdapter<SQCurrency
 
     public static class CurrenciesListItemViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.sq_item_currencies_list_textview_code)
+        @BindView(R.id.sq_item_currencies_list_textview_code)
         TextView mTextViewCode;
-        @Bind(R.id.sq_item_currencies_list_textview_label)
+        @BindView(R.id.sq_item_currencies_list_textview_label)
         TextView mTextViewLabel;
-        @Bind(R.id.sq_item_currencies_list_textview_rate)
+        @BindView(R.id.sq_item_currencies_list_textview_rate)
         TextView mTextViewRate;
 
         public CurrenciesListItemViewHolder(View pView) {

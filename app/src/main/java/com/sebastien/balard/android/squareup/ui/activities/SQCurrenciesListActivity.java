@@ -58,18 +58,18 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SQCurrenciesListActivity extends SQActivity {
 
-    @Bind(R.id.sq_activity_currencies_list_layout_drawer)
+    @BindView(R.id.sq_activity_currencies_list_layout_drawer)
     protected DrawerLayout mDrawerLayout;
-    @Bind(R.id.sq_activity_currencies_list_navigation_view)
+    @BindView(R.id.sq_activity_currencies_list_navigation_view)
     protected NavigationView mNavigationView;
-    @Bind(R.id.sq_activity_currencies_list_nestedscrollview_empty)
+    @BindView(R.id.sq_activity_currencies_list_nestedscrollview_empty)
     protected NestedScrollView mEmptyView;
-    @Bind(R.id.sq_activity_currencies_list_recyclerview)
+    @BindView(R.id.sq_activity_currencies_list_recyclerview)
     protected RecyclerView mRecyclerView;
 
     private ActionMode mActionMode;
@@ -102,23 +102,20 @@ public class SQCurrenciesListActivity extends SQActivity {
         mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem pMenuItem) {
-                switch (pMenuItem.getItemId()) {
-                    case R.id.sq_menu_drawer_item_event:
-                        SQLog.i("click on drawer menu item: event");
-                        startActivity(SQHomeActivity.getIntent(SQCurrenciesListActivity.this));
-                        break;
-                    case R.id.sq_menu_drawer_item_currency:
-                        SQLog.i("click on drawer menu item: currency");
-                        break;
-                    default:
-                        break;
-                }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                return true;
+        mNavigationView.setNavigationItemSelectedListener(pMenuItem -> {
+            switch (pMenuItem.getItemId()) {
+                case R.id.sq_menu_drawer_item_event:
+                    SQLog.i("click on drawer menu item: event");
+                    startActivity(SQHomeActivity.getIntent(SQCurrenciesListActivity.this));
+                    break;
+                case R.id.sq_menu_drawer_item_currency:
+                    SQLog.i("click on drawer menu item: currency");
+                    break;
+                default:
+                    break;
             }
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
         mAllCurrencies = SQCurrencyUtils.getAllCurrencies();
@@ -148,6 +145,11 @@ public class SQCurrenciesListActivity extends SQActivity {
                     mActionMode = startSupportActionMode(mActionModeCallback);
                 }
                 performSelection(pPosition);
+            }
+
+            @Override
+            public boolean isEnabled(int pPosition) {
+                return true;
             }
         }));
     }

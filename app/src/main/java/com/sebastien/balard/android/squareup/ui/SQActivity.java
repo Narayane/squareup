@@ -29,7 +29,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQAboutActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQSettingsActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -37,7 +37,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class SQActivity extends AppCompatActivity {
 
-    @Bind(R.id.sq_widget_app_bar_toolbar)
+    @BindView(R.id.sq_widget_appbar_toolbar)
     protected Toolbar mToolbar;
 
     protected CompositeSubscription mSubscriptions;

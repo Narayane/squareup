@@ -34,7 +34,7 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.SQAbstractCursorAdapter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -76,11 +76,11 @@ public class SQContactCursorAdapter extends SQAbstractCursorAdapter<SQContactCur
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.sq_item_contacts_list_imageview_picture)
+        @BindView(R.id.sq_item_contacts_list_imageview_picture)
         public AppCompatImageView mImageViewPicture;
-        @Bind(R.id.sq_item_contacts_list_textview_name)
+        @BindView(R.id.sq_item_contacts_list_textview_name)
         public AppCompatTextView mTextViewName;
-        @Bind(R.id.sq_item_contacts_list_textview_email)
+        @BindView(R.id.sq_item_contacts_list_textview_email)
         public AppCompatTextView mTextViewEmail;
 
         public ViewHolder(View pView) {

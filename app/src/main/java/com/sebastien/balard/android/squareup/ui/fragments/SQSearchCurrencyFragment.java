@@ -44,7 +44,7 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -54,9 +54,9 @@ public class SQSearchCurrencyFragment extends Fragment {
 
     public static final String TAG = SQSearchCurrencyFragment.class.getSimpleName();
 
-    @Bind(R.id.sq_fragment_search_currency_editext_currency)
+    @BindView(R.id.sq_fragment_search_currency_editext_currency)
     protected EditText mCurrencyEditText;
-    @Bind(R.id.sq_fragment_search_currency_recyclerview)
+    @BindView(R.id.sq_fragment_search_currency_recyclerview)
     protected RecyclerView mRecyclerView;
 
     private OnCurrencySelectionListener mListener;
@@ -130,6 +130,11 @@ public class SQSearchCurrencyFragment extends Fragment {
             public void onLongClick(View pView, int pPosition) {
                 SQLog.v("onLongClick");
 
+            }
+
+            @Override
+            public boolean isEnabled(int pPosition) {
+                return true;
             }
         }));
 
