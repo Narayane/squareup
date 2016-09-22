@@ -35,6 +35,8 @@ public class SQRecyclerViewItemTouchListener implements RecyclerView.OnItemTouch
         void onClick(View pView, int pPosition);
 
         void onLongClick(View pView, int pPosition);
+		
+		boolean isEnabled(int pPosition);
     }
 
     protected GestureDetector mGestureDetector;
@@ -49,6 +51,10 @@ public class SQRecyclerViewItemTouchListener implements RecyclerView.OnItemTouch
 
             @Override
             public boolean onSingleTapUp(MotionEvent pMotionEvent) {
+                View vView = pRecyclerView.findChildViewUnder(pMotionEvent.getX(), pMotionEvent.getY());
+                if (vView != null && mItemTouchListener != null) {
+                    mItemTouchListener.onClick(vView, pRecyclerView.getChildAdapterPosition(vView));
+                }
                 return true;
             }
 
@@ -64,12 +70,14 @@ public class SQRecyclerViewItemTouchListener implements RecyclerView.OnItemTouch
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView pRecyclerView, MotionEvent pMotionEvent) {
-        //SQLog.v("onInterceptTouchEvent " + mGestureDetector.onTouchEvent(pMotionEvent) + " " + pMotionEvent);
         View vView = pRecyclerView.findChildViewUnder(pMotionEvent.getX(), pMotionEvent.getY());
-        if (vView != null && mItemTouchListener != null && mGestureDetector.onTouchEvent(pMotionEvent)) {
-            mItemTouchListener.onClick(vView, pRecyclerView.getChildAdapterPosition(vView));
+        if (!mItemTouchListener.isEnabled(pRecyclerView.getChildAdapterPosition(vView))) {
+            onRequestDisallowInterceptTouchEvent(true);
+            return true;
+        } else {
+            mGestureDetector.onTouchEvent(pMotionEvent);
+            return false;
         }
-        return false;
     }
 
     @Override

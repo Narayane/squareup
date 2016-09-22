@@ -95,10 +95,10 @@ public class SQDialogUtils {
                                                                  pIsCancelable) {
 
         View vView = pContext.getLayoutInflater().inflate(pView, null);
-        float dpi = pContext.getResources().getDisplayMetrics().density;
-        int margin = Float.valueOf(24 * dpi).intValue();
-        AlertDialog.Builder vBuilder = new AlertDialog.Builder(pContext).setTitle(pTitle).setView(vView, margin,
-                margin, margin, margin);
+        //float dpi = pContext.getResources().getDisplayMetrics().density;
+        //int margin = Float.valueOf(24 * dpi).intValue();
+        AlertDialog.Builder vBuilder = new AlertDialog.Builder(pContext).setTitle(pTitle).setView(vView/*, margin,
+                margin, margin, margin*/);
         if (pYesButtonLabel != null) {
             vBuilder.setPositiveButton(pYesButtonLabel, pYesClickListener);
         }
@@ -110,26 +110,24 @@ public class SQDialogUtils {
         vDialog.setCancelable(pIsCancelable);
         vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-        showView(pContext, vDialog);
+        //showView(pContext, vDialog);
+        vDialog.show();
 
         return vDialog;
     }
 
     private static void showView(final Context pContext, AlertDialog pAlertDialog) {
-        pAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface pDialogInterface) {
+        pAlertDialog.setOnShowListener(pDialogInterface -> {
 
-                Dialog vDialog = ((Dialog) pDialogInterface);
+            Dialog vDialog = ((Dialog) pDialogInterface);
 
-                /*View divider = vDialog.findViewById(vDialog.getContext().getResources().getIdentifier
-                        ("android:id/titleDivider", null, null));
-                divider.setBackgroundColor(ContextCompat.getColor(pContext, R.color.colorPrimaryDark));*/
+            /*View divider = vDialog.findViewById(vDialog.getContext().getResources().getIdentifier
+                    ("android:id/titleDivider", null, null));
+            divider.setBackgroundColor(ContextCompat.getColor(pContext, R.color.colorPrimaryDark));*/
 
-                TextView pTitleView = (TextView) vDialog.findViewById(vDialog.getContext().getResources()
-                        .getIdentifier("alertTitle", "id", "android"));
-                pTitleView.setTextColor(ContextCompat.getColor(pContext, R.color.sq_color_primary));
-            }
+            TextView pTitleView = (TextView) vDialog.findViewById(vDialog.getContext().getResources()
+                    .getIdentifier("alertTitle", "id", "android"));
+            pTitleView.setTextColor(ContextCompat.getColor(pContext, R.color.sq_color_primary));
         });
         pAlertDialog.show();
     }

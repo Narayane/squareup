@@ -34,18 +34,15 @@ import android.view.ViewGroup;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
-import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
-import com.sebastien.balard.android.squareup.ui.activities.SQEditEventActivity;
-import com.sebastien.balard.android.squareup.ui.activities.SQHomeActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -54,12 +51,42 @@ import butterknife.ButterKnife;
 public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEventsListAdapter
         .EventsListItemViewHolder> {
 
-    private SQActivity mActivity;
+    public static class EventsListItemViewHolder extends RecyclerView.ViewHolder {
 
-    public SQEventsListAdapter(SQActivity pActivity, List<SQEvent> pEventList) {
+        @BindView(R.id.sq_item_events_list_textview_name)
+        AppCompatTextView mTextViewName;
+        @BindView(R.id.sq_item_events_list_textview_start_date)
+        AppCompatTextView mTextViewStartDate;
+        @BindView(R.id.sq_item_events_list_textview_end_date)
+        AppCompatTextView mTextViewEndDate;
+        @BindView(R.id.sq_item_events_list_textview_participants_count)
+        AppCompatTextView mTextViewParticipantsCount;
+        @BindView(R.id.sq_item_events_list_textview_amout)
+        AppCompatTextView mTextViewAmount;
+        @BindView(R.id.sq_item_events_list_button_edit)
+        AppCompatButton mButtonEdit;
+        @BindView(R.id.sq_item_events_list_button_more)
+        AppCompatImageButton mImageButtonMore;
+
+        public EventsListItemViewHolder(View pView) {
+            super(pView);
+            ButterKnife.bind(this, pView);
+        }
+    }
+
+    public interface OnEventActionListener {
+        SQActivity getActivity();
+        void onEdit(Long pEventId);
+        void onDuplicate(Long pEventId);
+        void onShare(Long pEventId);
+        void onDelete(Long pEventId);
+    }
+
+    private OnEventActionListener mListener;
+
+    public SQEventsListAdapter(List<SQEvent> pEventList) {
         super();
         mItemsList = pEventList;
-        mActivity = pActivity;
     }
 
     @Override
@@ -74,7 +101,7 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
         SQEvent vEvent = mItemsList.get(pPosition);
 
         pViewHolder.mTextViewName.setText(vEvent.getName());
-        if (vEvent.getEndDate().equals(vEvent.getStartDate())) {
+        if (vEvent.getEndDate().toLocalDate().equals(vEvent.getStartDate().toLocalDate())) {
             pViewHolder.mTextViewStartDate.setText(SQApplication.getContext().getString(R.string.sq_commons_the,
                     SQFormatUtils.formatLongDate(vEvent.getStartDate())));
             pViewHolder.mTextViewEndDate.setVisibility(View.GONE);
@@ -91,12 +118,11 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
         pViewHolder.mTextViewAmount.setText(SQFormatUtils.formatAmount(0f, vEvent.getCurrency().getSymbol()));
         pViewHolder.mButtonEdit.setOnClickListener(pView1 -> {
             SQLog.i("click on button: edit event");
-            mActivity.startActivityForResult(SQEditEventActivity.getIntentToEdit(mActivity, vEvent.getId()),
-                    SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
+            mListener.onEdit(vEvent.getId());
         });
         pViewHolder.mImageButtonMore.setOnClickListener(pView -> {
             SQLog.i("click on button: more action");
-            PopupMenu vPopupMenu = new PopupMenu(mActivity, pViewHolder.mImageButtonMore, Gravity.END);
+            PopupMenu vPopupMenu = new PopupMenu(mListener.getActivity(), pViewHolder.mImageButtonMore, Gravity.END);
             vPopupMenu.getMenuInflater().inflate(R.menu.sq_menu_contextual_event, vPopupMenu.getMenu());
             vPopupMenu.setOnMenuItemClickListener(pMenuItem -> {
                 switch (pMenuItem.getItemId()) {
@@ -105,17 +131,13 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
                         return true;
                     case R.id.sq_menu_contextual_event_item_share:
                         SQLog.i("click on button: share event");
-                        SQDialogUtils.createSnackBarWarning(mActivity.getToolbar(), mActivity.getString(R.string
-                                .sq_message_warning_not_yet_implemented), Snackbar.LENGTH_LONG).show();
+                        SQDialogUtils.createSnackBarWarning(mListener.getActivity().getToolbar(), mListener
+                                .getActivity().getString(R.string.sq_message_warning_not_yet_implemented), Snackbar
+                                .LENGTH_LONG).show();
                         return true;
                     case R.id.sq_menu_contextual_event_item_delete:
                         SQLog.i("click on button: delete event");
-                        SQDialogUtils.showDialogYesNo(mActivity, R.string.sq_dialog_title_warning, R
-                                .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
-                                (pDialogInterface, pWhich) -> {
-                                    ((SQHomeActivity) mActivity).deleteEvent(vEvent);
-                            pDialogInterface.dismiss();
-                        }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
+                        mListener.onDelete(vEvent.getId());
                         return true;
                     default:
                         return false;
@@ -125,26 +147,7 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
         });
     }
 
-    public static class EventsListItemViewHolder extends RecyclerView.ViewHolder {
-
-        @Bind(R.id.sq_item_events_list_textview_name)
-        AppCompatTextView mTextViewName;
-        @Bind(R.id.sq_item_events_list_textview_start_date)
-        AppCompatTextView mTextViewStartDate;
-        @Bind(R.id.sq_item_events_list_textview_end_date)
-        AppCompatTextView mTextViewEndDate;
-        @Bind(R.id.sq_item_events_list_textview_participants_count)
-        AppCompatTextView mTextViewParticipantsCount;
-        @Bind(R.id.sq_item_events_list_textview_amout)
-        AppCompatTextView mTextViewAmount;
-        @Bind(R.id.sq_item_events_list_button_edit)
-        AppCompatButton mButtonEdit;
-        @Bind(R.id.sq_item_events_list_button_more)
-        AppCompatImageButton mImageButtonMore;
-
-        public EventsListItemViewHolder(View pView) {
-            super(pView);
-            ButterKnife.bind(this, pView);
-        }
+    public void setOnEventActionListener(OnEventActionListener pListener) {
+        mListener = pListener;
     }
 }

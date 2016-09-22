@@ -19,8 +19,10 @@
 
 package com.sebastien.balard.android.squareup.ui.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -47,6 +49,7 @@ import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventsListAdapter;
@@ -59,7 +62,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.adapter.rxjava.HttpException;
@@ -72,18 +75,22 @@ import rx.schedulers.Schedulers;
  */
 public class SQHomeActivity extends SQActivity {
 
-    @Bind(R.id.sq_activity_home_layout_drawer)
+    @BindView(R.id.sq_activity_home_layout_drawer)
     protected DrawerLayout mDrawerLayout;
-    @Bind(R.id.sq_activity_home_navigationview)
+    @BindView(R.id.sq_activity_home_navigationview)
     protected NavigationView mNavigationView;
-    @Bind(R.id.sq_activity_home_nestedscrollview_empty)
+    @BindView(R.id.sq_activity_home_nestedscrollview_empty)
     protected NestedScrollView mEmptyView;
-    @Bind(R.id.sq_activity_home_recyclerview)
+    @BindView(R.id.sq_activity_home_recyclerview)
     protected RecyclerView mRecyclerView;
 
     private ActionMode mActionMode;
     private SQEventsListAdapter mAdapter;
     private List<SQEvent> mEvents;
+    private Long mEventInsertedPosition;
+    private Long mEventUpdatedPosition;
+    private Long mEventIdToEdit;
+    private String mEventName;
 
     //region static methods
     public static final Intent getIntent(Context pContext) {
@@ -91,8 +98,8 @@ public class SQHomeActivity extends SQActivity {
                 .FLAG_ACTIVITY_CLEAR_TOP)*/;
     }
 
-    public static final Intent getIntentForNewEvent(String pName) {
-        return new Intent().putExtra(SQConstants.EXTRA_EVENT_NAME, pName);
+    public static final Intent getIntentForNewEvent(Long pId, String pName) {
+        return new Intent().putExtra(SQConstants.EXTRA_EVENT_ID, pId).putExtra(SQConstants.EXTRA_EVENT_NAME, pName);
     }
     //endregion
 
@@ -133,18 +140,62 @@ public class SQHomeActivity extends SQActivity {
         mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
 
         mEvents = new ArrayList<>();
-        mAdapter = new SQEventsListAdapter(this, mEvents);
+        mAdapter = new SQEventsListAdapter(mEvents);
+        mAdapter.setOnEventActionListener(new SQEventsListAdapter.OnEventActionListener() {
+            @Override
+            public SQActivity getActivity() {
+                return SQHomeActivity.this;
+            }
+
+            @Override
+            public void onEdit(Long pEventId) {
+                if (!SQPermissionsUtils.hasPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS)) {
+                    mEventIdToEdit = pEventId;
+                    SQPermissionsUtils.requestPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS, SQConstants
+                            .NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
+                } else {
+                    startActivityForResult(SQEditEventActivity.getIntentToEdit(SQHomeActivity.this, pEventId),
+                            SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
+
+                }
+            }
+
+            @Override
+            public void onDuplicate(Long pEventId) {
+
+            }
+
+            @Override
+            public void onShare(Long pEventId) {
+
+            }
+
+            @Override
+            public void onDelete(Long pEventId) {
+                SQDialogUtils.showDialogYesNo(SQHomeActivity.this, R.string.sq_dialog_title_warning, R
+                                .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
+                        (pDialogInterface, pWhich) -> {
+                            deleteEvent(pEventId);
+                            pDialogInterface.dismiss();
+                        }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
+            }
+        });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder pViewHolder) {
+                return true;
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
                 SQRecyclerViewItemTouchListener.OnItemTouchListener() {
             @Override
             public void onClick(View pView, int pPosition) {
                 SQLog.v("onClick");
-                if (mActionMode != null) {
+                /*if (mActionMode != null) {
                     performSelection(pPosition);
-                }
+                }*/
             }
 
             @Override
@@ -154,6 +205,11 @@ public class SQHomeActivity extends SQActivity {
                     mActionMode = startSupportActionMode(mActionModeCallback);
                 }
                 performSelection(pPosition);*/
+            }
+
+            @Override
+            public boolean isEnabled(int pPosition) {
+                return true;
             }
         }));
     }
@@ -171,21 +227,39 @@ public class SQHomeActivity extends SQActivity {
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
-                    String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
-                    SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
-                            vName), Snackbar.LENGTH_LONG).show();
+                    mEventInsertedPosition = pData.getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
+                    mEventName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
                 }
                 break;
             case SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT:
                 if (pResultCode == RESULT_OK) {
-                    String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
-                    SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_update_event,
-                            vName), Snackbar.LENGTH_LONG).show();
-                }/* else {
-                    String vName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
-                    SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
-                            vName), Snackbar.LENGTH_LONG).show();
-                }*/
+                    mEventUpdatedPosition = pData.getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
+                    mEventName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int pRequestCode, @NonNull String[] pPermissions, @NonNull int[]
+            pGrantResults) {
+        super.onRequestPermissionsResult(pRequestCode, pPermissions, pGrantResults);
+        switch (pRequestCode) {
+            case SQConstants.NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS:
+                if (pGrantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(SQEditEventActivity.getIntentToEdit(this, mEventIdToEdit),
+                            SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
+                } else {
+                    SQDialogUtils.createSnackBarWithAction(this, mToolbar, Snackbar.LENGTH_LONG, R
+                            .color.sq_color_warning, R.color.sq_color_white, R.string
+                            .sq_message_warning_open_event_with_contacts_without_contacts_permissions, R.string
+                            .sq_actions_allow, R.color.sq_color_white, pView -> {
+                        startActivityForResult(SQPermissionsUtils.getIntentForApplicationSettings(this),
+                                SQConstants.NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
+                    }).show();
+                }
                 break;
             default:
                 break;
@@ -222,15 +296,20 @@ public class SQHomeActivity extends SQActivity {
     //endregion
 
     //region private methods
-    public void deleteEvent(SQEvent pEvent) {
+    public void deleteEvent(Long pEventId) {
         try {
-            int vPosition = mEvents.indexOf(pEvent);
+            int vPosition = -1;
+            for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
+                if (mEvents.get(vIndex).getId().equals(pEventId)) {
+                    vPosition = vIndex;
+                    break;
+                }
+            }
+            SQEvent pEvent = SQDatabaseHelper.getInstance(this).getEventDao().queryForId(pEventId);
             SQDatabaseHelper.getInstance(this).getEventDao().delete(pEvent);
             mEvents.remove(vPosition);
             mAdapter.notifyItemRemoved(vPosition);
             mAdapter.notifyItemRangeChanged(vPosition, mAdapter.getItemCount());
-            SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_delete_event),
-                    Snackbar.LENGTH_LONG);
         } catch (SQLException pException) {
             SQLog.e("fail to delete event", pException);
             SQDialogUtils.createSnackBarError(mToolbar, getString(R.string.sq_message_error_delete_event),
@@ -238,7 +317,35 @@ public class SQHomeActivity extends SQActivity {
         }
     }
 
-    private void performSelection(int pPosition) {
+    public void updateEventToPosition(Long pEventId, String pEventName) {
+        int vPosition = -1;
+        for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
+            if (mEvents.get(vIndex).getId().equals(pEventId)) {
+                vPosition = vIndex;
+                break;
+            }
+        }
+        mAdapter.notifyItemChanged(vPosition);
+        mAdapter.notifyItemRangeChanged(vPosition, mAdapter.getItemCount());
+        /*SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_update_event,
+                pEventName), Snackbar.LENGTH_LONG).show();*/
+    }
+
+    public void insertEventAtPosition(Long pEventId, String pEventName) {
+        int vPosition = -1;
+        for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
+            if (mEvents.get(vIndex).getId().equals(pEventId)) {
+                vPosition = vIndex;
+                break;
+            }
+        }
+        mAdapter.notifyItemInserted(vPosition);
+        mAdapter.notifyItemRangeChanged(vPosition, mAdapter.getItemCount());
+        /*SQDialogUtils.createSnackBarSuccess(mToolbar, getString(R.string.sq_message_success_create_event,
+                pEventName), Snackbar.LENGTH_LONG).show();*/
+    }
+
+    /*private void performSelection(int pPosition) {
         //FIXME: ripple but not selection
         mAdapter.toggleSelection(pPosition);
         if (mAdapter.getSelectedItemsCount() == 0) {
@@ -247,7 +354,7 @@ public class SQHomeActivity extends SQActivity {
             mActionMode.setTitle(getResources().getQuantityString(R.plurals.sq_cab_events_selected, mAdapter
                     .getSelectedItemsCount(), mAdapter.getSelectedItemsCount()));
         }
-    }
+    }*/
 
     private void removeEventsSelection() {
         List<Integer> vPositions = mAdapter.getSelectedItemsPositions();
@@ -309,7 +416,17 @@ public class SQHomeActivity extends SQActivity {
     private void refreshLayout() {
         mEvents.clear();
         mEvents.addAll(SQDatabaseHelper.getInstance(this).getEventDao().getAll());
-        mAdapter.notifyDataSetChanged();
+        if (mEventInsertedPosition == null && mEventUpdatedPosition == null) {
+            mAdapter.notifyDataSetChanged();
+        } else if (mEventInsertedPosition != null) {
+            insertEventAtPosition(mEventInsertedPosition, mEventName);
+            mEventInsertedPosition = null;
+            mEventName = null;
+        } else {
+            updateEventToPosition(mEventUpdatedPosition, mEventName);
+            mEventUpdatedPosition = null;
+            mEventName = null;
+        }
         if (mEvents.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);

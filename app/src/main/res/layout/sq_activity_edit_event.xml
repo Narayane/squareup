@@ -40,7 +40,7 @@
             android:theme="@style/SQTheme.ActionBar">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/sq_widget_app_bar_toolbar"
+                android:id="@+id/sq_widget_appbar_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/SQTheme.Popup"/>
