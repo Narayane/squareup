@@ -149,7 +149,7 @@ public class SQCurrenciesListActivity extends SQActivity {
 
             @Override
             public boolean isEnabled(int pPosition) {
-                return true;
+                return !mAdapter.getItem(pPosition).isBase();
             }
         }));
     }
