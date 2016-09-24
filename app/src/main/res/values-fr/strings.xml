@@ -45,6 +45,8 @@
     <!-- hints -->
     <string name="sq_hint_add_participants">Ajoutez des participants</string>
     <string name="sq_hint_select_currency">Sélectionnez une monnaie</string>
+    <string name="sq_hint_select_start_date">Sélectionnez une date de début</string>
+    <string name="sq_hint_select_end_date">Sélectionnez une date de fin</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"Vous venez de créer la monnaie : %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"Vous avez désactivé : %1$s"</string>

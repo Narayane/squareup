@@ -44,6 +44,8 @@
     <!-- hints -->
     <string name="sq_hint_add_participants">Añadir participantes</string>
     <string name="sq_hint_select_currency">Select a currency</string>
+    <string name="sq_hint_select_start_date">Select a start date</string>
+    <string name="sq_hint_select_end_date">Select an end date</string>
     <!-- messages -->
     <string name="sq_message_success_activate_currency">"You have activated the currency: %1$s"</string>
     <string name="sq_message_success_deactivate_currencies_selection">"You have deactivated: %1$s"</string>

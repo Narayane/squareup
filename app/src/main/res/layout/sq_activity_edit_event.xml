@@ -85,7 +85,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_marginTop="8dp"
-                        android:src="@drawable/sq_ic_event_24dp"/>
+                        app:srcCompat="@drawable/sq_ic_event_24dp"/>
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/sq_activity_edit_event_textview_start_date"
@@ -97,7 +97,7 @@
                         android:layout_toEndOf="@+id/fragment_card_new_event_imageview_date"
                         android:clickable="true"
                         android:gravity="center"
-                        android:text="Select start date"/>
+                        android:text="@string/sq_hint_select_start_date"/>
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/sq_activity_edit_event_textview_end_date"
@@ -108,7 +108,7 @@
                         android:layout_toEndOf="@+id/fragment_card_new_event_imageview_date"
                         android:clickable="true"
                         android:gravity="center"
-                        android:text="Select end date"/>
+                        android:text="@string/sq_hint_select_end_date"/>
                 </RelativeLayout>
 
                 <View
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerInParent="true"
-                        android:src="@drawable/sq_ic_currency_24dp"/>
+                        app:srcCompat="@drawable/sq_ic_currency_24dp"/>
 
                     <android.support.v7.widget.AppCompatEditText
                         android:id="@+id/sq_activity_edit_event_edittext_currency"
@@ -159,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:src="@drawable/sq_ic_group_24dp"/>
+                        app:srcCompat="@drawable/sq_ic_group_24dp"/>
 
                     <com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView
                         android:id="@+id/sq_activity_edit_event_chipsview_participants"

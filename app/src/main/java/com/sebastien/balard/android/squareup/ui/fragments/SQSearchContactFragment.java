@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
@@ -95,8 +96,8 @@ public class SQSearchContactFragment extends Fragment {
         for (int vIndex = 0;vIndex < pParticipants.size();vIndex++) {
             vIds[vIndex] = pParticipants.get(vIndex).getId();
         }
-        vBundle.putLongArray("EXISTING_PARTICIPANTS_IDS", vIds);
-        /*vBundle.putLongArray("EXISTING_PARTICIPANTS_IDS", pParticipants.stream().map(SQPerson::getId).collect
+        vBundle.putLongArray(SQConstants.EXTRA_ARRAY_PERSON_IDS, vIds);
+        /*vBundle.putLongArray(SQConstants.EXTRA_ARRAY_PERSON_IDS, pParticipants.stream().map(SQPerson::getId).collect
                 (Collectors.<long>toList()).toArray());*/
         vBundle.putBoolean("HAS_CONTACTS_PERMISSIONS", true);
         vFragment.setArguments(vBundle);
@@ -129,7 +130,7 @@ public class SQSearchContactFragment extends Fragment {
         SQLog.v("onViewCreated");
 
         initChipsView();
-        long[] vExistingParticipantsIds = getArguments().getLongArray("EXISTING_PARTICIPANTS_IDS");
+        long[] vExistingParticipantsIds = getArguments().getLongArray(SQConstants.EXTRA_ARRAY_PERSON_IDS);
         if (vExistingParticipantsIds != null) {
             try {
                 fillChipsView(vExistingParticipantsIds);

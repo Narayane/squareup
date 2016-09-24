@@ -47,6 +47,7 @@ import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
@@ -85,10 +86,10 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     protected SQChipsView mChipsViewParticipants;
 
     private SQEvent mEvent;
-    private boolean mIsEditMode;
+    private boolean mIsModeEdit;
+    private boolean mIsModeDuplicate;
     private String mSearchPattern;
     private List<SQPerson> mListPeopleToCreate;
-    private List<SQPerson> mListPeopleToDelete;
 
     //region static methods
     public final static Intent getIntent(Context pContext) {
@@ -96,7 +97,13 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     }
 
     public final static Intent getIntentToEdit(Context pContext, Long pEventId) {
-        return new Intent(pContext, SQEditEventActivity.class).putExtra(SQConstants.EXTRA_EVENT_ID, pEventId);
+        return new Intent(pContext, SQEditEventActivity.class).putExtra(SQConstants.EXTRA_EVENT_ID, pEventId)
+                .putExtra("EXTRA_MODE_EDIT", true);
+    }
+
+    public final static Intent getIntentToDuplicate(Context pContext, Long pEventId) {
+        return new Intent(pContext, SQEditEventActivity.class).putExtra(SQConstants.EXTRA_EVENT_ID, pEventId)
+                .putExtra("EXTRA_MODE_DUPLICATE", false);
     }
     //endregion
 
@@ -109,12 +116,12 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         SQLog.v("onCreate");
 
         initToolbar();
-        mIsEditMode = getIntent().hasExtra(SQConstants.EXTRA_EVENT_ID);
+        mIsModeEdit = getIntent().hasExtra("EXTRA_MODE_EDIT");
+        mIsModeDuplicate = getIntent().hasExtra("EXTRA_MODE_DUPLICATE");
         initEvent();
         initLayout();
-        if (mIsEditMode) {
+        if (mIsModeEdit) {
             mListPeopleToCreate = new ArrayList<>();
-            mListPeopleToDelete = new ArrayList<>();
         }
     }
 
@@ -122,7 +129,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     public boolean onCreateOptionsMenu(Menu pMenu) {
         SQLog.v("onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.sq_menu_create_event, pMenu);
-        if (mIsEditMode) {
+        if (mIsModeEdit) {
             pMenu.getItem(0).setTitle(R.string.sq_actions_update);
         }
         return true;
@@ -134,7 +141,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             case R.id.sq_menu_create_event_item_create:
                 //TODO: validation
                 String vName = mEditTextName.getText().toString();
-                if (mIsEditMode) {
+                if (mIsModeEdit) {
                     SQLog.v("click on menu item: update event");
                     try {
                         updateEvent(vName);
@@ -149,6 +156,12 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                     SQLog.v("click on menu item: create event");
                     try {
                         Long vEventId = createEvent(vName);
+                        if (mIsModeDuplicate) {
+                            SQFabricUtils.AnswersUtils.logDuplicateEvent(mEvent.getCurrency().getCode(), mEvent
+                                    .getParticipants().size());
+                        } else {
+                            SQFabricUtils.AnswersUtils.logCreateEvent(mEvent.getCurrency().getCode(), mEvent.getParticipants().size());
+                        }
                         setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(vEventId, vName));
                         finish();
                     } catch (SQLException pException) {
@@ -186,7 +199,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS:
                 if (pGrantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (mIsEditMode) {
+                    if (mIsModeEdit) {
                         openSearchContactFragment(mEvent.getParticipants(), mSearchPattern);
                     } else {
                         openSearchContactFragment(mSearchPattern);
@@ -351,6 +364,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
                 mListPeopleToCreate.add(vPerson);
             }
         }
+        /*mListPeopleToCreate.addAll(mListContactsSelected.stream().filter(vPerson -> !mEvent.getParticipants()
+                .contains(vPerson)).collect(Collectors.toList()));*/
         if (mListPeopleToCreate.size() > 0) {
             SQDatabaseHelper.getInstance(this).getPersonDao().createAll(mListPeopleToCreate, mEvent);
             mListPeopleToCreate.clear();
@@ -374,7 +389,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
 
     private void initEvent() {
         DateTime vNow = DateTime.now();
-        if (mIsEditMode) {
+        if (mIsModeEdit) {
             Long vId = getIntent().getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
             try {
                 mEvent = SQDatabaseHelper.getInstance(this).getEventDao().queryForId(vId);
@@ -395,6 +410,25 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             try {
                 SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(vCode);
                 mEvent = new SQEvent(null, vNow, vNow, vCurrency);
+                if (mIsModeDuplicate) {
+                    Long vId = getIntent().getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
+                    try {
+                        SQEvent vEventToDuplicate = SQDatabaseHelper.getInstance(this).getEventDao().queryForId(vId);
+                        SQPerson vClone;
+                        for (SQPerson vPerson : vEventToDuplicate.getParticipants()) {
+                            vClone = vPerson.clone();
+                            Uri vUri = null;
+                            if (vClone.getPhotoUriString() != null) {
+                                vUri = Uri.parse(vClone.getPhotoUriString());
+                            }
+                            mChipsViewParticipants.addChip(vClone.getName(), vUri, vClone);
+                        }
+                    } catch (SQLException pException) {
+                        SQLog.e("fail to load event with id: " + vId, pException);
+                        //setResult(Activity.RESULT_CANCELED, SQHomeActivity.getIntentForNewEvent(vName));
+                        finish();
+                    }
+                }
             } catch (SQLException pException) {
                 SQLog.e("fail to load currency: " + vCode, pException);
                 //setResult(Activity.RESULT_CANCELED, SQHomeActivity.getIntentForNewEvent(vName));
@@ -421,14 +455,14 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override
             public void onChipAdded(SQChipsView.SQChip pChip) {
-                /*if (mIsEditMode) {
+                /*if (mIsModeEdit) {
                     mListPeopleToCreate.add(pChip.getContact());
                 }*/
             }
 
             @Override
             public void onChipDeleted(SQChipsView.SQChip pChip) {
-                /*if (mIsEditMode) {
+                /*if (mIsModeEdit) {
                     mListPeopleToDelete.add(pChip.getContact());
                 }*/
             }
@@ -436,7 +470,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             @Override
             public void onTextChanged(CharSequence pCharSequence) {
                 if (pCharSequence.length() > 2) {
-                    if (mIsEditMode) {
+                    if (mIsModeEdit) {
                         openSearchContactFragment(mEvent.getParticipants(), pCharSequence.toString());
                     } else {
                         openSearchContactFragment(pCharSequence.toString());

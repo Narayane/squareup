@@ -20,7 +20,6 @@
 package com.sebastien.balard.android.squareup.ui.widgets.adapters;
 
 import android.annotation.SuppressLint;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
@@ -35,7 +34,6 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.misc.SQLog;
-import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.SQMultiChoiceModeAdapter;
@@ -128,12 +126,13 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
                 switch (pMenuItem.getItemId()) {
                     case R.id.sq_menu_contextual_event_item_duplicate:
                         SQLog.i("click on button: duplicate event");
+                        mListener.onDuplicate(vEvent.getId());
                         return true;
                     case R.id.sq_menu_contextual_event_item_share:
                         SQLog.i("click on button: share event");
-                        SQDialogUtils.createSnackBarWarning(mListener.getActivity().getToolbar(), mListener
+                        /*SQDialogUtils.createSnackBarWarning(mListener.getActivity().getToolbar(), mListener
                                 .getActivity().getString(R.string.sq_message_warning_not_yet_implemented), Snackbar
-                                .LENGTH_LONG).show();
+                                .LENGTH_LONG).show();*/
                         return true;
                     case R.id.sq_menu_contextual_event_item_delete:
                         SQLog.i("click on button: delete event");

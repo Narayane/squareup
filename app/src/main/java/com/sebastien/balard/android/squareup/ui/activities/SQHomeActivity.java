@@ -48,6 +48,7 @@ import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
@@ -162,7 +163,8 @@ public class SQHomeActivity extends SQActivity {
 
             @Override
             public void onDuplicate(Long pEventId) {
-
+                startActivityForResult(SQEditEventActivity.getIntentToDuplicate(SQHomeActivity.this, pEventId), SQConstants
+                        .NOTIFICATION_REQUEST_CREATE_EVENT);
             }
 
             @Override
@@ -176,6 +178,7 @@ public class SQHomeActivity extends SQActivity {
                                 .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
                         (pDialogInterface, pWhich) -> {
                             deleteEvent(pEventId);
+                            SQFabricUtils.AnswersUtils.logDeleteEvent();
                             pDialogInterface.dismiss();
                         }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
             }

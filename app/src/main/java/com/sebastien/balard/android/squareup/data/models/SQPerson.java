@@ -103,6 +103,16 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
         return new CompareToBuilder().append(this.getName(), pOther.getName()).toComparison();
     }
 
+    public SQPerson clone() {
+        SQPerson vClone;
+        if (mContactId != null) {
+            vClone = new SQPerson(mContactId);
+        } else {
+            vClone = new SQPerson(mName, mEmail, mWeight);
+        }
+        return vClone;
+    }
+
     public Long getContactId() {
         return mContactId;
     }

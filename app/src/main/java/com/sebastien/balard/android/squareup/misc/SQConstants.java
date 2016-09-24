@@ -62,4 +62,5 @@ public interface SQConstants {
 
     String EXTRA_EVENT_ID = "EXTRA_EVENT_ID";
     String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
+    String EXTRA_ARRAY_PERSON_IDS = "EXTRA_ARRAY_PERSON_IDS";
 }
