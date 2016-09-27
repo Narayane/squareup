@@ -24,6 +24,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.activities.SQLoginActivity"
+            android:label="@string/sq_actions_connect"
+            android:screenOrientation="portrait"
+            android:theme="@style/SQTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".ui.activities.SQCurrenciesListActivity"
             android:label="@string/sq_commons_my_currencies"
             android:screenOrientation="portrait"

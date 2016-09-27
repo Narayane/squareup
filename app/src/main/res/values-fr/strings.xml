@@ -12,6 +12,7 @@
     <string name="sq_actions_duplicate">Dupliquer</string>
     <string name="sq_actions_share">Partager</string>
     <string name="sq_actions_update">Modifier</string>
+    <string name="sq_actions_connect">Se connecter</string>
     <!-- commons -->
     <string name="sq_commons_my_events">Mes événements</string>
     <string name="sq_commons_my_currencies">Mes monnaies</string>

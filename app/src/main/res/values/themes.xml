@@ -29,6 +29,7 @@
         <item name="android:textColor">@color/sq_color_text_primary</item>
 
         <item name="editTextStyle">@style/SQTheme.Widget.EditText</item>
+        <item name="buttonStyle">@style/SQTheme.Widget.Button</item>
         <!--<item name="autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>
         <item name="android:autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>-->
     </style>

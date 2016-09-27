@@ -12,6 +12,12 @@
         <item name="android:textColorHint">#bdbdbd</item>
     </style>
 
+    <style name="SQTheme.Widget.Button" parent="@style/Widget.AppCompat.Button">
+        <item name="backgroundTint">@color/sq_color_accent</item>
+        <item name="android:textColor">@color/sq_color_white</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
     <style name="SQTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:padding">16dp</item>
         <item name="android:textSize">@dimen/sq_size_font_subhead</item>

@@ -12,6 +12,7 @@
     <string name="sq_actions_duplicate">Duplicate</string>
     <string name="sq_actions_share">Share</string>
     <string name="sq_actions_update">Update</string>
+    <string name="sq_actions_connect">Connect</string>
     <!-- commons -->
     <string name="sq_commons_my_events">My events</string>
     <string name="sq_commons_my_currencies">My active currencies</string>

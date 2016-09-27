@@ -22,6 +22,7 @@
     <!-- margins -->
     <dimen name="sq_margin_activity_horizontal">24dp</dimen>
     <dimen name="sq_margin_activity_vertical">24dp</dimen>
+    <dimen name="sq_height_navigationview">300dp</dimen>
     <dimen name="sq_margin_fab">24dp</dimen>
     <!-- text sizes -->
     <dimen name="sq_size_font_headline">28sp</dimen>

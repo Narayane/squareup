@@ -32,6 +32,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
@@ -49,12 +53,14 @@ import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventsListAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -84,6 +90,12 @@ public class SQHomeActivity extends SQActivity {
     protected NestedScrollView mEmptyView;
     @BindView(R.id.sq_activity_home_recyclerview)
     protected RecyclerView mRecyclerView;
+
+    protected AppCompatImageView mImageViewProfile;
+    protected AppCompatTextView mTextViewDisplayName;
+    protected AppCompatTextView mTextViewEmail;
+    protected AppCompatButton mButtonConnect;
+    protected AppCompatButton mButtonDisconnect;
 
     private ActionMode mActionMode;
     private SQEventsListAdapter mAdapter;
@@ -120,25 +132,7 @@ public class SQHomeActivity extends SQActivity {
         mDrawerLayout.addDrawerListener(vDrawerToggle);
         vDrawerToggle.syncState();
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem pMenuItem) {
-                switch (pMenuItem.getItemId()) {
-                    case R.id.sq_menu_drawer_item_event:
-                        SQLog.i("click on drawer menu item: events list");
-                        break;
-                    case R.id.sq_menu_drawer_item_currency:
-                        SQLog.i("click on drawer menu item: currencies list");
-                        startActivity(SQCurrenciesListActivity.getIntent(SQHomeActivity.this));
-                        break;
-                    default:
-                        break;
-                }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
-        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
+        initNavigationView();
 
         mEvents = new ArrayList<>();
         mAdapter = new SQEventsListAdapter(mEvents);
@@ -218,6 +212,18 @@ public class SQHomeActivity extends SQActivity {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        SQFirebaseUtils.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SQFirebaseUtils.stop();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
         SQLog.v("onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.sq_menu_default, pMenu);
@@ -228,6 +234,21 @@ public class SQHomeActivity extends SQActivity {
     protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
         SQLog.v("onActivityResult");
         switch (pRequestCode) {
+            case SQConstants.NOTIFICATION_REQUEST_LOGIN:
+                if (pResultCode == RESULT_OK) {
+                    FirebaseUser vUser = SQFirebaseUtils.getFirebaseUser();
+                    Picasso.with(this)
+                            .load(vUser.getPhotoUrl())
+                            .placeholder(R.mipmap.ic_launcher)
+                            /*.error(R.drawable.user_placeholder_error)*/
+                            .into(mImageViewProfile);
+                    mTextViewDisplayName.setText(vUser.getDisplayName());
+                    mTextViewEmail.setText(vUser.getEmail());
+                    mButtonDisconnect.setVisibility(View.VISIBLE);
+                    mButtonConnect.setVisibility(View.GONE);
+                    onBackPressed();
+                }
+                break;
             case SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
                     mEventInsertedPosition = pData.getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
@@ -389,29 +410,26 @@ public class SQHomeActivity extends SQActivity {
     }
 
     private void checkCurrenciesRates() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLog.d("check currencies rates last update");
-                DateTime vNow = DateTime.now();
-                int vFrequency = SQUserPreferencesUtils.getRatesUpdateFrequency();
-                SQLog.v("update frequency: " + vFrequency + " day(s)");
-                try {
-                    DateTime vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
-                    SQLog.v("last update: " + SQFormatUtils.formatDate(vLastUpdate));
+        new Thread(() -> {
+            SQLog.d("check currencies rates last update");
+            DateTime vNow = DateTime.now();
+            int vFrequency = SQUserPreferencesUtils.getRatesUpdateFrequency();
+            SQLog.v("update frequency: " + vFrequency + " day(s)");
+            try {
+                DateTime vLastUpdate = SQCurrencyUtils.getDefaultConversionBase().getLastUpdate();
+                SQLog.v("last update: " + SQFormatUtils.formatDate(vLastUpdate));
 
-                    boolean vTimeToCheck = true;
-                    if (vLastUpdate != null) {
-                        vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
-                    }
-                    if (vTimeToCheck) {
-                        mSubscriptions.add(subscribeToGetLatestRates());
-                    } else {
-                        SQLog.i("currencies rates are up-to-date");
-                    }
-                } catch (SQLException pException) {
-                    SQLog.e("fail to get default conversion base");
+                boolean vTimeToCheck = true;
+                if (vLastUpdate != null) {
+                    vTimeToCheck = Days.daysBetween(vLastUpdate, vNow).getDays() > vFrequency;
                 }
+                if (vTimeToCheck) {
+                    mSubscriptions.add(subscribeToGetLatestRates());
+                } else {
+                    SQLog.i("currencies rates are up-to-date");
+                }
+            } catch (SQLException pException) {
+                SQLog.e("fail to get default conversion base");
             }
         }).start();
     }
@@ -437,6 +455,49 @@ public class SQHomeActivity extends SQActivity {
             mEmptyView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void initNavigationView() {
+        mNavigationView.setNavigationItemSelectedListener(pMenuItem -> {
+            switch (pMenuItem.getItemId()) {
+                case R.id.sq_menu_drawer_item_event:
+                    SQLog.i("click on drawer menu item: events list");
+                    break;
+                case R.id.sq_menu_drawer_item_currency:
+                    SQLog.i("click on drawer menu item: currencies list");
+                    startActivity(SQCurrenciesListActivity.getIntent(SQHomeActivity.this));
+                    break;
+                default:
+                    break;
+            }
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
+        mImageViewProfile = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+                .sq_widget_drawer_imageview_profile);
+        mTextViewDisplayName = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+                .sq_widget_drawer_textview_display_name);
+        mTextViewEmail = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+                .sq_widget_drawer_textview_email);
+        mButtonConnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+                .sq_widget_drawer_button_connect);
+        mButtonConnect.setOnClickListener(pView -> {
+            SQLog.i("click on button: connect");
+            startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN);
+        });
+        mButtonDisconnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+                .sq_widget_drawer_button_disconnect);
+        mButtonDisconnect.setOnClickListener(pView -> {
+            SQLog.i("click on button: disconnect");
+            SQFirebaseUtils.signOut();
+            mImageViewProfile.setImageResource(R.mipmap.ic_launcher);
+            mTextViewDisplayName.setText("-");
+            mTextViewEmail.setText("-");
+            mButtonDisconnect.setVisibility(View.GONE);
+            mButtonConnect.setVisibility(View.VISIBLE);
+            onBackPressed();
+        });
     }
     //endregion
 
