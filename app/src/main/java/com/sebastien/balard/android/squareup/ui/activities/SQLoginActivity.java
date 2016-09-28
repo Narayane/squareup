@@ -25,6 +25,13 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
@@ -45,6 +52,10 @@ public class SQLoginActivity extends SQActivity {
 
     @BindView(R.id.sq_activity_login_button_google_sign_in)
     SignInButton mButtonGoogleSignIn;
+    @BindView(R.id.sq_activity_login_button_facebook_login)
+    LoginButton mButtonFacebookLogin;
+
+    private CallbackManager mFacebookCallback;
 
     public final static Intent getIntent(Context pContext) {
         return new Intent(pContext, SQLoginActivity.class);
@@ -53,6 +64,9 @@ public class SQLoginActivity extends SQActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginManager.getInstance().logOut();
+        mFacebookCallback = CallbackManager.Factory.create();
         setContentView(R.layout.sq_activity_login);
         ButterKnife.bind(this);
         SQLog.v("onCreate");
@@ -60,28 +74,8 @@ public class SQLoginActivity extends SQActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mButtonGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
-        mButtonGoogleSignIn.setOnClickListener(pView -> {
-            Intent vSignInIntent = Auth.GoogleSignInApi.getSignInIntent(SQFirebaseUtils.signIn(this, pConnectionResult
-                    -> {
-                SQLog.e("google api client connection failed");
-                if (pConnectionResult.hasResolution()) {
-                    try {
-                        SQLog.d("start resolution");
-                        pConnectionResult.startResolutionForResult(SQLoginActivity.this, SQConstants
-                                .NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
-                    } catch (IntentSender.SendIntentException pSendIntentException) {
-                        SQLog.e("could not resolve connection result", pSendIntentException);
-                        //mGoogleApiClient.connect();
-                    }
-                } else {
-                    SQLog.d("could not resolve connection result");
-                    // Could not resolve the connection result, show the user an error dialog.
-                    //processError(mContext, pConnectionResult);
-                }
-            }));
-            startActivityForResult(vSignInIntent, SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
-        });
+        initButtonGoogleSignIn();
+        initButtonFacebookLogin();
     }
 
     @Override
@@ -100,7 +94,6 @@ public class SQLoginActivity extends SQActivity {
     public void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
         super.onActivityResult(pRequestCode, pResultCode, pData);
         SQLog.v("onActivityResult");
-
         if (pRequestCode == SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN) {
             GoogleSignInResult vSignInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(pData);
             if (vSignInResult.isSuccess()) {
@@ -122,6 +115,67 @@ public class SQLoginActivity extends SQActivity {
             } else {
                 // Signed out, show unauthenticated UI.
             }
+        } else {
+            mFacebookCallback.onActivityResult(pRequestCode, pResultCode, pData);
         }
+    }
+
+    private void initButtonFacebookLogin() {
+        mButtonFacebookLogin.setReadPermissions("email", "public_profile");
+        mButtonFacebookLogin.registerCallback(mFacebookCallback, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult pLoginResult) {
+                SQLog.v("onSuccess:" + pLoginResult);
+                SQFirebaseUtils.authWithFacebook(SQLoginActivity.this, pLoginResult.getAccessToken(), pTask -> {
+                    SQLog.d("signInWithCredential:onComplete:" + pTask.isSuccessful());
+
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!pTask.isSuccessful()) {
+                        SQLog.w("signInWithCredential", pTask.getException());
+                        Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() {
+                SQLog.v("onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException pError) {
+                SQLog.v("onError", pError);
+            }
+        });
+    }
+
+    private void initButtonGoogleSignIn() {
+        mButtonGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
+        mButtonGoogleSignIn.setOnClickListener(pView -> {
+            Intent vSignInIntent = Auth.GoogleSignInApi.getSignInIntent(SQFirebaseUtils.signIn(this,
+                    pConnectionResult -> {
+                SQLog.e("google api client connection failed");
+                if (pConnectionResult.hasResolution()) {
+                    try {
+                        SQLog.d("start resolution");
+                        pConnectionResult.startResolutionForResult(SQLoginActivity.this, SQConstants
+                                .NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
+                    } catch (IntentSender.SendIntentException pSendIntentException) {
+                        SQLog.e("could not resolve connection result", pSendIntentException);
+                        //mGoogleApiClient.connect();
+                    }
+                } else {
+                    SQLog.d("could not resolve connection result");
+                    // Could not resolve the connection result, show the user an error dialog.
+                    //processError(mContext, pConnectionResult);
+                }
+            }));
+            startActivityForResult(vSignInIntent, SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
+        });
     }
 }

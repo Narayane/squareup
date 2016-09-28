@@ -19,6 +19,7 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
+import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,6 +29,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -92,10 +94,18 @@ public class SQFirebaseUtils {
     }
 
     public static void authWithGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
-                                      OnCompleteListener<AuthResult> pOnCompleteListener) {
-        SQLog.d("firebaseAuthWithGoogle: " + pGoogleSignInAccount.getId());
+                                       OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authWithGoogle: " + pGoogleSignInAccount.getId());
 
         AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
+        mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+    }
+
+    public static void authWithFacebook(SQActivity pActivity, AccessToken pAccessToken,
+                                      OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authWithFacebook: " + pAccessToken.getToken());
+
+        AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
         mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
     }
 }

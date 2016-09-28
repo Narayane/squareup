@@ -49,6 +49,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
 
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/sq_activity_login_button_facebook_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp" />
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
