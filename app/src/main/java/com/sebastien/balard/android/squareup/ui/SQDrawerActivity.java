@@ -127,18 +127,26 @@ public class SQDrawerActivity extends SQActivity {
         mButtonConnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
                 .sq_widget_drawer_button_connect);
         mButtonConnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: connect");
-            startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN);
+            SQLog.i("click on button: login");
+            login();
         });
         mButtonDisconnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
                 .sq_widget_drawer_button_disconnect);
         mButtonDisconnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: disconnect");
-            SQFirebaseUtils.signOut();
-            SQUserPreferencesUtils.clearUserProfile();
-            setUserProfile();
-            onBackPressed();
+            SQLog.i("click on button: logout");
+            logout();
         });
+    }
+
+    protected void logout() {
+        SQFirebaseUtils.signOut();
+        SQUserPreferencesUtils.clearUserProfile();
+        setUserProfile();
+        onBackPressed();
+    }
+
+    protected void login() {
+        startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN);
     }
 
     protected void initDrawer() {

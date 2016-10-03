@@ -43,10 +43,16 @@
             android:layout_marginStart="@dimen/sq_margin_activity_horizontal"
             android:layout_marginTop="@dimen/sq_margin_activity_vertical">
 
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Square up a besoin que vous soyez identifié pour créer un événement.\nSquare up utilisera uniquement votre nom, email et photo de profil et ne communiquera ces informations à aucun tiers."/>
+
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sq_activity_login_button_google_sign_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:layout_gravity="center"/>
 
             <com.facebook.login.widget.LoginButton
@@ -54,8 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginTop="30dp" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

@@ -153,6 +153,13 @@ public class SQHomeActivity extends SQDrawerActivity {
                     mEventName = pData.getExtras().getString(SQConstants.EXTRA_EVENT_NAME);
                 }
                 break;
+            case SQConstants.NOTIFICATION_REQUEST_LOGIN_TO_CREATE_EVENT:
+                if (pResultCode == RESULT_OK) {
+                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                    setUserProfile();
+                    startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
+                }
+                break;
             default:
                 break;
         }
@@ -196,9 +203,13 @@ public class SQHomeActivity extends SQDrawerActivity {
 
     //region ui events
     @OnClick(R.id.sq_activity_home_fab)
-    protected void onNewEventButtonClick(View pView) {
+    protected void onNewEventButtonClicked(View pView) {
         SQLog.i("click on button: new event");
-        startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
+        if (SQUserPreferencesUtils.isUserConnected()) {
+            startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
+        } else {
+            startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN_TO_CREATE_EVENT);
+        }
     }
     //endregion
 
