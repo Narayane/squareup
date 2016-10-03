@@ -84,4 +84,10 @@ public class SQActivity extends AppCompatActivity {
     public Toolbar getToolbar() {
         return mToolbar;
     }
+
+    protected void initToolbar() {
+        setSupportActionBar(mToolbar);
+        //getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 }

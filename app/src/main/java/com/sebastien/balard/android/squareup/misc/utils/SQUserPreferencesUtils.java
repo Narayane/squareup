@@ -19,8 +19,11 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 
@@ -31,6 +34,50 @@ public class SQUserPreferencesUtils {
 
     public static int getRatesUpdateFrequency() {
         return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
-                (SQConstants.USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY, "7"));
+                (SQConstants.PREFERENCE_CURRENCIES_UPDATE_FREQUENCY, "7"));
+    }
+
+    public static boolean isUserConnected() {
+        return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getBoolean
+                (SQConstants.PREFERENCE_USER_IS_LOGGED, false);
+    }
+
+    public static String getUserProfileDisplayName() {
+        return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
+                (SQConstants.PREFERENCE_USER_DISPLAY_NAME, "-");
+    }
+
+    public static String getUserProfileEmail() {
+        return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
+                (SQConstants.PREFERENCE_USER_EMAIL, "-");
+    }
+
+    public static Uri getUserProfilePhotoUri() {
+        String vUrl = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
+                (SQConstants.PREFERENCE_USER_PHOTO_URL, null);
+        if (vUrl != null) {
+            return Uri.parse(vUrl);
+        }
+        return null;
+    }
+
+    public static void setUserProfile(FirebaseUser pFirebaseUser) {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putBoolean(SQConstants.PREFERENCE_USER_IS_LOGGED, true);
+        vEditor.putString(SQConstants.PREFERENCE_USER_DISPLAY_NAME, pFirebaseUser.getDisplayName());
+        vEditor.putString(SQConstants.PREFERENCE_USER_EMAIL, pFirebaseUser.getEmail());
+        vEditor.putString(SQConstants.PREFERENCE_USER_PHOTO_URL, pFirebaseUser.getPhotoUrl().toString());
+        vEditor.apply();
+    }
+
+    public static void clearUserProfile() {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putBoolean(SQConstants.PREFERENCE_USER_IS_LOGGED, false);
+        vEditor.putString(SQConstants.PREFERENCE_USER_DISPLAY_NAME, null);
+        vEditor.putString(SQConstants.PREFERENCE_USER_EMAIL, null);
+        vEditor.putString(SQConstants.PREFERENCE_USER_PHOTO_URL, null);
+        vEditor.apply();
     }
 }

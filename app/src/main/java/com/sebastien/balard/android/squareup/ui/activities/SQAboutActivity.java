@@ -51,13 +51,13 @@ public class SQAboutActivity extends SQActivity {
         ButterKnife.bind(this);
         SQLog.v("onCreate");
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        SQLog.v("onResume");
 
         mVersionTextView.setText(getString(R.string.sq_app_version_label, BuildConfig.VERSION_NAME, BuildConfig
                 .VERSION_CODE));

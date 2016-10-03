@@ -46,8 +46,7 @@ public class SQSettingsActivity extends SQActivity {
         setContentView(R.layout.sq_activity_settings);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
 
         getFragmentManager().beginTransaction().replace(R.id.activity_settings_content, new SQSettingsFragment(),
                 SQSettingsFragment.TAG).commit();

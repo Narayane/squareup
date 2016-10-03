@@ -25,16 +25,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +35,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
@@ -58,9 +50,9 @@ import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.SQDrawerActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventsListAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -80,22 +72,12 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Sébastien BALARD on 27/02/2016.
  */
-public class SQHomeActivity extends SQActivity {
+public class SQHomeActivity extends SQDrawerActivity {
 
-    @BindView(R.id.sq_activity_home_layout_drawer)
-    protected DrawerLayout mDrawerLayout;
-    @BindView(R.id.sq_activity_home_navigationview)
-    protected NavigationView mNavigationView;
     @BindView(R.id.sq_activity_home_nestedscrollview_empty)
     protected NestedScrollView mEmptyView;
     @BindView(R.id.sq_activity_home_recyclerview)
     protected RecyclerView mRecyclerView;
-
-    protected AppCompatImageView mImageViewProfile;
-    protected AppCompatTextView mTextViewDisplayName;
-    protected AppCompatTextView mTextViewEmail;
-    protected AppCompatButton mButtonConnect;
-    protected AppCompatButton mButtonDisconnect;
 
     private ActionMode mActionMode;
     private SQEventsListAdapter mAdapter;
@@ -124,91 +106,10 @@ public class SQHomeActivity extends SQActivity {
         setContentView(R.layout.sq_activity_home);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        ActionBarDrawerToggle vDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .sq_actions_open_drawer, R.string.sq_actions_close_drawer);
-        mDrawerLayout.addDrawerListener(vDrawerToggle);
-        vDrawerToggle.syncState();
-
+        initToolbar();
+        initDrawer();
         initNavigationView();
-
-        mEvents = new ArrayList<>();
-        mAdapter = new SQEventsListAdapter(mEvents);
-        mAdapter.setOnEventActionListener(new SQEventsListAdapter.OnEventActionListener() {
-            @Override
-            public SQActivity getActivity() {
-                return SQHomeActivity.this;
-            }
-
-            @Override
-            public void onEdit(Long pEventId) {
-                if (!SQPermissionsUtils.hasPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS)) {
-                    mEventIdToEdit = pEventId;
-                    SQPermissionsUtils.requestPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS, SQConstants
-                            .NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
-                } else {
-                    startActivityForResult(SQEditEventActivity.getIntentToEdit(SQHomeActivity.this, pEventId),
-                            SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
-
-                }
-            }
-
-            @Override
-            public void onDuplicate(Long pEventId) {
-                startActivityForResult(SQEditEventActivity.getIntentToDuplicate(SQHomeActivity.this, pEventId), SQConstants
-                        .NOTIFICATION_REQUEST_CREATE_EVENT);
-            }
-
-            @Override
-            public void onShare(Long pEventId) {
-
-            }
-
-            @Override
-            public void onDelete(Long pEventId) {
-                SQDialogUtils.showDialogYesNo(SQHomeActivity.this, R.string.sq_dialog_title_warning, R
-                                .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
-                        (pDialogInterface, pWhich) -> {
-                            deleteEvent(pEventId);
-                            SQFabricUtils.AnswersUtils.logDeleteEvent();
-                            pDialogInterface.dismiss();
-                        }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
-            }
-        });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator() {
-            @Override
-            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder pViewHolder) {
-                return true;
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
-                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
-            @Override
-            public void onClick(View pView, int pPosition) {
-                SQLog.v("onClick");
-                /*if (mActionMode != null) {
-                    performSelection(pPosition);
-                }*/
-            }
-
-            @Override
-            public void onLongClick(View pView, int pPosition) {
-                SQLog.v("onLongClick");
-                /*if (mActionMode == null) {
-                    mActionMode = startSupportActionMode(mActionModeCallback);
-                }
-                performSelection(pPosition);*/
-            }
-
-            @Override
-            public boolean isEnabled(int pPosition) {
-                return true;
-            }
-        }));
+        initRecyclerView();
     }
 
     @Override
@@ -236,17 +137,8 @@ public class SQHomeActivity extends SQActivity {
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_LOGIN:
                 if (pResultCode == RESULT_OK) {
-                    FirebaseUser vUser = SQFirebaseUtils.getFirebaseUser();
-                    Picasso.with(this)
-                            .load(vUser.getPhotoUrl())
-                            .placeholder(R.mipmap.ic_launcher)
-                            /*.error(R.drawable.user_placeholder_error)*/
-                            .into(mImageViewProfile);
-                    mTextViewDisplayName.setText(vUser.getDisplayName());
-                    mTextViewEmail.setText(vUser.getEmail());
-                    mButtonDisconnect.setVisibility(View.VISIBLE);
-                    mButtonConnect.setVisibility(View.GONE);
-                    onBackPressed();
+                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                    setUserProfile();
                 }
                 break;
             case SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT:
@@ -294,6 +186,7 @@ public class SQHomeActivity extends SQActivity {
     protected void onResume() {
         super.onResume();
         SQLog.v("onResume");
+        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
         mToolbar.setTitle(getString(R.string.sq_commons_my_events));
         checkCurrenciesRates();
 
@@ -302,16 +195,6 @@ public class SQHomeActivity extends SQActivity {
     //endregion
 
     //region ui events
-    @Override
-    public void onBackPressed() {
-        SQLog.v("onBackPressed");
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     @OnClick(R.id.sq_activity_home_fab)
     protected void onNewEventButtonClick(View pView) {
         SQLog.i("click on button: new event");
@@ -457,47 +340,82 @@ public class SQHomeActivity extends SQActivity {
         }
     }
 
-    private void initNavigationView() {
-        mNavigationView.setNavigationItemSelectedListener(pMenuItem -> {
-            switch (pMenuItem.getItemId()) {
-                case R.id.sq_menu_drawer_item_event:
-                    SQLog.i("click on drawer menu item: events list");
-                    break;
-                case R.id.sq_menu_drawer_item_currency:
-                    SQLog.i("click on drawer menu item: currencies list");
-                    startActivity(SQCurrenciesListActivity.getIntent(SQHomeActivity.this));
-                    break;
-                default:
-                    break;
+    private void initRecyclerView() {
+        mEvents = new ArrayList<>();
+        mAdapter = new SQEventsListAdapter(mEvents);
+        mAdapter.setOnEventActionListener(new SQEventsListAdapter.OnEventActionListener() {
+            @Override
+            public SQActivity getActivity() {
+                return SQHomeActivity.this;
             }
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            return true;
+
+            @Override
+            public void onEdit(Long pEventId) {
+                if (!SQPermissionsUtils.hasPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS)) {
+                    mEventIdToEdit = pEventId;
+                    SQPermissionsUtils.requestPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS, SQConstants
+                            .NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS);
+                } else {
+                    startActivityForResult(SQEditEventActivity.getIntentToEdit(SQHomeActivity.this, pEventId),
+                            SQConstants.NOTIFICATION_REQUEST_EDIT_EVENT);
+
+                }
+            }
+
+            @Override
+            public void onDuplicate(Long pEventId) {
+                startActivityForResult(SQEditEventActivity.getIntentToDuplicate(SQHomeActivity.this, pEventId), SQConstants
+                        .NOTIFICATION_REQUEST_CREATE_EVENT);
+            }
+
+            @Override
+            public void onShare(Long pEventId) {
+
+            }
+
+            @Override
+            public void onDelete(Long pEventId) {
+                SQDialogUtils.showDialogYesNo(SQHomeActivity.this, R.string.sq_dialog_title_warning, R
+                                .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
+                        (pDialogInterface, pWhich) -> {
+                            deleteEvent(pEventId);
+                            SQFabricUtils.AnswersUtils.logDeleteEvent();
+                            pDialogInterface.dismiss();
+                        }, (pDialogInterface, pWhich) -> pDialogInterface.dismiss());
+            }
         });
-        mNavigationView.setCheckedItem(R.id.sq_menu_drawer_item_event);
-        mImageViewProfile = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
-                .sq_widget_drawer_imageview_profile);
-        mTextViewDisplayName = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
-                .sq_widget_drawer_textview_display_name);
-        mTextViewEmail = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
-                .sq_widget_drawer_textview_email);
-        mButtonConnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
-                .sq_widget_drawer_button_connect);
-        mButtonConnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: connect");
-            startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder pViewHolder) {
+                return true;
+            }
         });
-        mButtonDisconnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
-                .sq_widget_drawer_button_disconnect);
-        mButtonDisconnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: disconnect");
-            SQFirebaseUtils.signOut();
-            mImageViewProfile.setImageResource(R.mipmap.ic_launcher);
-            mTextViewDisplayName.setText("-");
-            mTextViewEmail.setText("-");
-            mButtonDisconnect.setVisibility(View.GONE);
-            mButtonConnect.setVisibility(View.VISIBLE);
-            onBackPressed();
-        });
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
+                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
+                    @Override
+                    public void onClick(View pView, int pPosition) {
+                        SQLog.v("onClick");
+                /*if (mActionMode != null) {
+                    performSelection(pPosition);
+                }*/
+                    }
+
+                    @Override
+                    public void onLongClick(View pView, int pPosition) {
+                        SQLog.v("onLongClick");
+                /*if (mActionMode == null) {
+                    mActionMode = startSupportActionMode(mActionModeCallback);
+                }
+                performSelection(pPosition);*/
+                    }
+
+                    @Override
+                    public boolean isEnabled(int pPosition) {
+                        return true;
+                    }
+                }));
     }
     //endregion
 

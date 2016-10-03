@@ -53,8 +53,8 @@ public class SQSettingsFragment extends PreferenceFragment implements SharedPref
         SQLog.v("onCreate");
         addPreferencesFromResource(R.xml.sq_settings);
 
-        mFrequencyUpdatePreferenceList = (ListPreference) getPreferenceScreen().findPreference(SQConstants.USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY);
-        mLastUpdatePreference = (Preference) getPreferenceScreen().findPreference(SQConstants.USER_PREFERENCE_CURRENCIES_LAST_UPDATE);
+        mFrequencyUpdatePreferenceList = (ListPreference) getPreferenceScreen().findPreference(SQConstants.PREFERENCE_CURRENCIES_UPDATE_FREQUENCY);
+        mLastUpdatePreference = (Preference) getPreferenceScreen().findPreference(SQConstants.PREFERENCE_CURRENCIES_LAST_UPDATE);
     }
 
     @Override

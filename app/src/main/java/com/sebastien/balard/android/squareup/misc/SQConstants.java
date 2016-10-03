@@ -53,8 +53,13 @@ public interface SQConstants {
 
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 
-    String USER_PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
-    String USER_PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
+    String PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
+    String PREFERENCE_CURRENCIES_LAST_UPDATE = "preference_currency_last_update_date";
+    String PREFERENCE_USER_IS_LOGGED = "preference_user_is_logged";
+    String PREFERENCE_USER_DISPLAY_NAME = "preference_user_display_name";
+    String PREFERENCE_USER_EMAIL = "preference_user_email";
+    String PREFERENCE_USER_PHOTO_URL = "preference_user_photo_url";
+    String PREFERENCE_USER_CONNECTION_PROVIDER = "preference_user_connection_provider";
 
     int NOTIFICATION_REQUEST_CREATE_EVENT = 10000;
     int NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS = 10001;

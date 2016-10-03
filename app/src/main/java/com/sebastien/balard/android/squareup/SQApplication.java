@@ -23,6 +23,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
+import com.facebook.FacebookSdk;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
@@ -54,6 +55,7 @@ public class SQApplication extends MultiDexApplication {
 
         SQFabricUtils.CrashlyticsUtils.init(this);
         JodaTimeAndroid.init(this);
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         checkBaseCurrency();
         checkDefaultConversionBase();

@@ -28,8 +28,6 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -64,16 +62,11 @@ public class SQLoginActivity extends SQActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        LoginManager.getInstance().logOut();
-        mFacebookCallback = CallbackManager.Factory.create();
         setContentView(R.layout.sq_activity_login);
         ButterKnife.bind(this);
         SQLog.v("onCreate");
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        initToolbar();
         initButtonGoogleSignIn();
         initButtonFacebookLogin();
     }
@@ -121,6 +114,7 @@ public class SQLoginActivity extends SQActivity {
     }
 
     private void initButtonFacebookLogin() {
+        mFacebookCallback = CallbackManager.Factory.create();
         mButtonFacebookLogin.setReadPermissions("email", "public_profile");
         mButtonFacebookLogin.registerCallback(mFacebookCallback, new FacebookCallback<LoginResult>() {
             @Override

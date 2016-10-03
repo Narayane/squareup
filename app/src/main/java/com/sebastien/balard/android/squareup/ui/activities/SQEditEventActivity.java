@@ -485,10 +485,5 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             }
         });
     }
-
-    private void initToolbar() {
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
     //endregion
 }
