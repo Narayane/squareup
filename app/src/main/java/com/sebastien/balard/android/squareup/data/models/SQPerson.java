@@ -54,7 +54,7 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
             foreignAutoCreate = true, foreignAutoRefresh = true, columnDefinition = "integer references " +
             SQConstants.TABLE_EVENT_NAME + "(" + SQConstants.TABLE_EVENT_COLUMN_ID + ") on delete cascade")
     protected SQEvent mEvent;
-
+    //FIXME add in db
     protected String mPhotoUriString;
 
     protected SQPerson() {
@@ -71,6 +71,11 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
         mName = pName;
         mEmail = pEmail;
         mWeight = pWeight;
+    }
+
+    public SQPerson(String pName, String pEmail, String pPhotoUriString, Integer pWeight) {
+        this(pName, pEmail, pWeight);
+        mPhotoUriString = pPhotoUriString;
     }
 
     @Override
@@ -106,9 +111,14 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
     public SQPerson clone() {
         SQPerson vClone;
         if (mContactId != null) {
-            vClone = new SQPerson(mContactId);
+            if (mContactId == 0) {
+                vClone = new SQPerson(mName, mEmail, mWeight);
+                vClone.setIsOwner();
+            } else {
+                vClone = new SQPerson(mContactId);
+            }
         } else {
-            vClone = new SQPerson(mName, mEmail, mWeight);
+            vClone = new SQPerson(mName, mEmail, mPhotoUriString, mWeight);
         }
         return vClone;
     }
@@ -151,5 +161,9 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
     public void setEvent(SQEvent pEvent) {
         mEvent = pEvent;
+    }
+
+    public void setIsOwner() {
+        mContactId = 0L;
     }
 }

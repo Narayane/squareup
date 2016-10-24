@@ -61,6 +61,18 @@ public class SQUserPreferencesUtils {
         return null;
     }
 
+    public static String getSocialProvider() {
+        return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
+                (SQConstants.PREFERENCE_SOCIAL_PROVIDER, null);
+    }
+
+    public static void setSocialProvider(String pProviderName) {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putString(SQConstants.PREFERENCE_SOCIAL_PROVIDER, pProviderName);
+        vEditor.apply();
+    }
+
     public static void setUserProfile(FirebaseUser pFirebaseUser) {
         SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
                 .edit();

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="@dimen/sq_height_navigationview"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:gravity="bottom"
               android:orientation="vertical"
               android:paddingBottom="@dimen/sq_margin_activity_vertical"
@@ -10,26 +11,11 @@
               android:paddingTop="@dimen/sq_margin_activity_vertical"
               android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/sq_widget_drawer_button_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="Connexion"/>
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/sq_widget_drawer_button_disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:visibility="gone"
-        android:text="déconnexion"/>
-
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/sq_widget_drawer_imageview_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"/>
+        android:layout_width="@dimen/sq_size_navigationview_icon"
+        android:layout_height="@dimen/sq_size_navigationview_icon"
+        app:srcCompat="@drawable/sq_ic_person_24dp"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/sq_widget_drawer_textview_display_name"
@@ -45,5 +31,21 @@
         android:layout_height="wrap_content"
         android:text="john.doe@noname.com"
         style="@style/SQTheme.TextAppearance"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/sq_widget_drawer_button_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="S'identifier"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/sq_widget_drawer_button_disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:text="Changer de compte"/>
 
 </LinearLayout>

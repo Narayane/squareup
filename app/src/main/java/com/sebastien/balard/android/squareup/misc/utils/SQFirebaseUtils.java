@@ -20,13 +20,7 @@
 package com.sebastien.balard.android.squareup.misc.utils;
 
 import com.facebook.AccessToken;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -34,7 +28,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 
@@ -46,9 +39,6 @@ public class SQFirebaseUtils {
 
     private static FirebaseAuth mAuth;
     private static FirebaseAuth.AuthStateListener mAuthListener;
-
-    private static GoogleApiClient mGoogleApiClient;
-    private static GoogleApiClient.OnConnectionFailedListener mConnectionFailedCallback;
 
     private static FirebaseUser mFirebaseUser;
 
@@ -79,31 +69,6 @@ public class SQFirebaseUtils {
 
     public static FirebaseUser getFirebaseUser() {
         return mFirebaseUser;
-    }
-
-    public static GoogleApiClient signIn(SQActivity pActivity, final GoogleApiClient.OnConnectionFailedListener
-            pConnectionFailedCallback) {
-        GoogleSignInOptions vGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions
-                .DEFAULT_SIGN_IN).requestIdToken(pActivity.getString(R.string.default_web_client_id))
-                .requestProfile().requestEmail().requestScopes(new Scope(Scopes.PLUS_LOGIN)).build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(pActivity).enableAutoManage(pActivity, pConnectionFailedCallback).addApi
-                (Auth.GOOGLE_SIGN_IN_API, vGoogleSignInOptions).build();
-        return mGoogleApiClient;
-    }
-
-    public static void signOut() {
-        LoginManager.getInstance().logOut();
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(pStatus -> {
-                if (pStatus.isSuccess()) {
-                    SQLog.d("google sign out succeeded");
-                } else {
-                    SQLog.d("google sign out failed");
-                }
-            });
-        }
-        FirebaseAuth.getInstance().signOut();
     }
 
     public static void authWithGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,

@@ -59,7 +59,7 @@ public interface SQConstants {
     String PREFERENCE_USER_DISPLAY_NAME = "preference_user_display_name";
     String PREFERENCE_USER_EMAIL = "preference_user_email";
     String PREFERENCE_USER_PHOTO_URL = "preference_user_photo_url";
-    String PREFERENCE_USER_CONNECTION_PROVIDER = "preference_user_connection_provider";
+    String PREFERENCE_SOCIAL_PROVIDER = "preference_social_provider";
 
     int NOTIFICATION_REQUEST_CREATE_EVENT = 10000;
     int NOTIFICATION_REQUEST_PERMISSION_READ_CONTACTS = 10001;

@@ -32,6 +32,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -113,7 +114,9 @@ public class SQEvent {
 
     public List<SQPerson> getParticipants() {
         if (mParticipants != null) {
-            return new ArrayList<>(mParticipants);
+            List<SQPerson> vList = new ArrayList<>(mParticipants);
+            Collections.sort(vList, (pFirst, pSecond) -> pFirst.getName().compareTo(pSecond.getName()));
+            return vList;
         } else {
             return new ArrayList<>();
         }

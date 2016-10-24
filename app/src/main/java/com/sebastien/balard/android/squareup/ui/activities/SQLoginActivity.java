@@ -21,7 +21,6 @@ package com.sebastien.balard.android.squareup.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -37,6 +36,8 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 
 import butterknife.BindView;
@@ -101,6 +102,7 @@ public class SQLoginActivity extends SQActivity {
                         SQLog.w("signInWithCredential", pTask.getException());
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     } else {
+                        SQUserPreferencesUtils.setSocialProvider("Google");
                         setResult(RESULT_OK);
                         finish();
                     }
@@ -130,6 +132,7 @@ public class SQLoginActivity extends SQActivity {
                         SQLog.w("signInWithCredential", pTask.getException());
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     } else {
+                        SQUserPreferencesUtils.setSocialProvider("Facebook");
                         setResult(RESULT_OK);
                         finish();
                     }
@@ -151,24 +154,7 @@ public class SQLoginActivity extends SQActivity {
     private void initButtonGoogleSignIn() {
         mButtonGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
         mButtonGoogleSignIn.setOnClickListener(pView -> {
-            Intent vSignInIntent = Auth.GoogleSignInApi.getSignInIntent(SQFirebaseUtils.signIn(this,
-                    pConnectionResult -> {
-                SQLog.e("google api client connection failed");
-                if (pConnectionResult.hasResolution()) {
-                    try {
-                        SQLog.d("start resolution");
-                        pConnectionResult.startResolutionForResult(SQLoginActivity.this, SQConstants
-                                .NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
-                    } catch (IntentSender.SendIntentException pSendIntentException) {
-                        SQLog.e("could not resolve connection result", pSendIntentException);
-                        //mGoogleApiClient.connect();
-                    }
-                } else {
-                    SQLog.d("could not resolve connection result");
-                    // Could not resolve the connection result, show the user an error dialog.
-                    //processError(mContext, pConnectionResult);
-                }
-            }));
+            Intent vSignInIntent = Auth.GoogleSignInApi.getSignInIntent(SQGoogleSignInUtils.getApiClient(this));
             startActivityForResult(vSignInIntent, SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
         });
     }

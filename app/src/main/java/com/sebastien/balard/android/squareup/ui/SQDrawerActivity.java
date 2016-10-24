@@ -28,10 +28,12 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
-import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQCurrenciesListActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQHomeActivity;
@@ -139,10 +141,16 @@ public class SQDrawerActivity extends SQActivity {
     }
 
     protected void logout() {
-        SQFirebaseUtils.signOut();
+        if (SQUserPreferencesUtils.getSocialProvider().equals("Facebook")) {
+            AccessToken.setCurrentAccessToken(null);
+            LoginManager.getInstance().logOut();
+        } else if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
+            SQGoogleSignInUtils.signOut(this);
+        }
         SQUserPreferencesUtils.clearUserProfile();
         setUserProfile();
-        onBackPressed();
+        login();
+        //onBackPressed();
     }
 
     protected void login() {

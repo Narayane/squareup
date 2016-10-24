@@ -47,6 +47,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
@@ -116,6 +117,9 @@ public class SQHomeActivity extends SQDrawerActivity {
     public void onStart() {
         super.onStart();
         SQFirebaseUtils.start();
+        if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
+            SQGoogleSignInUtils.connect(this);
+        }
     }
 
     @Override

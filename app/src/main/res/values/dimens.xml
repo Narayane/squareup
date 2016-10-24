@@ -25,7 +25,8 @@
     <dimen name="sq_margin_fab">16dp</dimen>
     <!-- heights -->
     <dimen name="sq_height_navigationview">200dp</dimen>
-    <dimen name="sq_height_appbar">160dp</dimen>
+    <!-- sizes -->
+    <dimen name="sq_size_navigationview_icon">48dp</dimen>
     <!-- text sizes -->
     <dimen name="sq_size_font_headline">24sp</dimen>
     <dimen name="sq_size_font_subhead">17sp</dimen>

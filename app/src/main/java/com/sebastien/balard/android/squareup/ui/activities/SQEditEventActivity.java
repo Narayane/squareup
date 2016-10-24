@@ -51,6 +51,7 @@ import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchContactFragment;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchCurrencyFragment;
@@ -376,6 +377,19 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     private Long createEvent(String pName) throws SQLException {
         mEvent.setName(pName);
         List<SQPerson> vParticipants = mChipsViewParticipants.getContacts();
+        boolean vFound = false;
+        for (SQPerson vPerson : vParticipants) {
+            if (vPerson.getContactId() != null && vPerson.getContactId() == 0) {
+                vFound = true;
+                break;
+            }
+        }
+        if (!vFound) {
+            SQPerson vOwner = new SQPerson(SQUserPreferencesUtils.getUserProfileDisplayName(), SQUserPreferencesUtils
+                    .getUserProfileEmail(), 1);
+            vOwner.setIsOwner();
+            vParticipants.add(vOwner);
+        }
         if (vParticipants.size() > 0) {
             SQDatabaseHelper.getInstance(this).getPersonDao().createAll(vParticipants, mEvent);
             SQLog.d("new event has been created with " + vParticipants.size() + " participants");
