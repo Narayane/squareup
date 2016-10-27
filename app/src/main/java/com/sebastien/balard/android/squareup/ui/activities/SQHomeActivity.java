@@ -47,7 +47,6 @@ import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
@@ -114,21 +113,6 @@ public class SQHomeActivity extends SQDrawerActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        SQFirebaseUtils.start();
-        if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
-            SQGoogleSignInUtils.connect(this);
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        SQFirebaseUtils.stop();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
         SQLog.v("onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.sq_menu_default, pMenu);
@@ -139,12 +123,6 @@ public class SQHomeActivity extends SQDrawerActivity {
     protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
         SQLog.v("onActivityResult");
         switch (pRequestCode) {
-            case SQConstants.NOTIFICATION_REQUEST_LOGIN:
-                if (pResultCode == RESULT_OK) {
-                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
-                    setUserProfile();
-                }
-                break;
             case SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
                     mEventInsertedPosition = pData.getExtras().getLong(SQConstants.EXTRA_EVENT_ID);
@@ -160,11 +138,12 @@ public class SQHomeActivity extends SQDrawerActivity {
             case SQConstants.NOTIFICATION_REQUEST_LOGIN_TO_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
                     SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
-                    setUserProfile();
+                    refreshNavigationView();
                     startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
                 }
                 break;
             default:
+                super.onActivityResult(pRequestCode, pResultCode, pData);
                 break;
         }
     }

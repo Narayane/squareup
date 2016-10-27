@@ -24,7 +24,7 @@
     <dimen name="sq_margin_activity_vertical">16dp</dimen>
     <dimen name="sq_margin_fab">16dp</dimen>
     <!-- heights -->
-    <dimen name="sq_height_navigationview">200dp</dimen>
+    <dimen name="sq_height_navigationview">250dp</dimen>
     <!-- sizes -->
     <dimen name="sq_size_navigationview_icon">48dp</dimen>
     <!-- text sizes -->

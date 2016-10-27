@@ -15,6 +15,7 @@
         android:id="@+id/sq_widget_drawer_imageview_profile"
         android:layout_width="@dimen/sq_size_navigationview_icon"
         android:layout_height="@dimen/sq_size_navigationview_icon"
+        android:visibility="gone"
         app:srcCompat="@drawable/sq_ic_person_24dp"/>
 
     <android.support.v7.widget.AppCompatTextView
@@ -22,14 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/sq_margin_activity_vertical"
-        android:text="John Doe"
+        android:visibility="gone"
         style="@style/SQTheme.TextAppearance"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/sq_widget_drawer_textview_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="john.doe@noname.com"
+        android:visibility="gone"
         style="@style/SQTheme.TextAppearance"/>
 
     <android.support.v7.widget.AppCompatButton

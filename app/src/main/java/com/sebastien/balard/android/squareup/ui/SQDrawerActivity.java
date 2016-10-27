@@ -19,6 +19,7 @@
 
 package com.sebastien.balard.android.squareup.ui;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +34,7 @@ import com.facebook.login.LoginManager;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQCurrenciesListActivity;
@@ -61,9 +63,43 @@ public class SQDrawerActivity extends SQActivity {
     protected AppCompatButton mButtonDisconnect;
 
     @Override
+    protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
+        SQLog.v("onActivityResult");
+        switch (pRequestCode) {
+            case SQConstants.NOTIFICATION_REQUEST_LOGIN:
+                if (pResultCode == RESULT_OK) {
+                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SQLog.v("onStart");
+        SQFirebaseUtils.start();
+        if (SQUserPreferencesUtils.getSocialProvider() != null && SQUserPreferencesUtils.getSocialProvider().equals
+                ("Google")) {
+            SQGoogleSignInUtils.connect(this);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        setUserProfile();
+        SQLog.v("onResume");
+        refreshNavigationView();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SQLog.v("onStop");
+        SQGoogleSignInUtils.disconnect();
+        SQFirebaseUtils.stop();
     }
 
     //region ui events
@@ -85,18 +121,21 @@ public class SQDrawerActivity extends SQActivity {
     }
 
     //region private methods
-    protected void setUserProfile() {
+    protected void refreshNavigationView() {
         if (SQUserPreferencesUtils.isUserConnected()) {
+            mImageViewProfile.setVisibility(View.VISIBLE);
             Picasso.with(this).load(SQUserPreferencesUtils.getUserProfilePhotoUri()).placeholder(R.mipmap.ic_launcher)
                 /*.error(R.drawable.user_placeholder_error)*/.into(mImageViewProfile);
+            mTextViewDisplayName.setVisibility(View.VISIBLE);
             mTextViewDisplayName.setText(SQUserPreferencesUtils.getUserProfileDisplayName());
+            mTextViewEmail.setVisibility(View.VISIBLE);
             mTextViewEmail.setText(SQUserPreferencesUtils.getUserProfileEmail());
             mButtonDisconnect.setVisibility(View.VISIBLE);
             mButtonConnect.setVisibility(View.GONE);
         } else {
-            mImageViewProfile.setImageResource(R.mipmap.ic_launcher);
-            mTextViewDisplayName.setText("-");
-            mTextViewEmail.setText("-");
+            mImageViewProfile.setVisibility(View.GONE);
+            mTextViewDisplayName.setVisibility(View.GONE);
+            mTextViewEmail.setVisibility(View.GONE);
             mButtonDisconnect.setVisibility(View.GONE);
             mButtonConnect.setVisibility(View.VISIBLE);
         }
@@ -145,10 +184,11 @@ public class SQDrawerActivity extends SQActivity {
             AccessToken.setCurrentAccessToken(null);
             LoginManager.getInstance().logOut();
         } else if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
-            SQGoogleSignInUtils.signOut(this);
+            SQGoogleSignInUtils.signOut();
         }
         SQUserPreferencesUtils.clearUserProfile();
-        setUserProfile();
+        refreshNavigationView();
+        SQFirebaseUtils.signOut();
         login();
         //onBackPressed();
     }

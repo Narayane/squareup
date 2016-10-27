@@ -39,7 +39,6 @@ public class SQFirebaseUtils {
 
     private static FirebaseAuth mAuth;
     private static FirebaseAuth.AuthStateListener mAuthListener;
-
     private static FirebaseUser mFirebaseUser;
 
     public static void start() {
@@ -71,19 +70,37 @@ public class SQFirebaseUtils {
         return mFirebaseUser;
     }
 
-    public static void authWithGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
-                                       OnCompleteListener<AuthResult> pOnCompleteListener) {
-        SQLog.d("authWithGoogle: " + pGoogleSignInAccount.getId());
-
-        AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
-        mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+    public static void signOut() {
+        FirebaseAuth.getInstance().signOut();
     }
 
-    public static void authWithFacebook(SQActivity pActivity, AccessToken pAccessToken,
-                                      OnCompleteListener<AuthResult> pOnCompleteListener) {
-        SQLog.d("authWithFacebook: " + pAccessToken.getToken());
+    public static void authenticateByGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
+                                            OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authenticateByGoogle: " + pGoogleSignInAccount.getId());
+
+        AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
+        if (mFirebaseUser != null) {
+            SQLog.d("linkWithCredential");
+            mAuth.getCurrentUser().linkWithCredential(vCredential).addOnCompleteListener(pActivity,
+                    pOnCompleteListener);
+        } else {
+            SQLog.d("signInWithCredential");
+            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        }
+    }
+
+    public static void authenticateByFacebook(SQActivity pActivity, AccessToken pAccessToken,
+                                              OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authenticateByFacebook: " + pAccessToken.getToken());
 
         AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
-        mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        if (mFirebaseUser != null) {
+            SQLog.d("linkWithCredential");
+            mAuth.getCurrentUser().linkWithCredential(vCredential).addOnCompleteListener(pActivity,
+                    pOnCompleteListener);
+        } else {
+            SQLog.d("signInWithCredential");
+            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        }
     }
 }

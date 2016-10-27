@@ -41,6 +41,7 @@ public class SQGoogleSignInUtils {
 
     public static GoogleApiClient getApiClient(SQActivity pActivity) {
         if (mGoogleApiClient == null) {
+            SQLog.v("create google api client");
             GoogleSignInOptions vGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions
                     .DEFAULT_SIGN_IN).requestIdToken(pActivity.getString(R.string.default_web_client_id))
                     .requestProfile().requestEmail().requestScopes(new Scope(Scopes.PLUS_LOGIN)).build();
@@ -61,28 +62,33 @@ public class SQGoogleSignInUtils {
                     // Could not resolve the connection result, show the user an error dialog.
                     //processError(mContext, pConnectionResult);
                 }
-            }).addApi
-                    (Auth.GOOGLE_SIGN_IN_API, vGoogleSignInOptions).build();
+            }).addApi(Auth.GOOGLE_SIGN_IN_API, vGoogleSignInOptions).build();
         }
         return mGoogleApiClient;
     }
 
     public static void connect(SQActivity pActivity) {
+        SQLog.v("connect");
         getApiClient(pActivity).connect();
     }
 
     public static void disconnect() {
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            SQLog.v("disconnect");
+            mGoogleApiClient.disconnect();
+        }
     }
 
-    public static void signOut(SQActivity pActivity) {
-        Auth.GoogleSignInApi.signOut(getApiClient(pActivity)).setResultCallback(pStatus -> {
-            if (pStatus.isSuccess()) {
-                SQLog.d("google sign out succeeded");
-            } else {
-                SQLog.d("google sign out failed");
-            }
-        });
-        //FirebaseAuth.getInstance().signOut();
+    public static void signOut() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(pStatus -> {
+                if (pStatus.isSuccess()) {
+                    SQLog.d("google sign out succeeded");
+                    mGoogleApiClient.disconnect();
+                } else {
+                    SQLog.w("google sign out failed");
+                }
+            });
+        }
     }
 }

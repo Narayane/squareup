@@ -92,14 +92,19 @@ public class SQLoginActivity extends SQActivity {
             GoogleSignInResult vSignInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(pData);
             if (vSignInResult.isSuccess()) {
                 // Signed in successfully, show authenticated UI.
-                SQFirebaseUtils.authWithGoogle(SQLoginActivity.this, vSignInResult.getSignInAccount(), pTask -> {
-                    SQLog.d("signInWithCredential:onComplete:" + pTask.isSuccessful());
+                SQFirebaseUtils.authenticateByGoogle(SQLoginActivity.this, vSignInResult.getSignInAccount(), pTask -> {
+                    SQLog.v("authenticateByGoogle: " + pTask.isSuccessful());
 
                     // If sign in fails, display a message to the user. If sign in succeeds
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
                     if (!pTask.isSuccessful()) {
-                        SQLog.w("signInWithCredential", pTask.getException());
+                        SQLog.w("authenticateByGoogle", pTask.getException());
+                        /*if (pTask.getException().getMessage().contains("User has already been linked to the given " +
+                                "provider")) {
+                            SQGoogleSignInUtils.signOut(this);
+                            SQFirebaseUtils.signOut();
+                        }*/
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         SQUserPreferencesUtils.setSocialProvider("Google");
@@ -122,14 +127,20 @@ public class SQLoginActivity extends SQActivity {
             @Override
             public void onSuccess(LoginResult pLoginResult) {
                 SQLog.v("onSuccess:" + pLoginResult);
-                SQFirebaseUtils.authWithFacebook(SQLoginActivity.this, pLoginResult.getAccessToken(), pTask -> {
-                    SQLog.d("signInWithCredential:onComplete:" + pTask.isSuccessful());
+                SQFirebaseUtils.authenticateByFacebook(SQLoginActivity.this, pLoginResult.getAccessToken(), pTask -> {
+                    SQLog.d("authenticateByFacebook: " + pTask.isSuccessful());
 
                     // If sign in fails, display a message to the user. If sign in succeeds
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
                     if (!pTask.isSuccessful()) {
-                        SQLog.w("signInWithCredential", pTask.getException());
+                        SQLog.w("authenticateByFacebook", pTask.getException());
+                        /*if (pTask.getException().getMessage().contains("User has already been linked to the given " +
+                                "provider")) {
+                            AccessToken.setCurrentAccessToken(null);
+                            LoginManager.getInstance().logOut();
+                            SQFirebaseUtils.signOut();
+                        }*/
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         SQUserPreferencesUtils.setSocialProvider("Facebook");
