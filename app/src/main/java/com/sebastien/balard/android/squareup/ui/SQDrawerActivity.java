@@ -175,8 +175,22 @@ public class SQDrawerActivity extends SQActivity {
                 .sq_widget_drawer_button_disconnect);
         mButtonDisconnect.setOnClickListener(pView -> {
             SQLog.i("click on button: logout");
-            logout();
+            //logout();
+            updateProfile();
         });
+    }
+
+    protected void updateProfile() {
+        if (SQUserPreferencesUtils.getSocialProvider().equals("Facebook")) {
+            AccessToken.setCurrentAccessToken(null);
+            LoginManager.getInstance().logOut();
+        } else if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
+            SQGoogleSignInUtils.signOut();
+        }
+        //SQUserPreferencesUtils.clearUserProfile();
+        //refreshNavigationView();
+        //SQFirebaseUtils.signOut();
+        login();
     }
 
     protected void logout() {
@@ -190,7 +204,6 @@ public class SQDrawerActivity extends SQActivity {
         refreshNavigationView();
         SQFirebaseUtils.signOut();
         login();
-        //onBackPressed();
     }
 
     protected void login() {

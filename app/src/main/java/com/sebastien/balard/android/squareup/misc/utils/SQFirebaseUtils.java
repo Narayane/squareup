@@ -74,17 +74,121 @@ public class SQFirebaseUtils {
         FirebaseAuth.getInstance().signOut();
     }
 
+    /*public static void linkWithFacebook(SQActivity pActivity, AccessToken pAccessToken,
+                                         OnCompleteListener<AuthResult> pOnCompleteListener) {
+        AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
+        try {
+            FirebaseUser vFirebaseUser = Tasks.await(mAuth.signInWithCredential(vCredential)).getUser();
+            mFirebaseUser.updateEmail(vFirebaseUser.getEmail()).addOnCompleteListener(pTask -> SQLog.d("succeed in " +
+                    "email " + "update"));
+            mFirebaseUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(vFirebaseUser
+                    .getDisplayName()).setPhotoUri(vFirebaseUser.getPhotoUrl()).build()).addOnCompleteListener(pTask
+                    -> SQLog.d("succeed in profile update"));
+            SQLog.d("linkWithCredential");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        } catch (ExecutionException pException) {
+            SQLog.e("fail to link", pException);
+        } catch (InterruptedException pException) {
+            SQLog.e("fail to link", pException);
+        }
+    }
+
+    public static void linkWithGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
+                                      OnCompleteListener<AuthResult> pOnCompleteListener) {
+        AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
+        //try {
+
+        mFirebaseUser.linkWithCredential(vCredential).addOnSuccessListener(pAuthResult -> {
+            mAuth.signInWithCredential(vCredential).continueWithTask(pTask -> {
+                FirebaseUser vFirebaseUser = pTask.getResult().getUser();
+                return mFirebaseUser.updateEmail(vFirebaseUser.getEmail());
+            }).addOnCompleteListener(pOnCompleteListener);
+        }).addOnFailureListener(pE
+                -> {});
+
+            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pTask -> {
+                FirebaseUser vFirebaseUser = pTask.getResult().getUser();
+                mFirebaseUser.updateEmail(vFirebaseUser.getEmail()).addOnCompleteListener(pTask1 -> SQLog.d("succeed " +
+                        "in "
+                        + "email update"));
+                mFirebaseUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(vFirebaseUser
+                        .getDisplayName()).setPhotoUri(vFirebaseUser.getPhotoUrl()).build()).addOnCompleteListener
+                        (pTask2
+                        -> SQLog.d("succeed in profile update"));
+            });
+
+            mAuth.signInWithCredential(vCredential).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
+                @Override
+                public Task<Void> then(@NonNull Task<AuthResult> task) throws Exception {
+                    // Take the result from the first task and start the second one
+                    AuthResult result = task.getResult();
+                    FirebaseUser vFirebaseUser = result.getUser();
+                    return mFirebaseUser.updateEmail(vFirebaseUser.getEmail());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void s) {
+                    // Chain of tasks completed successfully, got result from last task.
+                    // ...
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // One of the tasks in the chain failed with an exception.
+                    // ...
+                }
+            });
+
+            //FIXME: do not this in main thread
+            FirebaseUser vFirebaseUser = Tasks.await(mAuth.signInWithCredential(vCredential)).getUser();
+            mFirebaseUser.updateEmail(vFirebaseUser.getEmail()).addOnCompleteListener(pTask -> SQLog.d("succeed in "
+                    + "email update"));
+            mFirebaseUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(vFirebaseUser
+                    .getDisplayName()).setPhotoUri(vFirebaseUser.getPhotoUrl()).build()).addOnCompleteListener(pTask
+                    -> SQLog.d("succeed in profile update"));
+            SQLog.d("linkWithCredential");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        } catch (ExecutionException pException) {
+            SQLog.e("fail to link", pException);
+        } catch (InterruptedException pException) {
+            SQLog.e("fail to link", pException);
+        }
+    }
+
+    public static void mergeWithFacebook(SQActivity pActivity, AccessToken pAccessToken,
+                                         OnCompleteListener<AuthResult> pOnCompleteListener) {
+        AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
+        FirebaseUser vFirebaseUser = mAuth.signInWithCredential(vCredential).getResult().getUser();
+        mFirebaseUser.updateEmail(vFirebaseUser.getEmail()).addOnCompleteListener(pTask -> SQLog.d("succeed in email " +
+                "update"));
+        mFirebaseUser.updateProfile(new UserProfileChangeRequest.Builder()
+                .setDisplayName(vFirebaseUser.getDisplayName())
+                .setPhotoUri(vFirebaseUser.getPhotoUrl())
+                .build()).addOnCompleteListener(pTask -> SQLog.d("succeed in profile update"));
+    }
+
+    public static void mergeWithGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
+                                       OnCompleteListener<AuthResult> pOnCompleteListener) {
+        AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
+        FirebaseUser vFirebaseUser = mAuth.signInWithCredential(vCredential).getResult().getUser();
+        mFirebaseUser.updateEmail(vFirebaseUser.getEmail()).addOnCompleteListener(pTask -> SQLog.d("succeed in email " +
+                "update"));
+        mFirebaseUser.updateProfile(new UserProfileChangeRequest.Builder()
+                .setDisplayName(vFirebaseUser.getDisplayName())
+                .setPhotoUri(vFirebaseUser.getPhotoUrl())
+                .build()).addOnCompleteListener(pTask -> SQLog.d("succeed in profile update"));
+    }*/
+
     public static void authenticateByGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
                                             OnCompleteListener<AuthResult> pOnCompleteListener) {
         SQLog.d("authenticateByGoogle: " + pGoogleSignInAccount.getId());
 
         AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
-        if (mFirebaseUser != null) {
-            SQLog.d("linkWithCredential");
-            mAuth.getCurrentUser().linkWithCredential(vCredential).addOnCompleteListener(pActivity,
-                    pOnCompleteListener);
+        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
+            SQLog.v("linkWith");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
         } else {
-            SQLog.d("signInWithCredential");
+            SQLog.v("signIn");
             mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
         }
     }
@@ -94,12 +198,11 @@ public class SQFirebaseUtils {
         SQLog.d("authenticateByFacebook: " + pAccessToken.getToken());
 
         AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
-        if (mFirebaseUser != null) {
-            SQLog.d("linkWithCredential");
-            mAuth.getCurrentUser().linkWithCredential(vCredential).addOnCompleteListener(pActivity,
-                    pOnCompleteListener);
+        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
+            SQLog.v("linkWith");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
         } else {
-            SQLog.d("signInWithCredential");
+            SQLog.v("signIn");
             mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
         }
     }
