@@ -45,7 +45,6 @@ import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFabricUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQPermissionsUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
@@ -137,7 +136,7 @@ public class SQHomeActivity extends SQDrawerActivity {
                 break;
             case SQConstants.NOTIFICATION_REQUEST_LOGIN_TO_CREATE_EVENT:
                 if (pResultCode == RESULT_OK) {
-                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                    //SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
                     refreshNavigationView();
                     startActivityForResult(SQEditEventActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_CREATE_EVENT);
                 }

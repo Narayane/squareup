@@ -19,19 +19,24 @@
 
 package com.sebastien.balard.android.squareup.ui.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.Status;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -54,6 +59,7 @@ public class SQLoginActivity extends SQActivity {
     @BindView(R.id.sq_activity_login_button_facebook_login)
     LoginButton mButtonFacebookLogin;
 
+    private ProgressDialog mProgressDialog;
     private CallbackManager mFacebookCallback;
 
     public final static Intent getIntent(Context pContext) {
@@ -89,32 +95,37 @@ public class SQLoginActivity extends SQActivity {
         super.onActivityResult(pRequestCode, pResultCode, pData);
         SQLog.v("onActivityResult");
         if (pRequestCode == SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN) {
-            GoogleSignInResult vSignInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(pData);
-            if (vSignInResult.isSuccess()) {
-                // Signed in successfully, show authenticated UI.
-                SQFirebaseUtils.authenticateByGoogle(SQLoginActivity.this, vSignInResult.getSignInAccount(), pTask -> {
-                    SQLog.v("authenticateByGoogle: " + pTask.isSuccessful());
+            SQGoogleSignInUtils.processSignInResultIntent(pData, new SQGoogleSignInUtils.OnSignInListener() {
+                @Override
+                public void onSuccess(GoogleSignInAccount pSignInAccount) {
+                    mProgressDialog = ProgressDialog.show(SQLoginActivity.this, "Please wait", "Sign in in " +
+                            "progress...", true);
+                    SQFirebaseUtils.authenticateByGoogle(SQLoginActivity.this, pSignInAccount.getIdToken(), pTask -> {
+                        if (!pTask.isSuccessful()) {
+                            SQLog.e("fail to authenticate in Firebase", pTask.getException());
+                            Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            SQLog.d("succeed in authenticate in Firebase");
+                            SQUserPreferencesUtils.setSocialProvider("Google");
+                            SQUserPreferencesUtils.setUserConnected();
+                            SQUserPreferencesUtils.setUserDisplayName(pSignInAccount.getDisplayName());
+                            SQUserPreferencesUtils.setUserEmail(pSignInAccount.getEmail());
+                            SQUserPreferencesUtils.setUserPhotoUri(pSignInAccount.getPhotoUrl());
+                            SQGoogleSignInUtils.signOut(SQLoginActivity.this);
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
+                    });
+                }
 
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
-                    if (!pTask.isSuccessful()) {
-                        SQLog.w("authenticateByGoogle", pTask.getException());
-                        /*if (pTask.getException().getMessage().contains("User has already been linked to the given " +
-                                "provider")) {
-                            SQGoogleSignInUtils.signOut(this);
-                            SQFirebaseUtils.signOut();
-                        }*/
-                        Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        SQUserPreferencesUtils.setSocialProvider("Google");
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                });
-            } else {
-                // Signed out, show unauthenticated UI.
-            }
+                @Override
+                public void onError(Status pStatus) {
+                    SQLog.e("fail to authenticate in Google: " + pStatus);
+                }
+            });
         } else {
             mFacebookCallback.onActivityResult(pRequestCode, pResultCode, pData);
         }
@@ -127,25 +138,42 @@ public class SQLoginActivity extends SQActivity {
             @Override
             public void onSuccess(LoginResult pLoginResult) {
                 SQLog.v("onSuccess:" + pLoginResult);
-                SQFirebaseUtils.authenticateByFacebook(SQLoginActivity.this, pLoginResult.getAccessToken(), pTask -> {
+                mProgressDialog = ProgressDialog.show(SQLoginActivity.this, "Please wait", "Sign in in " +
+                        "progress...", true);
+                SQFirebaseUtils.authenticateByFacebook(SQLoginActivity.this, pLoginResult.getAccessToken().getToken(), pTask -> {
                     SQLog.d("authenticateByFacebook: " + pTask.isSuccessful());
-
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
                     if (!pTask.isSuccessful()) {
                         SQLog.w("authenticateByFacebook", pTask.getException());
-                        /*if (pTask.getException().getMessage().contains("User has already been linked to the given " +
-                                "provider")) {
-                            AccessToken.setCurrentAccessToken(null);
-                            LoginManager.getInstance().logOut();
-                            SQFirebaseUtils.signOut();
-                        }*/
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         SQUserPreferencesUtils.setSocialProvider("Facebook");
-                        setResult(RESULT_OK);
-                        finish();
+                        SQUserPreferencesUtils.setUserConnected();
+                        Profile vProfile = Profile.getCurrentProfile();
+                        SQUserPreferencesUtils.setUserDisplayName(vProfile.getFirstName() + " " + vProfile
+                                .getLastName());
+                        SQUserPreferencesUtils.setUserPhotoUri(vProfile.getProfilePictureUri(300, 300));
+
+                        Bundle vBundle = new Bundle();
+                        vBundle.putString("fields", "email");
+                        GraphRequest vGraphRequest = GraphRequest.newMeRequest(pLoginResult.getAccessToken(),
+                                (pJSONObject, pGraphResponse) -> {
+                            if (pGraphResponse.getError() != null) {
+                                SQLog.e("fail to get Facebook email", pGraphResponse.getError().getException());
+                            } else {
+                                String vEmail = pJSONObject.optString("email");
+                                SQLog.d("succeed in get Facebook email: " + vEmail);
+                                SQUserPreferencesUtils.setUserEmail(pJSONObject.optString("email"));
+                            }
+                            AccessToken.setCurrentAccessToken(null);
+                            LoginManager.getInstance().logOut();
+                            setResult(RESULT_OK);
+                            finish();
+                        });
+                        vGraphRequest.setParameters(vBundle);
+                        vGraphRequest.executeAsync();
+                    }
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
                     }
                 });
             }
@@ -165,8 +193,8 @@ public class SQLoginActivity extends SQActivity {
     private void initButtonGoogleSignIn() {
         mButtonGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
         mButtonGoogleSignIn.setOnClickListener(pView -> {
-            Intent vSignInIntent = Auth.GoogleSignInApi.getSignInIntent(SQGoogleSignInUtils.getApiClient(this));
-            startActivityForResult(vSignInIntent, SQConstants.NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
+            startActivityForResult(SQGoogleSignInUtils.getSignInIntent(this), SQConstants
+                    .NOTIFICATION_REQUEST_GOOGLE_SIGN_IN);
         });
     }
 }

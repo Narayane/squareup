@@ -347,7 +347,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     private void updateEvent(String pName) throws SQLException {
         List<SQPerson> mListContactsSelected = mChipsViewParticipants.getContacts();
         for (SQPerson vPerson : mEvent.getParticipants()) {
-            if (!mListContactsSelected.contains(vPerson)) {
+            if (!mListContactsSelected.contains(vPerson) && !vPerson.isOwner()) {
                 //mListPeopleToDelete.add(vPerson);
                 SQLog.v("delete participant: " + vPerson.getName());
                 SQDatabaseHelper.getInstance(SQEditEventActivity.this).getPersonDao().delete(vPerson);
@@ -385,8 +385,8 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
             }
         }
         if (!vFound) {
-            SQPerson vOwner = new SQPerson(SQUserPreferencesUtils.getUserProfileDisplayName(), SQUserPreferencesUtils
-                    .getUserProfileEmail(), 1);
+            SQPerson vOwner = new SQPerson(SQUserPreferencesUtils.getUserDisplayName(), SQUserPreferencesUtils
+                    .getUserEmail(), 1);
             vOwner.setIsOwner();
             vParticipants.add(vOwner);
         }

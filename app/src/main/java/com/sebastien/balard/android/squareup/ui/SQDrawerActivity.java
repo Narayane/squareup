@@ -29,13 +29,10 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
-import com.facebook.AccessToken;
-import com.facebook.login.LoginManager;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
-import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.activities.SQCurrenciesListActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQHomeActivity;
@@ -60,7 +57,7 @@ public class SQDrawerActivity extends SQActivity {
     protected AppCompatTextView mTextViewDisplayName;
     protected AppCompatTextView mTextViewEmail;
     protected AppCompatButton mButtonConnect;
-    protected AppCompatButton mButtonDisconnect;
+    protected AppCompatButton mButtonUpdateProfile;
 
     @Override
     protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
@@ -68,7 +65,7 @@ public class SQDrawerActivity extends SQActivity {
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_LOGIN:
                 if (pResultCode == RESULT_OK) {
-                    SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                    //SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
                 }
                 break;
             default:
@@ -81,10 +78,6 @@ public class SQDrawerActivity extends SQActivity {
         super.onStart();
         SQLog.v("onStart");
         SQFirebaseUtils.start();
-        if (SQUserPreferencesUtils.getSocialProvider() != null && SQUserPreferencesUtils.getSocialProvider().equals
-                ("Google")) {
-            SQGoogleSignInUtils.connect(this);
-        }
     }
 
     @Override
@@ -98,7 +91,6 @@ public class SQDrawerActivity extends SQActivity {
     public void onStop() {
         super.onStop();
         SQLog.v("onStop");
-        SQGoogleSignInUtils.disconnect();
         SQFirebaseUtils.stop();
     }
 
@@ -124,19 +116,19 @@ public class SQDrawerActivity extends SQActivity {
     protected void refreshNavigationView() {
         if (SQUserPreferencesUtils.isUserConnected()) {
             mImageViewProfile.setVisibility(View.VISIBLE);
-            Picasso.with(this).load(SQUserPreferencesUtils.getUserProfilePhotoUri()).placeholder(R.mipmap.ic_launcher)
+            Picasso.with(this).load(SQUserPreferencesUtils.getUserPhotoUri()).placeholder(R.mipmap.ic_launcher)
                 /*.error(R.drawable.user_placeholder_error)*/.into(mImageViewProfile);
             mTextViewDisplayName.setVisibility(View.VISIBLE);
-            mTextViewDisplayName.setText(SQUserPreferencesUtils.getUserProfileDisplayName());
+            mTextViewDisplayName.setText(SQUserPreferencesUtils.getUserDisplayName());
             mTextViewEmail.setVisibility(View.VISIBLE);
-            mTextViewEmail.setText(SQUserPreferencesUtils.getUserProfileEmail());
-            mButtonDisconnect.setVisibility(View.VISIBLE);
+            mTextViewEmail.setText(SQUserPreferencesUtils.getUserEmail());
+            mButtonUpdateProfile.setVisibility(View.VISIBLE);
             mButtonConnect.setVisibility(View.GONE);
         } else {
             mImageViewProfile.setVisibility(View.GONE);
             mTextViewDisplayName.setVisibility(View.GONE);
             mTextViewEmail.setVisibility(View.GONE);
-            mButtonDisconnect.setVisibility(View.GONE);
+            mButtonUpdateProfile.setVisibility(View.GONE);
             mButtonConnect.setVisibility(View.VISIBLE);
         }
     }
@@ -168,45 +160,18 @@ public class SQDrawerActivity extends SQActivity {
         mButtonConnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
                 .sq_widget_drawer_button_connect);
         mButtonConnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: login");
-            login();
+            SQLog.i("click on button: connect");
+            openLoginScreen();
         });
-        mButtonDisconnect = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
+        mButtonUpdateProfile = ButterKnife.findById(mNavigationView.getHeaderView(0), R.id
                 .sq_widget_drawer_button_disconnect);
-        mButtonDisconnect.setOnClickListener(pView -> {
-            SQLog.i("click on button: logout");
-            //logout();
-            updateProfile();
+        mButtonUpdateProfile.setOnClickListener(pView -> {
+            SQLog.i("click on button: update profile");
+            openLoginScreen();
         });
     }
 
-    protected void updateProfile() {
-        if (SQUserPreferencesUtils.getSocialProvider().equals("Facebook")) {
-            AccessToken.setCurrentAccessToken(null);
-            LoginManager.getInstance().logOut();
-        } else if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
-            SQGoogleSignInUtils.signOut();
-        }
-        //SQUserPreferencesUtils.clearUserProfile();
-        //refreshNavigationView();
-        //SQFirebaseUtils.signOut();
-        login();
-    }
-
-    protected void logout() {
-        if (SQUserPreferencesUtils.getSocialProvider().equals("Facebook")) {
-            AccessToken.setCurrentAccessToken(null);
-            LoginManager.getInstance().logOut();
-        } else if (SQUserPreferencesUtils.getSocialProvider().equals("Google")) {
-            SQGoogleSignInUtils.signOut();
-        }
-        SQUserPreferencesUtils.clearUserProfile();
-        refreshNavigationView();
-        SQFirebaseUtils.signOut();
-        login();
-    }
-
-    protected void login() {
+    protected void openLoginScreen() {
         startActivityForResult(SQLoginActivity.getIntent(this), SQConstants.NOTIFICATION_REQUEST_LOGIN);
     }
 

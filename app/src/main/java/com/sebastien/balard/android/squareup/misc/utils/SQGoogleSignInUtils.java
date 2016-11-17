@@ -19,13 +19,17 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
+import android.content.Intent;
 import android.content.IntentSender;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -39,7 +43,35 @@ public class SQGoogleSignInUtils {
 
     private static GoogleApiClient mGoogleApiClient;
 
-    public static GoogleApiClient getApiClient(SQActivity pActivity) {
+    public interface OnSignInListener {
+        void onSuccess(GoogleSignInAccount pSignInAccount);
+        void onError(Status pStatus);
+    }
+
+    public static Intent getSignInIntent(SQActivity pActivity) {
+        return Auth.GoogleSignInApi.getSignInIntent(SQGoogleSignInUtils.getApiClient(pActivity));
+    }
+
+    public static void processSignInResultIntent(Intent pIntent, OnSignInListener pOnSignInListener) {
+        GoogleSignInResult vSignInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(pIntent);
+        if (vSignInResult.isSuccess()) {
+            pOnSignInListener.onSuccess(vSignInResult.getSignInAccount());
+        } else {
+            pOnSignInListener.onError(vSignInResult.getStatus());
+        }
+    }
+
+    public static void signOut(SQActivity pActivity) {
+        Auth.GoogleSignInApi.signOut(SQGoogleSignInUtils.getApiClient(pActivity)).setResultCallback(pStatus -> {
+            if (pStatus.isSuccess()) {
+                SQLog.d("succeed in sign out");
+            } else {
+                SQLog.w("fail to sign out");
+            }
+        });
+    }
+
+    private static GoogleApiClient getApiClient(SQActivity pActivity) {
         if (mGoogleApiClient == null) {
             SQLog.v("create google api client");
             GoogleSignInOptions vGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions
@@ -65,30 +97,5 @@ public class SQGoogleSignInUtils {
             }).addApi(Auth.GOOGLE_SIGN_IN_API, vGoogleSignInOptions).build();
         }
         return mGoogleApiClient;
-    }
-
-    public static void connect(SQActivity pActivity) {
-        SQLog.v("connect");
-        getApiClient(pActivity).connect();
-    }
-
-    public static void disconnect() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            SQLog.v("disconnect");
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    public static void signOut() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(pStatus -> {
-                if (pStatus.isSuccess()) {
-                    SQLog.d("google sign out succeeded");
-                    mGoogleApiClient.disconnect();
-                } else {
-                    SQLog.w("google sign out failed");
-                }
-            });
-        }
     }
 }

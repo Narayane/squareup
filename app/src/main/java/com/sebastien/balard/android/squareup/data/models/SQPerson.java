@@ -166,4 +166,8 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
     public void setIsOwner() {
         mContactId = 0L;
     }
+
+    public boolean isOwner() {
+        return mContactId.equals(0L);
+    }
 }

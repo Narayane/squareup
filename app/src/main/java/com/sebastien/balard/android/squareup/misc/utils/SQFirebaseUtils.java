@@ -19,8 +19,6 @@
 
 package com.sebastien.balard.android.squareup.misc.utils;
 
-import com.facebook.AccessToken;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -28,6 +26,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 
@@ -49,11 +48,11 @@ public class SQFirebaseUtils {
                 mFirebaseUser = pFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null) {
                     // user is signed in
-                    SQLog.d("signedIn: " + mFirebaseUser.getDisplayName());
+                    SQLog.d("authenticated as: " + mFirebaseUser.getDisplayName());
                     //FIXME: put a listener
                 } else {
                     // user is signed out
-                    SQLog.d("signedOut");
+                    SQLog.d("not authenticated");
                 }
             };
         }
@@ -72,6 +71,42 @@ public class SQFirebaseUtils {
 
     public static void signOut() {
         FirebaseAuth.getInstance().signOut();
+    }
+
+    public static void authenticateByGoogle(SQActivity pActivity, String pToken,
+                                            OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authenticate by Google with token: " + pToken);
+
+        AuthCredential vCredential = GoogleAuthProvider.getCredential(pToken, null);
+        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
+            SQLog.v("link with in Firebase");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        } else {
+            SQLog.v("sign in Firebase");
+            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        }
+    }
+
+    public static void authenticateByFacebook(SQActivity pActivity, String pToken,
+                                              OnCompleteListener<AuthResult> pOnCompleteListener) {
+        SQLog.d("authenticateByFacebook: " + pToken);
+
+        AuthCredential vCredential = FacebookAuthProvider.getCredential(pToken);
+        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
+            SQLog.v("link with in Firebase");
+            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        } else {
+            SQLog.v("sign in Firebase");
+            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
+        }
+    }
+
+    public static void updateEmail(String pEmail, OnCompleteListener<Void> pOnCompleteListener) {
+        mFirebaseUser.updateEmail(pEmail).addOnCompleteListener(pOnCompleteListener);
+    }
+
+    public static void updateProfile(UserProfileChangeRequest pRequest, OnCompleteListener<Void> pOnCompleteListener) {
+        mFirebaseUser.updateProfile(pRequest).addOnCompleteListener(pOnCompleteListener);
     }
 
     /*public static void linkWithFacebook(SQActivity pActivity, AccessToken pAccessToken,
@@ -178,32 +213,4 @@ public class SQFirebaseUtils {
                 .setPhotoUri(vFirebaseUser.getPhotoUrl())
                 .build()).addOnCompleteListener(pTask -> SQLog.d("succeed in profile update"));
     }*/
-
-    public static void authenticateByGoogle(SQActivity pActivity, GoogleSignInAccount pGoogleSignInAccount,
-                                            OnCompleteListener<AuthResult> pOnCompleteListener) {
-        SQLog.d("authenticateByGoogle: " + pGoogleSignInAccount.getId());
-
-        AuthCredential vCredential = GoogleAuthProvider.getCredential(pGoogleSignInAccount.getIdToken(), null);
-        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
-            SQLog.v("linkWith");
-            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
-        } else {
-            SQLog.v("signIn");
-            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
-        }
-    }
-
-    public static void authenticateByFacebook(SQActivity pActivity, AccessToken pAccessToken,
-                                              OnCompleteListener<AuthResult> pOnCompleteListener) {
-        SQLog.d("authenticateByFacebook: " + pAccessToken.getToken());
-
-        AuthCredential vCredential = FacebookAuthProvider.getCredential(pAccessToken.getToken());
-        if (mFirebaseUser != null && mFirebaseUser.getProviders().size() == 1) {
-            SQLog.v("linkWith");
-            mFirebaseUser.linkWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
-        } else {
-            SQLog.v("signIn");
-            mAuth.signInWithCredential(vCredential).addOnCompleteListener(pActivity, pOnCompleteListener);
-        }
-    }
 }

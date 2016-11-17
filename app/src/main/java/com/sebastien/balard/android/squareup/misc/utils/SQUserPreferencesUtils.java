@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 
@@ -42,17 +41,17 @@ public class SQUserPreferencesUtils {
                 (SQConstants.PREFERENCE_USER_IS_LOGGED, false);
     }
 
-    public static String getUserProfileDisplayName() {
+    public static String getUserDisplayName() {
         return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
-                (SQConstants.PREFERENCE_USER_DISPLAY_NAME, "-");
+                (SQConstants.PREFERENCE_USER_DISPLAY_NAME, null);
     }
 
-    public static String getUserProfileEmail() {
+    public static String getUserEmail() {
         return PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
-                (SQConstants.PREFERENCE_USER_EMAIL, "-");
+                (SQConstants.PREFERENCE_USER_EMAIL, null);
     }
 
-    public static Uri getUserProfilePhotoUri() {
+    public static Uri getUserPhotoUri() {
         String vUrl = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext()).getString
                 (SQConstants.PREFERENCE_USER_PHOTO_URL, null);
         if (vUrl != null) {
@@ -66,6 +65,13 @@ public class SQUserPreferencesUtils {
                 (SQConstants.PREFERENCE_SOCIAL_PROVIDER, null);
     }
 
+    public static void setUserConnected() {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putBoolean(SQConstants.PREFERENCE_USER_IS_LOGGED, true);
+        vEditor.apply();
+    }
+
     public static void setSocialProvider(String pProviderName) {
         SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
                 .edit();
@@ -73,17 +79,28 @@ public class SQUserPreferencesUtils {
         vEditor.apply();
     }
 
-    public static void setUserProfile(FirebaseUser pFirebaseUser) {
+    public static void setUserDisplayName(String pDisplayName) {
         SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
                 .edit();
-        vEditor.putBoolean(SQConstants.PREFERENCE_USER_IS_LOGGED, true);
-        vEditor.putString(SQConstants.PREFERENCE_USER_DISPLAY_NAME, pFirebaseUser.getDisplayName());
-        vEditor.putString(SQConstants.PREFERENCE_USER_EMAIL, pFirebaseUser.getEmail());
-        vEditor.putString(SQConstants.PREFERENCE_USER_PHOTO_URL, pFirebaseUser.getPhotoUrl().toString());
+        vEditor.putString(SQConstants.PREFERENCE_USER_DISPLAY_NAME, pDisplayName);
         vEditor.apply();
     }
 
-    public static void clearUserProfile() {
+    public static void setUserEmail(String pEmail) {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putString(SQConstants.PREFERENCE_USER_EMAIL, pEmail);
+        vEditor.apply();
+    }
+
+    public static void setUserPhotoUri(Uri pPhotoUri) {
+        SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
+                .edit();
+        vEditor.putString(SQConstants.PREFERENCE_USER_PHOTO_URL, pPhotoUri.toString());
+        vEditor.apply();
+    }
+
+    /*public static void clearUserProfile() {
         SharedPreferences.Editor vEditor = PreferenceManager.getDefaultSharedPreferences(SQApplication.getContext())
                 .edit();
         vEditor.putBoolean(SQConstants.PREFERENCE_USER_IS_LOGGED, false);
@@ -91,5 +108,5 @@ public class SQUserPreferencesUtils {
         vEditor.putString(SQConstants.PREFERENCE_USER_EMAIL, null);
         vEditor.putString(SQConstants.PREFERENCE_USER_PHOTO_URL, null);
         vEditor.apply();
-    }
+    }*/
 }
