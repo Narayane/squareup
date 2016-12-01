@@ -2,6 +2,7 @@
 <android.support.design.widget.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sq_widget_appbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/SQTheme.ActionBar">

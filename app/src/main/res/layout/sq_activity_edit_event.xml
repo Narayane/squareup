@@ -34,6 +34,7 @@
         <android.support.design.widget.AppBarLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/sq_widget_appbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="120dp"
@@ -51,7 +52,7 @@
                 android:layout_gravity="bottom"
                 android:layout_margin="16dp">
 
-                <android.support.v7.widget.AppCompatEditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/sq_activity_edit_event_edittext_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

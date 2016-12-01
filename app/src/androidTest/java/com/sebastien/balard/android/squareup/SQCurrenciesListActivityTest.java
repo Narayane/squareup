@@ -19,7 +19,6 @@
 
 package com.sebastien.balard.android.squareup;
 
-import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -31,9 +30,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.DrawerMatchers.isOpen;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.IsNot.not;
 
@@ -49,8 +46,8 @@ public class SQCurrenciesListActivityTest {
 
     @Test
     public void testDrawerMenuChecked() {
-        onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).perform(DrawerActions.open());
-        onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).check(matches(isOpen()));
+        //onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).perform(DrawerActions.open());
+        //onView(withId(R.id.sq_activity_currencies_list_layout_drawer)).check(matches(isOpen()));
         onView(withText(R.string.sq_commons_my_events)).check(matches(not(isSelected())));
         //onView(withText(R.string.sq_commons_my_currencies)).check(matches(isSelected()));
     }

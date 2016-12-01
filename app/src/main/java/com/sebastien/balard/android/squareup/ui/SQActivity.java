@@ -20,6 +20,7 @@
 package com.sebastien.balard.android.squareup.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -37,6 +38,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class SQActivity extends AppCompatActivity {
 
+    @BindView(R.id.sq_widget_appbar_layout)
+    protected AppBarLayout mLayoutAppBar;
     @BindView(R.id.sq_widget_appbar_toolbar)
     protected Toolbar mToolbar;
 
