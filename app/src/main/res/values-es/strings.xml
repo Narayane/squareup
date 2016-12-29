@@ -69,4 +69,6 @@
         ouvrir un évènement avec des contacts si vous ne lui permettez pas d\'accéder à vos contacts</string>
     <string name="sq_message_warning_not_yet_implemented">Available shortly</string>
     <string name="sq_message_info_add_participants">Sélectionnez un contact dans la liste ci-dessous ou appuyer sur , ou entrée à la fin de votre saisie pour en créer un nouveau</string>
+    <string name="sq_message_warning_sign_in_with_multiple_google_accounts">"You have already used another Google
+        account to sign in, please use it again"</string>
 </resources>

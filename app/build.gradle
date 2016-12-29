@@ -1,9 +1,32 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion "0.7.6.201602180812"
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec", "outputs/code-coverage/connected/*coverage.ec"
+    ])
+}
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.sebastien.balard.android.squareup"
@@ -31,24 +54,36 @@ android {
         debug {
             buildConfigField("String", "LOG_LEVEL", "\"all\";")
             buildConfigField("boolean", "ENABLE_FABRIC_CRASHLYTICS", "false")
+
+            testCoverageEnabled false
         }
         release {
             buildConfigField("String", "LOG_LEVEL", "\"debug\";")
             buildConfigField("boolean", "ENABLE_FABRIC_CRASHLYTICS", "true")
-            minifyEnabled false
+
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
         }
     }
 }
 
-ext.support_libs_version = '25.0.1'
-ext.play_services_version = '9.6.1'
+ext.support_libs_version = '25.1.0'
+ext.play_services_version = '10.0.1'
 ext.espresso_version = '2.2.2'
 ext.retrofit_version = '2.0.2'
 ext.butterknife_version = '8.4.0'
 ext.jodatime_version = '2.9.2'
 ext.junit_version = '4.12'
 ext.multidex_version = '1.0.1'
+ext.robolectric_version = '3.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -85,8 +120,9 @@ dependencies {
     }
     // unit tests
     testCompile "junit:junit:$junit_version"
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'org.robolectric:robolectric-shadows:3.0'
+    testCompile "org.robolectric:robolectric:$robolectric_version"
+    testCompile "org.robolectric:robolectric-shadows:$robolectric_version"
+    testCompile "org.robolectric:shadows-multidex:$robolectric_version"
     testCompile "joda-time:joda-time:$jodatime_version"
     // integration tests
     androidTestCompile "com.android.support:multidex-instrumentation:$multidex_version"

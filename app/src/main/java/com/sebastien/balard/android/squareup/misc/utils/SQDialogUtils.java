@@ -23,11 +23,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.sebastien.balard.android.squareup.R;
@@ -53,7 +53,9 @@ public class SQDialogUtils {
         Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
         vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
                 .sq_color_red_500));
-
+        TextView textView = (TextView) vSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(3);
+        textView.setTextColor(Color.WHITE);
         return vSnackbar;
     }
 
@@ -61,7 +63,9 @@ public class SQDialogUtils {
         Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
         vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
                 .sq_color_orange_500));
-
+        TextView textView = (TextView) vSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(3);
+        textView.setTextColor(Color.WHITE);
         return vSnackbar;
     }
 
@@ -69,7 +73,9 @@ public class SQDialogUtils {
         Snackbar vSnackbar = Snackbar.make(pAnchorView, pMessage, pDuration);
         vSnackbar.getView().setBackgroundColor(ContextCompat.getColor(SQApplication.getContext(), R.color
                 .sq_color_green_500));
-
+        TextView textView = (TextView) vSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(3);
+        textView.setTextColor(Color.WHITE);
         return vSnackbar;
     }
 
@@ -83,6 +89,27 @@ public class SQDialogUtils {
 
         //setText(pContext, vDialog);
         vDialog.show();
+        return vDialog;
+    }
+
+    public static AlertDialog createDialogWithCustomView(final Activity pContext, int pTitle, View pView, Integer
+            pYesButtonLabel, Integer pNoButtonLabel, DialogInterface.OnClickListener pYesClickListener,
+                                                         DialogInterface.OnClickListener pNoClickListener, boolean
+                                                                 pIsCancelable) {
+
+        AlertDialog.Builder vBuilder = new AlertDialog.Builder(pContext).setTitle(pTitle).setView(pView/*, margin,
+                margin, margin, margin*/);
+        if (pYesButtonLabel != null) {
+            vBuilder.setPositiveButton(pYesButtonLabel, pYesClickListener);
+        }
+        if (pNoButtonLabel != null) {
+            vBuilder.setNegativeButton(pNoButtonLabel, pNoClickListener);
+        }
+
+        AlertDialog vDialog = vBuilder.create();
+        vDialog.setCancelable(pIsCancelable);
+        //vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
         return vDialog;
     }
 
@@ -105,7 +132,7 @@ public class SQDialogUtils {
 
         AlertDialog vDialog = vBuilder.create();
         vDialog.setCancelable(pIsCancelable);
-        vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        //vDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         //showView(pContext, vDialog);
         vDialog.show();

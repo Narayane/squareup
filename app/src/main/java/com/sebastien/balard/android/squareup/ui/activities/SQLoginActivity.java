@@ -23,6 +23,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -40,6 +41,7 @@ import com.google.android.gms.common.api.Status;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFirebaseUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQGoogleSignInUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
@@ -100,10 +102,12 @@ public class SQLoginActivity extends SQActivity {
                 public void onSuccess(GoogleSignInAccount pSignInAccount) {
                     mProgressDialog = ProgressDialog.show(SQLoginActivity.this, "Please wait", "Sign in in " +
                             "progress...", true);
-                    SQFirebaseUtils.authenticateByGoogle(SQLoginActivity.this, pSignInAccount.getIdToken(), pTask -> {
+                    /*SQFirebaseUtils.authenticateByGoogle(SQLoginActivity.this, pSignInAccount.getIdToken(), pTask -> {
                         if (!pTask.isSuccessful()) {
                             SQLog.e("fail to authenticate in Firebase", pTask.getException());
-                            Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            SQGoogleSignInUtils.signOut();
+                            SQDialogUtils.createSnackBarWarning(mToolbar, getString(R.string
+                                    .sq_message_warning_sign_in_with_multiple_google_accounts), Snackbar.LENGTH_LONG).show();
                         } else {
                             SQLog.d("succeed in authenticate in Firebase");
                             SQUserPreferencesUtils.setSocialProvider("Google");
@@ -111,13 +115,36 @@ public class SQLoginActivity extends SQActivity {
                             SQUserPreferencesUtils.setUserDisplayName(pSignInAccount.getDisplayName());
                             SQUserPreferencesUtils.setUserEmail(pSignInAccount.getEmail());
                             SQUserPreferencesUtils.setUserPhotoUri(pSignInAccount.getPhotoUrl());
-                            SQGoogleSignInUtils.signOut(SQLoginActivity.this);
+                            SQGoogleSignInUtils.signOut();
                             setResult(RESULT_OK);
                             finish();
                         }
                         if (mProgressDialog.isShowing()) {
                             mProgressDialog.dismiss();
                         }
+                    });*/
+                    SQFirebaseUtils.authenticateByGoogle(pSignInAccount.getEmail(), pSignInAccount.getIdToken(),
+                            pAuthResult -> {
+                        SQLog.d("succeed in authenticate in Firebase");
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
+                        SQUserPreferencesUtils.setSocialProvider("Google");
+                        SQUserPreferencesUtils.setUserConnected();
+                        SQUserPreferencesUtils.setUserDisplayName(pSignInAccount.getDisplayName());
+                        SQUserPreferencesUtils.setUserEmail(pSignInAccount.getEmail());
+                        SQUserPreferencesUtils.setUserPhotoUri(pSignInAccount.getPhotoUrl());
+                        SQGoogleSignInUtils.signOut();
+                        setResult(RESULT_OK);
+                        finish();
+                    }, pException -> {
+                        SQLog.e("fail to authenticate in Firebase", pException);
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
+                        SQGoogleSignInUtils.signOut();
+                        SQDialogUtils.createSnackBarWarning(mToolbar, getString(R.string
+                                .sq_message_warning_sign_in_with_multiple_google_accounts), Snackbar.LENGTH_LONG).show();
                     });
                 }
 
@@ -140,11 +167,14 @@ public class SQLoginActivity extends SQActivity {
                 SQLog.v("onSuccess:" + pLoginResult);
                 mProgressDialog = ProgressDialog.show(SQLoginActivity.this, "Please wait", "Sign in in " +
                         "progress...", true);
-                SQFirebaseUtils.authenticateByFacebook(SQLoginActivity.this, pLoginResult.getAccessToken().getToken(), pTask -> {
+                /*SQFirebaseUtils.authenticateByFacebook(SQLoginActivity.this, pLoginResult.getAccessToken().getToken
+                        (), pTask -> {
                     SQLog.d("authenticateByFacebook: " + pTask.isSuccessful());
                     if (!pTask.isSuccessful()) {
                         SQLog.w("authenticateByFacebook", pTask.getException());
                         Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        AccessToken.setCurrentAccessToken(null);
+                        LoginManager.getInstance().logOut();
                     } else {
                         SQUserPreferencesUtils.setSocialProvider("Facebook");
                         SQUserPreferencesUtils.setUserConnected();
@@ -175,6 +205,44 @@ public class SQLoginActivity extends SQActivity {
                     if (mProgressDialog.isShowing()) {
                         mProgressDialog.dismiss();
                     }
+                });*/
+                SQFirebaseUtils.authenticateByFacebook(pLoginResult.getAccessToken().getToken(), pAuthResult -> {
+                    SQLog.d("succeed in authenticate in Firebase");
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                    }
+                    SQUserPreferencesUtils.setSocialProvider("Facebook");
+                    SQUserPreferencesUtils.setUserConnected();
+                    Profile vProfile = Profile.getCurrentProfile();
+                    SQUserPreferencesUtils.setUserDisplayName(vProfile.getFirstName() + " " + vProfile.getLastName());
+                    SQUserPreferencesUtils.setUserPhotoUri(vProfile.getProfilePictureUri(300, 300));
+
+                    Bundle vBundle = new Bundle();
+                    vBundle.putString("fields", "email");
+                    GraphRequest vGraphRequest = GraphRequest.newMeRequest(pLoginResult.getAccessToken(),
+                            (pJSONObject, pGraphResponse) -> {
+                        if (pGraphResponse.getError() != null) {
+                            SQLog.e("fail to get Facebook email", pGraphResponse.getError().getException());
+                        } else {
+                            String vEmail = pJSONObject.optString("email");
+                            SQLog.d("succeed in get Facebook email: " + vEmail);
+                            SQUserPreferencesUtils.setUserEmail(pJSONObject.optString("email"));
+                        }
+                        AccessToken.setCurrentAccessToken(null);
+                        LoginManager.getInstance().logOut();
+                        setResult(RESULT_OK);
+                        finish();
+                    });
+                    vGraphRequest.setParameters(vBundle);
+                    vGraphRequest.executeAsync();
+                }, pException -> {
+                    SQLog.e("fail to authenticate in Firebase", pException);
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                    }
+                    Toast.makeText(SQLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    AccessToken.setCurrentAccessToken(null);
+                    LoginManager.getInstance().logOut();
                 });
             }
 

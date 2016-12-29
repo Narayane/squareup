@@ -65,7 +65,7 @@ public class SQDrawerActivity extends SQActivity {
         switch (pRequestCode) {
             case SQConstants.NOTIFICATION_REQUEST_LOGIN:
                 if (pResultCode == RESULT_OK) {
-                    //SQUserPreferencesUtils.setUserProfile(SQFirebaseUtils.getFirebaseUser());
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 }
                 break;
             default:
@@ -116,8 +116,9 @@ public class SQDrawerActivity extends SQActivity {
     protected void refreshNavigationView() {
         if (SQUserPreferencesUtils.isUserConnected()) {
             mImageViewProfile.setVisibility(View.VISIBLE);
-            Picasso.with(this).load(SQUserPreferencesUtils.getUserPhotoUri()).placeholder(R.mipmap.ic_launcher)
-                /*.error(R.drawable.user_placeholder_error)*/.into(mImageViewProfile);
+            Picasso.with(this).load(SQUserPreferencesUtils.getUserPhotoUri()).placeholder(R.drawable.sq_ic_person_24dp)
+                /*.transform(new SQRoundedTransformation(50, 1)).error(R.drawable.user_placeholder_error)*/.into
+                    (mImageViewProfile);
             mTextViewDisplayName.setVisibility(View.VISIBLE);
             mTextViewDisplayName.setText(SQUserPreferencesUtils.getUserDisplayName());
             mTextViewEmail.setVisibility(View.VISIBLE);

@@ -26,7 +26,7 @@
     <!-- heights -->
     <dimen name="sq_height_navigationview">300dp</dimen>
     <!-- sizes -->
-    <dimen name="sq_size_navigationview_icon">64dp</dimen>
+    <dimen name="sq_size_navigationview_icon">72dp</dimen>
     <!-- text sizes -->
     <dimen name="sq_size_font_headline">28sp</dimen>
     <dimen name="sq_size_font_subhead">21sp</dimen>

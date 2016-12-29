@@ -9,6 +9,7 @@
               android:paddingLeft="@dimen/sq_margin_activity_horizontal"
               android:paddingRight="@dimen/sq_margin_activity_horizontal"
               android:paddingTop="@dimen/sq_margin_activity_vertical"
+              android:background="@drawable/sq_shape_drawer_background"
               android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <android.support.v7.widget.AppCompatImageView

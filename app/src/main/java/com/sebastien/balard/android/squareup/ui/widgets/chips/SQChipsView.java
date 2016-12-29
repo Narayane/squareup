@@ -20,8 +20,6 @@
 package com.sebastien.balard.android.squareup.ui.widgets.chips;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -30,7 +28,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Spannable;
@@ -54,7 +51,8 @@ import android.widget.TextView;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
-import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
+import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.dialogs.SQNewPersonDialogFragment;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -65,18 +63,15 @@ import java.util.List;
 /**
  * Created by Sebastien BALARD on 06/05/2016.
  */
-public class SQChipsView extends ScrollView implements SQChipsEditText.InputConnectionWrapperInterface {
+public class SQChipsView extends ScrollView implements SQChipsEditText.InputConnectionWrapperInterface, SQNewPersonDialogFragment.OnNewPersonListener {
 
-    //<editor-fold desc="Static Fields">
     private static final String TAG = "ChipsView";
     private static final int CHIP_HEIGHT = 32; // dp
     private static final int SPACING_TOP = 2; // dp
     private static final int SPACING_BOTTOM = 2; // dp
     public static final int DEFAULT_VERTICAL_SPACING = 2; // dp
     private static final int DEFAULT_MAX_HEIGHT = -1;
-    //</editor-fold>
 
-    //<editor-fold desc="Attributes">
     private int mMaxHeight; // px
     private int mVerticalSpacing;
 
@@ -88,9 +83,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
     private int mChipsTextColorClicked;
     private int mChipsPlaceholderResId;
     private int mChipsDeleteResId;
-    //</editor-fold>
 
-    //<editor-fold desc="Private Fields">
     private float mDensity;
     private RelativeLayout mChipsContainer;
     private ChipsListener mChipsListener;
@@ -99,70 +92,28 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
     private EditTextListener mEditTextListener;
     private List<SQChip> mChipList = new ArrayList<>();
     private Object mCurrentEditTextSpan;
-    public Activity mContext;
-    //</editor-fold>
+    public SQActivity mContext;
 
-    //<editor-fold desc="Constructors">
     public SQChipsView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public SQChipsView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //initAttr(context, attrs);
-        mMaxHeight = DEFAULT_MAX_HEIGHT;
-        mChipsColor = ContextCompat.getColor(context, R.color.base30);
-        mChipsColorClicked = ContextCompat.getColor(context, R.color.sq_color_primary_dark);
-
-        mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
-        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
-
-        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
-        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
-
-        mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
-        mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
-        init();
+        init(context);
     }
 
     public SQChipsView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        //initAttr(context, attrs);
-        mMaxHeight = DEFAULT_MAX_HEIGHT;
-        mChipsColor = ContextCompat.getColor(context, R.color.base30);
-        mChipsColorClicked = ContextCompat.getColor(context, R.color.sq_color_primary_dark);
-
-        mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
-        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
-
-        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
-        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
-
-        mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
-        mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
-        init();
+        init(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SQChipsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        //initAttr(context, attrs);
-        mMaxHeight = DEFAULT_MAX_HEIGHT;
-        mChipsColor = ContextCompat.getColor(context, R.color.base30);
-        mChipsColorClicked = ContextCompat.getColor(context, R.color.sq_color_primary_dark);
-
-        mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
-        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
-
-        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
-        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
-
-        mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
-        mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
-        init();
+        init(context);
     }
-    //</editor-fold>
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -177,53 +128,26 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         return true;
     }
 
-    //<editor-fold desc="Initialization">
-    /*private void initAttr(Context context, AttributeSet attrs) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.ChipsView,
-                0, 0);
-        try {
-            mMaxHeight = a.getDimensionPixelSize(R.styleable.ChipsView_cv_max_height, DEFAULT_MAX_HEIGHT);
-            mVerticalSpacing = a.getDimensionPixelSize(R.styleable.ChipsView_cv_vertical_spacing, (int) (DEFAULT_VERTICAL_SPACING * mDensity));
-            mChipsColor = a.getColor(R.styleable.ChipsView_cv_color,
-                    ContextCompat.getColor(context, R.color.base30));
-            mChipsColorClicked = a.getColor(R.styleable.ChipsView_cv_color_clicked,
-                    ContextCompat.getColor(context, R.color.colorPrimaryDark));
-            mChipsColorErrorClicked = a.getColor(R.styleable.ChipsView_cv_color_error_clicked,
-                    ContextCompat.getColor(context, R.color.color_error));
 
-            mChipsBgColor = a.getColor(R.styleable.ChipsView_cv_bg_color,
-                    ContextCompat.getColor(context, R.color.base10));
-            mChipsBgColorClicked = a.getColor(R.styleable.ChipsView_cv_bg_color_clicked,
-                    ContextCompat.getColor(context, R.color.blue));
+    private void init(Context context) {
+        mMaxHeight = DEFAULT_MAX_HEIGHT;
+        mChipsColor = ContextCompat.getColor(context, R.color.base30);
+        mChipsColorClicked = ContextCompat.getColor(context, R.color.sq_color_primary_dark);
 
-            mChipsBgColorErrorClicked = a.getColor(R.styleable.ChipsView_cv_bg_color_clicked,
-                    ContextCompat.getColor(context, R.color.color_error));
+        mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
+        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
 
-            mChipsTextColor = a.getColor(R.styleable.ChipsView_cv_text_color,
-                    Color.BLACK);
-            mChipsTextColorClicked = a.getColor(R.styleable.ChipsView_cv_text_color_clicked,
-                    Color.WHITE);
-            mChipsTextColorErrorClicked = a.getColor(R.styleable.ChipsView_cv_text_color_clicked,
-                    Color.WHITE);
+        mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
+        mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
 
-            mChipsPlaceholderResId = a.getResourceId(R.styleable.ChipsView_cv_icon_placeholder,
-                    R.drawable.ic_person_24dp);
-            mChipsDeleteResId = a.getResourceId(R.styleable.ChipsView_cv_icon_delete,
-                    R.drawable.ic_close_24dp);
-        } finally {
-            a.recycle();
-        }
-    }*/
+        mChipsPlaceholderResId = R.drawable.sq_ic_person_24dp;
+        mChipsDeleteResId = R.drawable.sq_ic_close_24dp;
 
-    private void init() {
         mDensity = getResources().getDisplayMetrics().density;
         mVerticalSpacing = (int) (DEFAULT_VERTICAL_SPACING * mDensity);
         mChipsContainer = new RelativeLayout(getContext());
         addView(mChipsContainer);
 
-        // Dummy item to prevent AutoCompleteTextView from receiving focus
         LinearLayout linearLayout = new LinearLayout(getContext());
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(0, 0);
         linearLayout.setLayoutParams(params);
@@ -253,10 +177,6 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         mRootChipsLayout.setPadding(0, (int) (SPACING_TOP * mDensity), 0, 0);
         mChipsContainer.addView(mRootChipsLayout);
 
-        initListener();
-    }
-
-    private void initListener() {
         mChipsContainer.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,31 +188,13 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         mEditTextListener = new EditTextListener();
         mEditText.setHint(R.string.sq_hint_add_participants);
         mEditText.addTextChangedListener(mEditTextListener);
-        mEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    unselectAllChips();
-                }
+        mEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                unselectAllChips();
             }
         });
-        /*mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView pTextView, int pKeyCode, KeyEvent pKeyEvent) {
-                if ((pKeyEvent.getAction() == KeyEvent.ACTION_DOWN) && (pKeyCode == KeyEvent.KEYCODE_ENTER)) {
-                    SQLog.v("KeyEvent.KEYCODE_ENTER");
-                    return true;
-                }
-                return false;
-            }
-        });*/
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Public Methods">
-    /*public void addChip(String displayName, String avatarUrl, SQPerson contact) {
-        addChip(displayName, Uri.parse(avatarUrl), contact);
-    }*/
 
     public void addChip(String displayName, Uri avatarUrl, SQPerson contact) {
         addChip(displayName, avatarUrl, contact, false);
@@ -308,12 +210,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         }
 
         onChipsChanged(true);
-        post(new Runnable() {
-            @Override
-            public void run() {
-                fullScroll(View.FOCUS_DOWN);
-            }
-        });
+        post(() -> fullScroll(View.FOCUS_DOWN));
     }
 
     @NonNull
@@ -346,15 +243,16 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         onChipsChanged(true);
     }
 
-    /*public Contact tryToRecognizeAddress() {
-        String text = mEditText.getText().toString();
-        if (!TextUtils.isEmpty(text)) {
-            if (Common.isValidEmail(text)) {
-                return new Contact(text, "", null, text, null);
-            }
+    @Override
+    public void onCreated(SQPerson pPerson) {
+        SQLog.v("onCreated");
+        SQChip chip = new SQChip(pPerson.getName(), null, pPerson);
+        mChipList.add(chip);
+        if (mChipsListener != null) {
+            mChipsListener.onChipAdded(chip);
         }
-        return null;
-    }*/
+        post(() -> onChipsChanged(true));
+    }
 
     public void setChipsListener(ChipsListener chipsListener) {
         this.mChipsListener = chipsListener;
@@ -363,23 +261,13 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
     public EditText getEditText() {
         return mEditText;
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Private Methods">
-    /**
-     * rebuild all chips and place them right
-     */
     private void onChipsChanged(final boolean moveCursor) {
         SQChipsVerticalLinearLayout.TextLineParams textLineParams = mRootChipsLayout.onChipsChanged(mChipList);
 
         // if null then run another layout pass
         if (textLineParams == null) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    onChipsChanged(moveCursor);
-                }
-            });
+            post(() -> onChipsChanged(moveCursor));
             return;
         }
 
@@ -412,36 +300,6 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
 
         mEditText.setText(spannable);
     }
-
-    private void onEnterPressed(String text) {
-        if (text != null && text.length() > 0) {
-
-            /*if (Common.isValidEmail(text)) {
-                onEmailRecognized(text);
-            } else {
-                onNonEmailRecognized(text);
-            }*/
-            mEditText.setSelection(0);
-        }
-    }
-
-    /*private void onEmailRecognized(String email) {
-        onEmailRecognized(new Contact(email, "", null, email, null));
-    }
-
-    private void onEmailRecognized(Contact contact) {
-        SQChip chip = new SQChip(contact.getDisplayName(), null, contact);
-        mChipList.add(chip);
-        if (mChipsListener != null) {
-            mChipsListener.onChipAdded(chip);
-        }
-        post(new Runnable() {
-            @Override
-            public void run() {
-                onChipsChanged(true);
-            }
-        });
-    }*/
 
     private void selectOrDeleteLastChip() {
         if (mChipList.size() > 0) {
@@ -492,16 +350,12 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
     private void unselectAllChips() {
         unselectChipsExcept(null);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="InputConnectionWrapperInterface Implementation">
     @Override
     public InputConnection getInputConnection(InputConnection target) {
         return new KeyInterceptingInputConnection(target);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Inner Classes / Interfaces">
     private class EditTextListener implements TextWatcher {
 
         private boolean mIsPasteTextChange = false;
@@ -524,15 +378,10 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
                 mChipsListener.onContentValidated();
             } else if (s.toString().endsWith("\n") || s.toString().endsWith(",") || s.toString().endsWith(";")) {
                 SQLog.d("new person");
-                Dialog vNewPersonDialog = createNewPersonDialog();
-                vNewPersonDialog.show();
-                AppCompatEditText vEditTextName = (AppCompatEditText) vNewPersonDialog.findViewById(R
-                        .id.sq_dialog_create_contact_edittext_name);
-                AppCompatEditText vEditTextWeight = (AppCompatEditText) vNewPersonDialog.findViewById(R
-                        .id.sq_dialog_create_contact_edittext_weight);
                 String vTypedText = s.toString().substring(0, s.toString().length() - 1);
-                vEditTextName.append(vTypedText);
-                vEditTextWeight.append("1");
+                SQNewPersonDialogFragment.newInstance(SQChipsView.this, vTypedText).show(mContext
+                        .getSupportFragmentManager(),
+                        SQNewPersonDialogFragment.TAG);
                 s.clear();
                 mEditText.setSelection(0);
             } else {
@@ -540,31 +389,6 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
                     mChipsListener.onTextChanged(s);
                 }
             }
-        }
-
-        private Dialog createNewPersonDialog() {
-             return SQDialogUtils.createDialogWithCustomView(mContext, R.string
-                    .sq_dialog_title_create_contact, R.layout
-                     .sq_dialog_create_contact, R.string.sq_actions_create,
-                    null, (pDialogInterface, pWhich) -> {
-                        Dialog vDialog = (Dialog) pDialogInterface;
-                        AppCompatEditText vEditTextName = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_name);
-                        AppCompatEditText vEditTextWeight = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_weight);
-                        AppCompatEditText vEditTextEmail = (AppCompatEditText) vDialog.findViewById(R
-                                .id.sq_dialog_create_contact_edittext_email);
-                        String vName = vEditTextName.getText().toString();
-                        String vEmail = vEditTextEmail.getText().toString();
-                        int vWeight = Integer.valueOf(vEditTextWeight.getText().toString());
-                        SQPerson vChipsContact = new SQPerson(vName, vEmail, vWeight);
-                        SQChip chip = new SQChip(vName, null, vChipsContact);
-                        mChipList.add(chip);
-                        if (mChipsListener != null) {
-                            mChipsListener.onChipAdded(chip);
-                        }
-                        post(() -> onChipsChanged(true));
-                    }, null, false);
         }
     }
 

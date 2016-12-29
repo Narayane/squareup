@@ -19,19 +19,22 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/sq_dialog_create_contact_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginBottom="@dimen/sq_margin_activity_vertical"
-              android:layout_marginEnd="@dimen/sq_margin_activity_horizontal"
-              android:layout_marginStart="@dimen/sq_margin_activity_horizontal"
-              android:layout_marginTop="@dimen/sq_margin_activity_vertical"
+              android:paddingBottom="@dimen/sq_margin_activity_vertical"
+              android:paddingEnd="24dp"
+              android:paddingStart="24dp"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:paddingTop="@dimen/sq_margin_activity_vertical"
               android:orientation="vertical">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatEditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/sq_dialog_create_contact_edittext_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,14 +42,14 @@
             android:hint="@string/sq_commons_name"
             android:imeOptions="actionNext"
             android:inputType="text"
-            android:singleLine="true"/>
+            android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatEditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/sq_dialog_create_contact_edittext_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,20 +57,20 @@
             android:hint="@string/sq_commons_weight"
             android:imeOptions="actionNext"
             android:inputType="number"
-            android:singleLine="true"/>
+            android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatEditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/sq_dialog_create_contact_edittext_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/sq_commons_email"
             android:imeOptions="actionDone"
             android:inputType="textEmailAddress"
-            android:singleLine="true"/>
+            android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

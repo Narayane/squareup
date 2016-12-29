@@ -79,7 +79,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
         SQSearchContactFragment.OnContactsSelectionListener {
 
     @BindView(R.id.sq_activity_edit_event_edittext_name)
-    @NotEmpty(messageId = R.string.sq_validation_required_field, order = 1)
+    @NotEmpty(messageId = R.string.sq_validation_required_field)
     protected TextInputEditText mEditTextName;
     @BindView(R.id.sq_activity_edit_event_textview_start_date)
     protected AppCompatTextView mTextViewStartDate;
@@ -142,7 +142,6 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     protected void onResume() {
         super.onResume();
         SQLog.v("onResume");
-        SQUIUtils.SoftInput.show(this, mEditTextName);
     }
 
     @Override
@@ -506,6 +505,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
 
             }
         });
+        mEditTextName.requestFocus();
     }
     //endregion
 }

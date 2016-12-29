@@ -39,6 +39,7 @@ import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
+import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQContactCursorAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.chips.SQChipsView;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
@@ -207,7 +208,7 @@ public class SQSearchContactFragment extends Fragment {
     }
 
     private void initChipsView() {
-        mChipsViewParticipants.mContext = getActivity();
+        mChipsViewParticipants.mContext = (SQActivity) getActivity();
         mChipsViewParticipants.getEditText().setHint(getString(R.string.sq_hint_add_participants));
         mChipsViewParticipants.setChipsListener(new SQChipsView.ChipsListener() {
             @Override

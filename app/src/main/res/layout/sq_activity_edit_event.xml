@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/sq_commons_name"
-                    android:inputType="textCapSentences"
+                    android:inputType="textCapSentences|textNoSuggestions"
                     android:imeOptions="actionNext"
                     android:textSize="@dimen/sq_size_font_headline"/>
             </android.support.design.widget.TextInputLayout>

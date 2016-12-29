@@ -61,14 +61,16 @@ public class SQGoogleSignInUtils {
         }
     }
 
-    public static void signOut(SQActivity pActivity) {
-        Auth.GoogleSignInApi.signOut(SQGoogleSignInUtils.getApiClient(pActivity)).setResultCallback(pStatus -> {
-            if (pStatus.isSuccess()) {
-                SQLog.d("succeed in sign out");
-            } else {
-                SQLog.w("fail to sign out");
-            }
-        });
+    public static void signOut() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(pStatus -> {
+                if (pStatus.isSuccess()) {
+                    SQLog.d("succeed in sign out from Google");
+                } else {
+                    SQLog.w("fail to sign out from Google");
+                }
+            });
+        }
     }
 
     private static GoogleApiClient getApiClient(SQActivity pActivity) {
