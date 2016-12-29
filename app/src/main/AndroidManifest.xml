@@ -43,6 +43,12 @@
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
+            android:name=".ui.activities.SQEventActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/SQTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".ui.activities.SQSettingsActivity"
             android:label="@string/sq_actions_settings"
             android:screenOrientation="portrait"

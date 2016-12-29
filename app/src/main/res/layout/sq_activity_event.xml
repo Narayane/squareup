@@ -18,19 +18,20 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<resources>
-    <!-- margins -->
-    <dimen name="sq_margin_activity_horizontal">24dp</dimen>
-    <dimen name="sq_margin_activity_vertical">24dp</dimen>
-    <dimen name="sq_margin_fab">24dp</dimen>
-    <!-- heights -->
-    <dimen name="sq_height_navigationview">300dp</dimen>
-    <dimen name="sq_height_toolbar_collapsing">300dp</dimen>
-    <!-- sizes -->
-    <dimen name="sq_size_navigationview_icon">72dp</dimen>
-    <!-- text sizes -->
-    <dimen name="sq_size_font_headline">28sp</dimen>
-    <dimen name="sq_size_font_subhead">21sp</dimen>
-    <dimen name="sq_size_font_body">18sp</dimen>
-    <dimen name="sq_size_font_caption">16sp</dimen>
-</resources>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.SQEventActivity">
+
+    <include layout="@layout/sq_widget_appbar_collapsing"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/sq_activity_event_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+</android.support.design.widget.CoordinatorLayout>

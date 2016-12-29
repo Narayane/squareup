@@ -51,7 +51,6 @@ import com.sebastien.balard.android.squareup.misc.utils.SQUserPreferencesUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.SQDrawerActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventsListAdapter;
-import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -80,7 +79,7 @@ public class SQHomeActivity extends SQDrawerActivity {
 
     private ActionMode mActionMode;
     private SQEventsListAdapter mAdapter;
-    private List<SQEvent> mEvents;
+    private List<SQEvent> mListEvents;
     private Long mEventInsertedPosition;
     private Long mEventUpdatedPosition;
     private Long mEventIdToEdit;
@@ -199,15 +198,15 @@ public class SQHomeActivity extends SQDrawerActivity {
     public void deleteEvent(Long pEventId) {
         try {
             int vPosition = -1;
-            for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
-                if (mEvents.get(vIndex).getId().equals(pEventId)) {
+            for (int vIndex = 0; vIndex < mListEvents.size(); vIndex++) {
+                if (mListEvents.get(vIndex).getId().equals(pEventId)) {
                     vPosition = vIndex;
                     break;
                 }
             }
             SQEvent pEvent = SQDatabaseHelper.getInstance(this).getEventDao().queryForId(pEventId);
             SQDatabaseHelper.getInstance(this).getEventDao().delete(pEvent);
-            mEvents.remove(vPosition);
+            mListEvents.remove(vPosition);
             mAdapter.notifyItemRemoved(vPosition);
             mAdapter.notifyItemRangeChanged(vPosition, mAdapter.getItemCount());
         } catch (SQLException pException) {
@@ -219,8 +218,8 @@ public class SQHomeActivity extends SQDrawerActivity {
 
     public void updateEventToPosition(Long pEventId, String pEventName) {
         int vPosition = -1;
-        for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
-            if (mEvents.get(vIndex).getId().equals(pEventId)) {
+        for (int vIndex = 0; vIndex < mListEvents.size(); vIndex++) {
+            if (mListEvents.get(vIndex).getId().equals(pEventId)) {
                 vPosition = vIndex;
                 break;
             }
@@ -233,8 +232,8 @@ public class SQHomeActivity extends SQDrawerActivity {
 
     public void insertEventAtPosition(Long pEventId, String pEventName) {
         int vPosition = -1;
-        for (int vIndex = 0; vIndex < mEvents.size(); vIndex++) {
-            if (mEvents.get(vIndex).getId().equals(pEventId)) {
+        for (int vIndex = 0; vIndex < mListEvents.size(); vIndex++) {
+            if (mListEvents.get(vIndex).getId().equals(pEventId)) {
                 vPosition = vIndex;
                 break;
             }
@@ -311,8 +310,8 @@ public class SQHomeActivity extends SQDrawerActivity {
     }
 
     private void refreshLayout() {
-        mEvents.clear();
-        mEvents.addAll(SQDatabaseHelper.getInstance(this).getEventDao().getAll());
+        mListEvents.clear();
+        mListEvents.addAll(SQDatabaseHelper.getInstance(this).getEventDao().getAll());
         if (mEventInsertedPosition == null && mEventUpdatedPosition == null) {
             mAdapter.notifyDataSetChanged();
         } else if (mEventInsertedPosition != null) {
@@ -324,7 +323,7 @@ public class SQHomeActivity extends SQDrawerActivity {
             mEventUpdatedPosition = null;
             mEventName = null;
         }
-        if (mEvents.size() == 0) {
+        if (mListEvents.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
         } else {
@@ -334,8 +333,8 @@ public class SQHomeActivity extends SQDrawerActivity {
     }
 
     private void initRecyclerView() {
-        mEvents = new ArrayList<>();
-        mAdapter = new SQEventsListAdapter(mEvents);
+        mListEvents = new ArrayList<>();
+        mAdapter = new SQEventsListAdapter(mListEvents);
         mAdapter.setOnEventActionListener(new SQEventsListAdapter.OnEventActionListener() {
             @Override
             public SQActivity getActivity() {
@@ -343,7 +342,14 @@ public class SQHomeActivity extends SQDrawerActivity {
             }
 
             @Override
+            public void onOpen(Long pEventId) {
+                SQLog.v("onOpen");
+                startActivity(SQEventActivity.getIntentToOpen(SQHomeActivity.this, pEventId));
+            }
+
+            @Override
             public void onEdit(Long pEventId) {
+                SQLog.v("onEdit");
                 if (!SQPermissionsUtils.hasPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS)) {
                     mEventIdToEdit = pEventId;
                     SQPermissionsUtils.requestPermission(SQHomeActivity.this, Manifest.permission.READ_CONTACTS, SQConstants
@@ -357,17 +363,20 @@ public class SQHomeActivity extends SQDrawerActivity {
 
             @Override
             public void onDuplicate(Long pEventId) {
+                SQLog.v("onDuplicate");
                 startActivityForResult(SQEditEventActivity.getIntentToDuplicate(SQHomeActivity.this, pEventId), SQConstants
                         .NOTIFICATION_REQUEST_CREATE_EVENT);
             }
 
             @Override
             public void onShare(Long pEventId) {
+                SQLog.v("onShare");
 
             }
 
             @Override
             public void onDelete(Long pEventId) {
+                SQLog.v("onDelete");
                 SQDialogUtils.showDialogYesNo(SQHomeActivity.this, R.string.sq_dialog_title_warning, R
                                 .string.sq_dialog_message_delete_event, android.R.string.ok, android.R.string.cancel,
                         (pDialogInterface, pWhich) -> {
@@ -385,30 +394,31 @@ public class SQHomeActivity extends SQDrawerActivity {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
+        /*mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(this, mRecyclerView, new
                 SQRecyclerViewItemTouchListener.OnItemTouchListener() {
-                    @Override
-                    public void onClick(View pView, int pPosition) {
-                        SQLog.v("onClick");
-                /*if (mActionMode != null) {
-                    performSelection(pPosition);
-                }*/
-                    }
+            @Override
+            public void onClick(View pView, int pPosition) {
+                SQLog.v("onClick");
+                //if (mActionMode != null) {
+                //    performSelection(pPosition);
+                //}
+                startActivity(SQEventActivity.getIntentToOpen(SQHomeActivity.this, mListEvents.get(pPosition).getId()));
+            }
 
-                    @Override
-                    public void onLongClick(View pView, int pPosition) {
-                        SQLog.v("onLongClick");
-                /*if (mActionMode == null) {
-                    mActionMode = startSupportActionMode(mActionModeCallback);
-                }
-                performSelection(pPosition);*/
-                    }
+            @Override
+            public void onLongClick(View pView, int pPosition) {
+                SQLog.v("onLongClick");
+                //if (mActionMode == null) {
+                //    mActionMode = startSupportActionMode(mActionModeCallback);
+                //}
+                //performSelection(pPosition);
+            }
 
-                    @Override
-                    public boolean isEnabled(int pPosition) {
-                        return true;
-                    }
-                }));
+            @Override
+            public boolean isEnabled(int pPosition) {
+                return true;
+            }
+        }));*/
     }
     //endregion
 

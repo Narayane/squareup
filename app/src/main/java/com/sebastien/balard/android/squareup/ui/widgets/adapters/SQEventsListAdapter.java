@@ -29,6 +29,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
@@ -51,6 +52,8 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
 
     public static class EventsListItemViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.sq_item_events_list_layout_clickable)
+        LinearLayout mLayoutClickable;
         @BindView(R.id.sq_item_events_list_textview_name)
         AppCompatTextView mTextViewName;
         @BindView(R.id.sq_item_events_list_textview_start_date)
@@ -74,6 +77,7 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
 
     public interface OnEventActionListener {
         SQActivity getActivity();
+        void onOpen(Long pEventId);
         void onEdit(Long pEventId);
         void onDuplicate(Long pEventId);
         void onShare(Long pEventId);
@@ -98,6 +102,7 @@ public class SQEventsListAdapter extends SQMultiChoiceModeAdapter<SQEvent, SQEve
     public void onBindViewHolder(final EventsListItemViewHolder pViewHolder, int pPosition) {
         SQEvent vEvent = mItemsList.get(pPosition);
 
+        pViewHolder.mLayoutClickable.setOnClickListener(pView -> mListener.onOpen(vEvent.getId()));
         pViewHolder.mTextViewName.setText(vEvent.getName());
         if (vEvent.getEndDate().toLocalDate().equals(vEvent.getStartDate().toLocalDate())) {
             pViewHolder.mTextViewStartDate.setText(SQApplication.getContext().getString(R.string.sq_commons_the,

@@ -34,12 +34,14 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/sq_item_events_list_layout_clickable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground"
             android:padding="12dp">
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
