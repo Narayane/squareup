@@ -25,7 +25,7 @@
     <dimen name="sq_margin_fab">16dp</dimen>
     <!-- heights -->
     <dimen name="sq_height_navigationview">250dp</dimen>
-    <dimen name="sq_height_toolbar_collapsing">160dp</dimen>
+    <dimen name="sq_height_toolbar_collapsing">180dp</dimen>
     <!-- sizes -->
     <dimen name="sq_size_navigationview_icon">56dp</dimen>
     <!-- text sizes -->

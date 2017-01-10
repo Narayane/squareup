@@ -32,6 +32,7 @@ import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.fragments.event.SQEventSynthesisFragment;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQViewPagerAdapter;
 
 import java.sql.SQLException;
@@ -87,13 +88,18 @@ public class SQEventActivity extends SQActivity {
             finish();
         }
     }
+    //endregion
 
+    //region public methods
+    public SQEvent getEvent() {
+        return mEvent;
+    }
     //endregion
 
     //region private methods
     private void initViewPager() {
         SQViewPagerAdapter vViewPagerAdapter = new SQViewPagerAdapter(getSupportFragmentManager());
-        vViewPagerAdapter.addFragment(new Fragment(), "Synthèse");
+        vViewPagerAdapter.addFragment(new SQEventSynthesisFragment(), "Synthèse");
         vViewPagerAdapter.addFragment(new Fragment(), "Opérations");
         vViewPagerAdapter.addFragment(new Fragment(), "Dettes");
         mViewPager.setAdapter(vViewPagerAdapter);

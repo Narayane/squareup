@@ -63,7 +63,7 @@ public class SQContactCursorAdapter extends SQAbstractCursorAdapter<SQContactCur
         if (vPhotoUri != null) {
             pViewHolder.mImageViewPicture.setImageURI(vPhotoUri);
         } else {
-            pViewHolder.mImageViewPicture.setImageResource(R.mipmap.ic_launcher);
+            pViewHolder.mImageViewPicture.setImageResource(R.drawable.sq_ic_person_24dp);
         }
         pViewHolder.mTextViewName.setText(SQContactUtils.getDisplayName(mContext, vContactId));
         pViewHolder.mTextViewEmail.setText(SQContactUtils.getEmail(mContext, vContactId));

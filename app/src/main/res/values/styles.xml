@@ -52,6 +52,10 @@
         <item name="android:textSize">@dimen/sq_size_font_headline</item>
     </style>
 
+    <style name="SQTheme.TextAppearance.HeadLine.Condensed.Bold" parent="SQTheme.TextAppearance.Condensed.Bold">
+        <item name="android:textSize">@dimen/sq_size_font_headline</item>
+    </style>
+
     <style name="SQTheme.TextAppearance.Caption.Italic" parent="SQTheme.TextAppearance">
         <item name="android:textSize">@dimen/sq_size_font_caption</item>
         <item name="android:textStyle">italic</item>

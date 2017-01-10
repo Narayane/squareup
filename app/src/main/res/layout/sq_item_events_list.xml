@@ -83,13 +83,27 @@
                     android:text="0 participant"/>
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/sq_item_events_list_textview_amout"
-                style="@style/SQTheme.TextAppearance.SubHead.Condensed.Bold"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="right|center_vertical"
-                android:text="0,00 €"/>
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:minWidth="64dp"
+                    android:scaleType="fitEnd"
+                    app:srcCompat="@drawable/sq_img_placeholder_landscape"/>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/sq_item_events_list_textview_amout"
+                    style="@style/SQTheme.TextAppearance.SubHead.Condensed.Bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="end|bottom"
+                    android:text="1 000,00 €"/>
+
+            </LinearLayout>
         </LinearLayout>
 
         <View

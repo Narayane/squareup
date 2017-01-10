@@ -86,12 +86,12 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
         SQPerson vOther = (SQPerson) pObject;
 
-        return new EqualsBuilder().append(getEmail(), vOther.getEmail()).isEquals();
+        return new EqualsBuilder().append(getName(), vOther.getName()).append(getEmail(), vOther.getEmail()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(getEmail()).toHashCode();
+        return new HashCodeBuilder(17, 37).append(getName()).append(getEmail()).toHashCode();
     }
 
     @Override

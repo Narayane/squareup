@@ -4,17 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sq_widget_appbar_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sq_height_toolbar_collapsing"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:theme="@style/SQTheme.ActionBar">
 
     <android.support.design.widget.CollapsingToolbarLayout
         android:id="@+id/sq_widget_appbar_layout_collapsing"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/sq_height_toolbar_collapsing"
         app:contentScrim="?attr/colorPrimary"
-        app:expandedTitleMarginStart="80dp"
-        app:expandedTitleMarginBottom="56dp"
+        app:expandedTitleMarginBottom="64dp"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <android.support.v7.widget.AppCompatImageView
@@ -31,6 +30,7 @@
             android:id="@+id/sq_widget_appbar_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginBottom="?attr/actionBarSize"
             app:layout_collapseMode="pin"
             android:gravity="top"
             app:popupTheme="@style/SQTheme.Popup"/>
@@ -40,7 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="bottom"
-            app:tabIndicatorColor="@android:color/white"/>
+            app:tabIndicatorColor="?attr/colorAccent"
+            app:tabIndicatorHeight="4dp"/>
     </android.support.design.widget.CollapsingToolbarLayout>
 
 </android.support.design.widget.AppBarLayout>
