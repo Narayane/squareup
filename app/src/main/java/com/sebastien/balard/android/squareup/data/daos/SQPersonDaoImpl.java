@@ -20,10 +20,12 @@
 package com.sebastien.balard.android.squareup.data.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import java.sql.SQLException;
@@ -37,6 +39,13 @@ public class SQPersonDaoImpl extends BaseDaoImpl<SQPerson, Long> {
     public SQPersonDaoImpl(ConnectionSource pConnectionSource, DatabaseTableConfig<SQPerson> pTableConfig) throws
             SQLException {
         super(pConnectionSource, pTableConfig);
+    }
+
+    public List<SQPerson> findParticipantsByEventId(Long pEventId) throws SQLException {
+        QueryBuilder<SQPerson, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_PERSON_COLUMN_FK_EVENT_ID, pEventId);
+        vQueryBuilder.orderBy(SQConstants.TABLE_PERSON_COLUMN_NAME, true);
+        return vQueryBuilder.query();
     }
 
     public void createAll(List<SQPerson> pPeople, SQEvent pEvent) throws SQLException {

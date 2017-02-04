@@ -51,6 +51,17 @@ public interface SQConstants {
     String TABLE_PERSON_COLUMN_FK_CONTACT_ID = "fk_contact_id";
     String TABLE_PERSON_COLUMN_FK_EVENT_ID = "fk_event_id";
 
+    String TABLE_DEAL_NAME = "sq_deals";
+    String TABLE_DEAL_COLUMN_ID = "deal_id";
+    String TABLE_DEAL_COLUMN_TYPE = "deal_type";
+    String TABLE_DEAL_COLUMN_TAG = "deal_tag";
+    String TABLE_DEAL_COLUMN_DATE = "deal_date";
+    String TABLE_DEAL_COLUMN_VALUE = "deal_value";
+    String TABLE_DEAL_COLUMN_CURRENCY_RATE = "deal_currency_rate";
+    String TABLE_DEAL_COLUMN_LATITUDE = "deal_latitude";
+    String TABLE_DEAL_COLUMN_LONGITUDE = "deal_longitude";
+    String TABLE_DEAL_COLUMN_FK_CURRENCY_ID = "fk_currency_id";
+
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 
     String PREFERENCE_CURRENCIES_UPDATE_FREQUENCY = "preference_currency_update_frequency";
@@ -71,4 +82,5 @@ public interface SQConstants {
     String EXTRA_EVENT_ID = "EXTRA_EVENT_ID";
     String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
     String EXTRA_ARRAY_PERSON_IDS = "EXTRA_ARRAY_PERSON_IDS";
+    String EXTRA_EVENT_OWNER_ID = "EXTRA_EVENT_OWNER_ID";
 }

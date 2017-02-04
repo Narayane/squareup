@@ -457,7 +457,7 @@ public class SQHomeActivity extends SQDrawerActivity {
             public void onNext(SQConversionBase pConversionBase) {
                 SQLog.v("onNext");
                 SQLog.d("conversion base: " + pConversionBase.getCode());
-                SQLog.d("last update: " + SQFormatUtils.formatDateAndTime(pConversionBase.getLastUpdate()));
+                SQLog.d("last update: " + SQFormatUtils.formatDateTime(pConversionBase.getLastUpdate()));
                 SQLog.d("rates count: " + pConversionBase.getRates().size());
                 try {
                     SQDatabaseHelper.getInstance(SQHomeActivity.this).getConversionBaseDao().createOrUpdate

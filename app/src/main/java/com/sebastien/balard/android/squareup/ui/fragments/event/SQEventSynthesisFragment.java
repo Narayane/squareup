@@ -34,8 +34,10 @@ import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQFragment;
+import com.sebastien.balard.android.squareup.ui.activities.SQEditDealActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQEventActivity;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventSynthesisAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +122,25 @@ public class SQEventSynthesisFragment extends SQFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapterPersons);
+        mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(getActivity(), mRecyclerView, new
+                SQRecyclerViewItemTouchListener.OnItemTouchListener() {
+                    @Override
+                    public void onClick(View pView, int pPosition) {
+                        SQLog.v("onClick");
+                        startActivity(SQEditDealActivity.getIntentToCreate(getActivity(), getEvent().getId(),
+                                getEvent().getParticipants().get(pPosition).getId()));
+                    }
 
+                    @Override
+                    public void onLongClick(View pView, int pPosition) {
+                        SQLog.v("onLongClick");
+                    }
+
+                    @Override
+                    public boolean isEnabled(int pPosition) {
+                        return true;
+                    }
+                }));
     }
     //endregion
 }

@@ -101,7 +101,7 @@ public class SQSettingsFragment extends PreferenceFragment implements SharedPref
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            mLastUpdatePreference.setSummary(SQFormatUtils.formatMediumDateAndTime(vLastUpdate));
+            mLastUpdatePreference.setSummary(SQFormatUtils.formatMediumDateTime(vLastUpdate));
         }
     }
 

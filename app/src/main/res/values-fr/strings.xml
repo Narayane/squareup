@@ -27,6 +27,7 @@
     <string name="sq_commons_name">Nom</string>
     <string name="sq_commons_email">Email</string>
     <string name="sq_commons_weight">Poids</string>
+    <string name="sq_commons_at">à</string>
     <!-- settings screen -->
     <string name="sq_screen_settings_category_currencies_title">Monnaies</string>
     <string name="sq_screen_settings_category_currencies_label_update_frequency">Fréquence de mise à jour</string>

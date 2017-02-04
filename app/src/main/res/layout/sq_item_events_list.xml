@@ -40,13 +40,15 @@
             android:orientation="horizontal"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground"
-            android:padding="12dp">
+            android:padding="@dimen/sq_margin_activity_horizontal"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginEnd="@dimen/sq_margin_activity_horizontal">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/sq_item_events_list_textview_name"
@@ -90,9 +92,10 @@
 
                 <android.support.v7.widget.AppCompatImageView
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:minWidth="64dp"
-                    android:scaleType="fitEnd"
+                    android:layout_height="@dimen/sq_height_imageview_item_events_list"
+                    android:minWidth="@dimen/sq_height_imageview_item_events_list"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     app:srcCompat="@drawable/sq_img_placeholder_landscape"/>
 
                 <android.support.v7.widget.AppCompatTextView
@@ -100,8 +103,9 @@
                     style="@style/SQTheme.TextAppearance.SubHead.Condensed.Bold"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     android:gravity="end|bottom"
-                    android:text="1 000,00 €"/>
+                    android:text="1 000 000,00 €"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -114,7 +118,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="end"
             android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatButton
@@ -132,6 +136,7 @@
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/sq_ic_overflow_24dp"
+                android:layout_marginEnd="@dimen/sq_margin_activity_horizontal"
                 android:gravity="center_vertical"/>
         </LinearLayout>
 

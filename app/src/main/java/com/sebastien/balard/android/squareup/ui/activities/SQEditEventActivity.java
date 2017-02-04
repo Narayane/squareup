@@ -230,7 +230,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     @OnTextChanged(value = R.id.sq_activity_edit_event_edittext_currency, callback = OnTextChanged.Callback
             .TEXT_CHANGED)
     protected void onCurrencyTextChanged(CharSequence pCharSequence, int pStart, int pBefore, int pCount) {
-        if (pBefore == 2 && pCount > 2) {
+        if (pStart > 2 && pCount > 0) {
             openSearchCurrencyFragment(pCharSequence.toString());
             mEditTextCurrency.getText().clear();
         }

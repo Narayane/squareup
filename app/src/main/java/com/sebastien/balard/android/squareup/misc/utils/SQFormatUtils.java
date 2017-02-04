@@ -20,6 +20,7 @@
 package com.sebastien.balard.android.squareup.misc.utils;
 
 import com.sebastien.balard.android.squareup.SQApplication;
+import com.sebastien.balard.android.squareup.misc.SQLog;
 
 import org.joda.time.DateTime;
 
@@ -27,12 +28,40 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Locale;
 
 /**
  * Created by Sebastien BALARD on 10/03/2016.
  */
 public class SQFormatUtils {
+
+    public static Float parseFloatEntry(String pEntry) {
+        Float vResult = null;
+        NumberFormat vFormat = NumberFormat.getInstance(Locale.ENGLISH);
+        vFormat.setParseIntegerOnly(false);
+        String value;
+        Number vNumber = 0;
+        try {
+            if (!pEntry.equals("")) {
+                value = pEntry;
+                vNumber = vFormat.parse(value).floatValue();
+            }
+            vResult = vNumber.floatValue();
+        } catch (ParseException pException) {
+            SQLog.e("Parsing float entry problem", pException);
+        }
+        return vResult;
+    }
+
+    public static String formatAmount(Float pValue) {
+        DecimalFormat df = new DecimalFormat("###,###,###,##0.00");
+        Float vFormatted = 0f;
+        if (pValue != null) {
+            vFormatted = pValue;
+        }
+        return df.format(vFormatted);
+    }
 
     public static String formatAmount(Float pValue, String pCurrencySymbol) {
 
@@ -59,7 +88,7 @@ public class SQFormatUtils {
         return vLabel;
     }
 
-    public static String formatDateAndTime(DateTime pDateTime) {
+    public static String formatDateTime(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
             vLabel = formatDate(pDateTime) + " " + formatTime(pDateTime);
@@ -67,10 +96,18 @@ public class SQFormatUtils {
         return vLabel;
     }
 
-    public static String formatMediumDateAndTime(DateTime pDateTime) {
+    public static String formatMediumDateTime(DateTime pDateTime) {
         String vLabel = "-";
         if (pDateTime != null) {
             vLabel = formatMediumDate(pDateTime) + " " + formatTime(pDateTime);
+        }
+        return vLabel;
+    }
+
+    public static String formatLongDateTime(DateTime pDateTime, String pDelimiter) {
+        String vLabel = "-";
+        if (pDateTime != null) {
+            vLabel = formatLongDate(pDateTime) + " " + pDelimiter + " " + formatTime(pDateTime);
         }
         return vLabel;
     }

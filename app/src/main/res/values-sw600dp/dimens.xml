@@ -26,6 +26,7 @@
     <!-- heights -->
     <dimen name="sq_height_navigationview">300dp</dimen>
     <dimen name="sq_height_toolbar_collapsing">300dp</dimen>
+    <dimen name="sq_height_imageview_item_events_list">128dp</dimen>
     <!-- sizes -->
     <dimen name="sq_size_navigationview_icon">72dp</dimen>
     <!-- text sizes -->

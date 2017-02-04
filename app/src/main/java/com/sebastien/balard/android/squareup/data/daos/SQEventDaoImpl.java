@@ -23,6 +23,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -53,5 +54,17 @@ public class SQEventDaoImpl extends BaseDaoImpl<SQEvent, Long> {
             SQLog.e("fail to get events");
         }
         return vList;
+    }
+
+    public SQCurrency getCurrencyForNewDeal(Long pEventId) throws SQLException {
+        QueryBuilder<SQEvent, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_EVENT_COLUMN_ID, pEventId);
+        return vQueryBuilder.queryForFirst().getCurrency();
+    }
+
+    public SQCurrency getParticipants(Long pEventId) throws SQLException {
+        QueryBuilder<SQEvent, Long> vQueryBuilder = queryBuilder();
+        vQueryBuilder.where().eq(SQConstants.TABLE_EVENT_COLUMN_ID, pEventId);
+        return vQueryBuilder.queryForFirst().getCurrency();
     }
 }
