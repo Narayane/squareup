@@ -43,6 +43,13 @@ public class SQUIUtils {
             vImm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
 
+        public static void hide(Activity pContext, View pView) {
+            InputMethodManager vImm = (InputMethodManager) pContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (vImm.isAcceptingText()) {
+                vImm.hideSoftInputFromWindow(pView.getWindowToken(), 0);
+            }
+        }
+
         public static void hide(Activity pContext) {
             InputMethodManager vImm = (InputMethodManager) pContext.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (vImm.isAcceptingText()) {

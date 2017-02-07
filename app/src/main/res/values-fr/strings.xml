@@ -39,6 +39,8 @@
     <string name="sq_screen_home_textview_empty_label">Vous n\'avez pas encore créé d\'événement</string>
     <!-- currencies list screen -->
     <string name="sq_screen_currencies_list_textview_empty_label">Vous n\'avez pas encore activé de devise</string>
+    <!-- deal screen -->
+    <string name="sq_edit_deal_screen_payment_label">fait un paiement pour</string>
     <!-- dialogs -->
     <string name="sq_dialog_title_warning">Alerte</string>
     <string name="sq_dialog_title_create_contact">Nouveau contact</string>
@@ -73,4 +75,6 @@
     <string name="sq_message_warning_not_yet_implemented">Bientôt disponible</string>
     <string name="sq_message_info_add_participants">Sélectionnez un contact dans la liste ci-dessous ou appuyer sur , ou entrée à la fin de votre saisie pour en créer un nouveau</string>
     <string name="sq_message_warning_sign_in_with_multiple_google_accounts">"Vous avez utilisé précédemment un autre compte Google pour vous identifier, merci de le réutiliser à nouveau"</string>
+    <string name="sq_message_error_at_least_one_active_participant">"Au moins un participant doit être actif
+        dans un paiement"</string>
 </resources>

@@ -29,10 +29,14 @@ import com.j256.ormlite.table.TableUtils;
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImpl;
+import com.sebastien.balard.android.squareup.data.daos.SQDealDaoImpl;
+import com.sebastien.balard.android.squareup.data.daos.SQDebtDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImpl;
 import com.sebastien.balard.android.squareup.data.daos.SQPersonDaoImpl;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.data.models.SQDeal;
+import com.sebastien.balard.android.squareup.data.models.SQDebt;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -53,6 +57,8 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private SQConversionBaseDaoImpl mConversionBaseDao;
     private SQEventDaoImpl mEventDao;
     private SQPersonDaoImpl mPersonDao;
+    private SQDealDaoImpl mDealDao;
+    private SQDebtDaoImpl mDebtDao;
 
     public static synchronized SQDatabaseHelper getInstance(Context pContext) {
         if (mInstance == null) {
@@ -85,6 +91,8 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(pConnectionSource, SQConversionBase.class);
             TableUtils.createTable(pConnectionSource, SQEvent.class);
             TableUtils.createTable(pConnectionSource, SQPerson.class);
+            TableUtils.createTable(pConnectionSource, SQDeal.class);
+            TableUtils.createTable(pConnectionSource, SQDebt.class);
         } catch (SQLException pException) {
             SQLog.e("fail to create database", pException);
             throw new RuntimeException(pException);
@@ -104,7 +112,7 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
                 //TODO: put start date in end date when end date is null
             }
         } catch (SQLException pException) {
-            SQLog.e("database upgrade problem (" + pOldVersion + " => " + pNewVersion, pException);
+            SQLog.e("fail to upgrade database (" + pOldVersion + " => " + pNewVersion, pException);
             throw new RuntimeException(pException);
         }
     }
@@ -164,5 +172,29 @@ public class SQDatabaseHelper extends OrmLiteSqliteOpenHelper {
             }
         }
         return mCurrencyDao;
+    }
+
+    public SQDealDaoImpl getDealDao() {
+        if (mDealDao == null) {
+            try {
+                mDealDao = getDao(SQDeal.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get deal dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mDealDao;
+    }
+
+    public SQDebtDaoImpl getDebtDao() {
+        if (mDebtDao == null) {
+            try {
+                mDebtDao = getDao(SQDebt.class);
+            } catch (SQLException pException) {
+                SQLog.e("fail to get debt dao");
+                throw new RuntimeException(pException);
+            }
+        }
+        return mDebtDao;
     }
 }

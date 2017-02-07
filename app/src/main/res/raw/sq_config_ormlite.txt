@@ -1,5 +1,5 @@
 #
-# generated on 2016/06/25 10:25:46
+# generated on 2017/02/05 09:27:19
 #
 # --table-start--
 dataClass=com.sebastien.balard.android.squareup.data.models.SQCurrency
@@ -62,6 +62,133 @@ canBeNull=false
 # --table-end--
 #################################
 # --table-start--
+dataClass=com.sebastien.balard.android.squareup.data.models.SQDeal
+tableName=sq_deals
+# --table-fields-start--
+# --field-start--
+fieldName=mId
+columnName=deal_id
+canBeNull=false
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=type
+columnName=deal_type
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mTag
+columnName=deal_tag
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mDate
+columnName=deal_date
+dataPersister=DATE_TIME
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mValue
+columnName=deal_value
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mRate
+columnName=deal_currency_rate
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mLatitude
+columnName=deal_latitude
+# --field-end--
+# --field-start--
+fieldName=mLongitude
+columnName=deal_longitude
+# --field-end--
+# --field-start--
+fieldName=mCurrency
+columnName=fk_currency_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=mOwner
+columnName=fk_owner_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=mEventId
+columnName=fk_event_id
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mDebts
+foreignCollection=true
+foreignCollectionEager=true
+foreignCollectionForeignFieldName=mDeal
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.sebastien.balard.android.squareup.data.models.SQDebt
+tableName=sq_debts
+# --table-fields-start--
+# --field-start--
+fieldName=mId
+columnName=debt_id
+canBeNull=false
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=mIsActive
+columnName=is_active
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mValue
+columnName=debt_value
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mRate
+columnName=debt_currency_rate
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mRecipient
+columnName=fk_recipient_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=mCurrency
+columnName=fk_currency_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=mDeal
+columnName=fk_deal_id
+canBeNull=false
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+columnDefinition=integer references sq_deals(deal_id) on delete cascade
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
 dataClass=com.sebastien.balard.android.squareup.data.models.SQEvent
 tableName=sq_events
 # --table-fields-start--
@@ -93,6 +220,7 @@ columnName=fk_currency_id
 canBeNull=false
 foreign=true
 foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
 foreignAutoCreate=true
 # --field-end--
 # --field-start--
@@ -137,6 +265,7 @@ columnName=fk_event_id
 canBeNull=false
 foreign=true
 foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
 columnDefinition=integer references sq_events(event_id) on delete cascade
 foreignAutoCreate=true
 # --field-end--

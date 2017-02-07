@@ -36,16 +36,22 @@ import java.util.Locale;
  */
 public class SQFormatUtils {
 
-    public static Float parseFloatEntry(String pEntry) {
+    public static Float parseFloatEntry(String pEntry, boolean pUseDefaultLocale) {
         Float vResult = null;
-        NumberFormat vFormat = NumberFormat.getInstance(Locale.ENGLISH);
-        vFormat.setParseIntegerOnly(false);
+        NumberFormat vNumberFormat;
+        if (pUseDefaultLocale) {
+            vNumberFormat = NumberFormat.getInstance(Locale.getDefault());
+        } else {
+            vNumberFormat = NumberFormat.getInstance(Locale.ENGLISH);
+        }
+        vNumberFormat.setParseIntegerOnly(false);
+        vNumberFormat.setParseIntegerOnly(false);
         String value;
         Number vNumber = 0;
         try {
             if (!pEntry.equals("")) {
                 value = pEntry;
-                vNumber = vFormat.parse(value).floatValue();
+                vNumber = vNumberFormat.parse(value).floatValue();
             }
             vResult = vNumber.floatValue();
         } catch (ParseException pException) {

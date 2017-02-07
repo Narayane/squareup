@@ -61,6 +61,17 @@ public interface SQConstants {
     String TABLE_DEAL_COLUMN_LATITUDE = "deal_latitude";
     String TABLE_DEAL_COLUMN_LONGITUDE = "deal_longitude";
     String TABLE_DEAL_COLUMN_FK_CURRENCY_ID = "fk_currency_id";
+    String TABLE_DEAL_COLUMN_FK_OWNER_ID = "fk_owner_id";
+    String TABLE_DEAL_COLUMN_FK_EVENT_ID = "fk_event_id";
+
+    String TABLE_DEBT_NAME = "sq_debts";
+    String TABLE_DEBT_COLUMN_ID = "debt_id";
+    String TABLE_DEBT_COLUMN_IS_ACTIVE = "is_active";
+    String TABLE_DEBT_COLUMN_VALUE = "debt_value";
+    String TABLE_DEBT_COLUMN_CURRENCY_RATE = "debt_currency_rate";
+    String TABLE_DEBT_COLUMN_FK_RECIPIENT_ID = "fk_recipient_id";
+    String TABLE_DEBT_COLUMN_FK_CURRENCY_ID = "fk_currency_id";
+    String TABLE_DEBT_COLUMN_FK_DEAL_ID = "fk_deal_id";
 
     String ACTION_UPDATE_CURRENCIES_RATES = "ACTION_UPDATE_CURRENCIES_RATES";
 

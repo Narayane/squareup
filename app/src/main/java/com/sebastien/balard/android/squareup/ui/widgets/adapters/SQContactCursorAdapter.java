@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +31,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
 import com.sebastien.balard.android.squareup.ui.widgets.SQAbstractCursorAdapter;
 
@@ -63,7 +66,10 @@ public class SQContactCursorAdapter extends SQAbstractCursorAdapter<SQContactCur
         if (vPhotoUri != null) {
             pViewHolder.mImageViewPicture.setImageURI(vPhotoUri);
         } else {
-            pViewHolder.mImageViewPicture.setImageResource(R.drawable.sq_ic_person_24dp);
+            TextDrawable vPlaceholder = TextDrawable.builder().buildRound(Character.toString(SQContactUtils
+                    .getDisplayName(mContext, vContactId).charAt(0)), ContextCompat.getColor(SQApplication.getContext
+                    (), R.color.sq_color_primary_dark));
+            pViewHolder.mImageViewPicture.setImageDrawable(vPlaceholder);
         }
         pViewHolder.mTextViewName.setText(SQContactUtils.getDisplayName(mContext, vContactId));
         pViewHolder.mTextViewEmail.setText(SQContactUtils.getEmail(mContext, vContactId));

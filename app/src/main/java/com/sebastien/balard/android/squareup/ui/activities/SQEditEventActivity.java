@@ -147,7 +147,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
         SQLog.v("onCreateOptionsMenu");
-        getMenuInflater().inflate(R.menu.sq_menu_create_event, pMenu);
+        getMenuInflater().inflate(R.menu.sq_menu_create, pMenu);
         if (mIsModeEdit) {
             pMenu.getItem(0).setTitle(R.string.sq_actions_update);
         }
@@ -157,13 +157,13 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     @Override
     public boolean onOptionsItemSelected(MenuItem pMenuItem) {
         switch (pMenuItem.getItemId()) {
-            case R.id.sq_menu_create_event_item_create:
+            case R.id.sq_menu_create_item_create:
                 if (FormValidator.validate(this, new SQValidationCallback(this, false))) {
                     if (mIsModeEdit) {
-                        SQLog.v("click on menu item: update event");
+                        SQLog.i("click on menu item: update event");
                         updateEvent();
                     } else {
-                        SQLog.v("click on menu item: create event");
+                        SQLog.i("click on menu item: create event");
                         createEvent();
                     }
                 }
@@ -230,7 +230,7 @@ public class SQEditEventActivity extends SQActivity implements SQSearchCurrencyF
     @OnTextChanged(value = R.id.sq_activity_edit_event_edittext_currency, callback = OnTextChanged.Callback
             .TEXT_CHANGED)
     protected void onCurrencyTextChanged(CharSequence pCharSequence, int pStart, int pBefore, int pCount) {
-        if (pStart > 2 && pCount > 0) {
+        if (pStart > 1 && pCount > 0) {
             openSearchCurrencyFragment(pCharSequence.toString());
             mEditTextCurrency.getText().clear();
         }

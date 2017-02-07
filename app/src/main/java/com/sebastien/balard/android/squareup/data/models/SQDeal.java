@@ -19,39 +19,55 @@
 
 package com.sebastien.balard.android.squareup.data.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.sebastien.balard.android.squareup.data.daos.SQDealDaoImpl;
+import com.sebastien.balard.android.squareup.misc.SQConstants;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Sebastien BALARD on 22/01/2017.
  */
 
+@DatabaseTable(tableName = SQConstants.TABLE_DEAL_NAME, daoClass = SQDealDaoImpl.class)
 public class SQDeal {
 
-    @DatabaseField(generatedId = true, columnName = "deal_id", canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_DEAL_COLUMN_ID, canBeNull = false)
     protected Long mId;
-    @DatabaseField(columnName = "deal_type", canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TYPE, canBeNull = false)
     protected String type;
-    @DatabaseField(columnName = "deal_tag", canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TAG, canBeNull = false)
     protected String mTag;
-    @DatabaseField(columnName = "deal_date", dataType = DataType.DATE_TIME, canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_DATE, dataType = DataType.DATE_TIME, canBeNull = false)
     protected DateTime mDate;
-    @DatabaseField(columnName = "deal_value", canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_VALUE, canBeNull = false)
     protected Float mValue;
-    @DatabaseField(columnName = "deal_currency_rate", canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_CURRENCY_RATE, canBeNull = false)
     protected Float mRate;
-    @DatabaseField(columnName = "deal_latitude")
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_LATITUDE)
     protected Double mLatitude;
-    @DatabaseField(columnName = "deal_longitude")
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_LONGITUDE)
     protected Double mLongitude;
-    @DatabaseField(columnName = "fk_currency_id", canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_FK_CURRENCY_ID, canBeNull = false, foreign = true,
+            foreignAutoRefresh = true)
     protected SQCurrency mCurrency;
-    @DatabaseField(columnName = "fk_owner_id", canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_FK_OWNER_ID, canBeNull = false, foreign = true,
+            foreignAutoRefresh = true)
     protected SQPerson mOwner;
-    @DatabaseField(columnName = "fk_event_id", canBeNull = false)
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_FK_EVENT_ID, canBeNull = false)
     protected Long mEventId;
+    @ForeignCollectionField(eager = true, foreignFieldName = "mDeal")
+    protected ForeignCollection<SQDebt> mDebts;
 
     protected SQDeal() {
         mDate = DateTime.now();
@@ -60,6 +76,24 @@ public class SQDeal {
     public SQDeal(String pTag) {
         this();
         mTag = pTag;
+    }
+
+    @Override
+    public boolean equals(Object pObject) {
+        if (this == pObject) return true;
+
+        if (pObject == null || getClass() != pObject.getClass()) return false;
+
+        SQDeal vOther = (SQDeal) pObject;
+
+        return new EqualsBuilder().append(mTag, vOther.mTag).append(mDate, vOther.mDate).append(mValue,
+                vOther.mValue).append(mRate, vOther.mRate).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(mTag).append(mDate).append(mValue).append(mRate)
+                .toHashCode();
     }
 
     public SQCurrency getCurrency() {
@@ -82,20 +116,20 @@ public class SQDeal {
         return mEventId;
     }
 
+    public void setEventId(Long pEventId) {
+        mEventId = pEventId;
+    }
+
     public Long getId() {
         return mId;
     }
 
-    public Double getLatitude() {
-        return mLatitude;
-    }
-
-    public Double getLongitude() {
-        return mLongitude;
-    }
-
     public SQPerson getOwner() {
         return mOwner;
+    }
+
+    public void setOwner(SQPerson pOwner) {
+        mOwner = pOwner;
     }
 
     public Float getRate() {
@@ -106,7 +140,30 @@ public class SQDeal {
         return mTag;
     }
 
+    public void setTag(String pTag) {
+        mTag = pTag;
+    }
+
     public Float getValue() {
         return mValue;
+    }
+
+    public void setValue(Float pValue) {
+        mValue = pValue;
+    }
+
+    public List<SQDebt> getDebts() {
+        if (mDebts != null) {
+            List<SQDebt> vList = new ArrayList<>(mDebts);
+            Collections.sort(vList, (pFirst, pSecond) -> pFirst.getRecipient().getName().compareTo(pSecond.getRecipient().getName
+                    ()));
+            return vList;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public enum SQDealType {
+        Food, Drink, Accomodation, Restaurant, Parking, Taxi, Bar, Transport, Gas, Toll;
     }
 }

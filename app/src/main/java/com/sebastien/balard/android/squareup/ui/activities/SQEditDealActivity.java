@@ -25,7 +25,10 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
@@ -36,23 +39,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 
 import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQDeal;
+import com.sebastien.balard.android.squareup.data.models.SQDebt;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
+import com.sebastien.balard.android.squareup.misc.utils.SQDialogUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 import com.sebastien.balard.android.squareup.misc.utils.SQUIUtils;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchContactFragment;
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchCurrencyFragment;
 import com.sebastien.balard.android.squareup.ui.widgets.SQValidationCallback;
-import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQDealParticipantsListAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQDealDebtsListAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQPersonSpinnerAdapter;
 
 import org.joda.time.DateTime;
@@ -75,8 +79,8 @@ import eu.inmite.android.lib.validations.form.annotations.NotEmpty;
 
 public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFragment.OnCurrencySelectionListener {
 
-    @BindView(R.id.sq_activity_edit_deal_view_focus)
-    protected View mViewFocus;
+    /*@BindView(R.id.sq_activity_edit_deal_layout_focus)
+    protected LinearLayout mLayoutFocus;*/
     @BindView(R.id.sq_activity_edit_deal_edittext_tag)
     @NotEmpty(messageId = R.string.sq_validation_required_field)
     protected TextInputEditText mEditTextTag;
@@ -91,8 +95,9 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     @BindView(R.id.sq_activity_edit_deal_recyclerview_participants)
     protected RecyclerView mRecyclerView;
 
-    private SQDealParticipantsListAdapter mAdapterParticipants;
-    private List<SQPerson> mListParticipants;
+    private SQDealDebtsListAdapter mAdapterDebts;
+    private List<SQDebt> mListDebts;
+    private Handler mUIThread;
 
     private SQDeal mDeal;
     /*private boolean mIsModeEdit;
@@ -119,6 +124,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
         SQLog.v("onCreate");
 
         initToolbar();
+        mUIThread = new Handler(Looper.getMainLooper());
         /*mIsModeEdit = getIntent().hasExtra("EXTRA_MODE_EDIT");
         mIsModeDuplicate = getIntent().hasExtra("EXTRA_MODE_DUPLICATE");
         if (mIsModeEdit) {
@@ -127,18 +133,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
             duplicateEvent();
         }*/
         mDeal = new SQDeal("");
-        try {
-            mDeal.setCurrency(SQDatabaseHelper.getInstance(this).getEventDao().getCurrencyForNewDeal(getIntent()
-                    .getExtras().getLong(SQConstants.EXTRA_EVENT_ID)));
-        } catch (SQLException pException) {
-            try {
-                String vCode = SQCurrencyUtils.getLocaleCurrency().getCurrencyCode();
-                SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(vCode);
-                mDeal.setCurrency(vCurrency);
-            } catch (SQLException pException2) {
-                SQLog.e("gros pb");
-            }
-        }
+        mDeal.setEventId(getIntent().getExtras().getLong(SQConstants.EXTRA_EVENT_ID));
         initLayout();
     }
 
@@ -158,7 +153,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     @Override
     public boolean onCreateOptionsMenu(Menu pMenu) {
         SQLog.v("onCreateOptionsMenu");
-        getMenuInflater().inflate(R.menu.sq_menu_create_event, pMenu);
+        getMenuInflater().inflate(R.menu.sq_menu_create, pMenu);
         /*if (mIsModeEdit) {
             pMenu.getItem(0).setTitle(R.string.sq_actions_update);
         }*/
@@ -168,17 +163,24 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     @Override
     public boolean onOptionsItemSelected(MenuItem pMenuItem) {
         switch (pMenuItem.getItemId()) {
-            /*case R.id.sq_menu_create_event_item_create:
-                if (FormValidator.validate(this, new SQValidationCallback(this, false))) {
-                    if (mIsModeEdit) {
+            case R.id.sq_menu_create_item_create:
+                boolean vAtLeastOneActive = false;
+                for (SQDebt vDebt : mListDebts) {
+                    vAtLeastOneActive |= vDebt.isActive();
+                }
+                if (FormValidator.validate(this, new SQValidationCallback(this, false)) && vAtLeastOneActive) {
+                    /*if (mIsModeEdit) {
                         SQLog.v("click on menu item: update event");
                         updateEvent();
-                    } else {
-                        SQLog.v("click on menu item: create event");
-                        createEvent();
-                    }
+                    } else {*/
+                        SQLog.v("click on menu item: create deal");
+                        createDeal();
+                    //}
+                } else {
+                    SQDialogUtils.createSnackBarError(mToolbar, getString(R.string
+                            .sq_message_error_at_least_one_active_participant), Snackbar.LENGTH_LONG).show();
                 }
-                return true;*/
+                return true;
             default:
                 return super.onOptionsItemSelected(pMenuItem);
         }
@@ -234,7 +236,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     @OnTextChanged(value = R.id.sq_activity_edit_deal_edittext_currency, callback = OnTextChanged.Callback
             .TEXT_CHANGED)
     protected void onCurrencyTextChanged(CharSequence pCharSequence, int pStart, int pBefore, int pCount) {
-        if (pStart > 2 && pCount > 0) {
+        if (pStart > 1 && pCount > 0) {
             openSearchCurrencyFragment(pCharSequence.toString());
             mEditTextCurrency.getText().clear();
         }
@@ -256,8 +258,8 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
             mDeal.setCurrency(SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(vCode));
             mEditTextCurrency.append(getString(R.string.sq_format_currency_label, mDeal.getCurrency().getName(),
                     mDeal.getCurrency().getCode()));
-            mViewFocus.requestFocus();
-            SQUIUtils.SoftInput.hide(SQEditDealActivity.this);
+            SQUIUtils.SoftInput.hide(SQEditDealActivity.this, mEditTextCurrency);
+            //mLayoutFocus.requestFocus();
         } catch (SQLException pException) {
             SQLog.e("fail to load currency: " + vCode, pException);
             //setResult(Activity.RESULT_CANCELED, SQHomeActivity.getIntentForNewEvent(vName));
@@ -266,30 +268,73 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     }
 
     //region private methods
+    private void createDeal() {
+        try {
+            mDeal.setTag(mEditTextTag.getText().toString());
+            Float value;
+            if (mEditTextValue.hasFocus()) {
+                // value is not formatted
+                value = SQFormatUtils.parseFloatEntry(mEditTextValue.getText().toString(), false);
+            } else {
+                // value is formatted
+                value = SQFormatUtils.parseFloatEntry(mEditTextValue.getText().toString(), true);
+            }
+            mDeal.setValue(value);
+            mDeal.setOwner((SQPerson) mSpinnerOwner.getSelectedItem());
+            /*if (this.latitude != null && this.longitude != null) {
+                deal.setLatitude(this.latitude);
+                deal.setLongitude(this.longitude);
+            }*/
+            if (mListDebts.size() > 0) {
+                SQDatabaseHelper.getInstance(this).getDebtDao().createAll(mListDebts, mDeal);
+                //SQLog.d("new event has been created with " + vParticipants.size() + " participants");
+            }
+            SQDatabaseHelper.getInstance(this).getDealDao().refresh(mDeal);
+            /*if (mIsModeDuplicate) {
+                SQFabricUtils.AnswersUtils.logDuplicateEvent(mEvent.getCurrency().getCode(), mEvent
+                        .getParticipants().size());
+            } else {
+                SQFabricUtils.AnswersUtils.logCreateEvent(mEvent.getCurrency().getCode(), mEvent.getParticipants().size());
+            }*/
+            SQUIUtils.SoftInput.hide(this);
+            //setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(mEvent.getId(), mEvent.getName()));
+            finish();
+        } catch (SQLException pException) {
+            SQLog.e("fail to create event", pException);
+            SQDialogUtils.createSnackBarError(mToolbar, getString(R.string.sq_message_error_create_event),
+                    Snackbar.LENGTH_LONG);
+        }
+    }
+
+    private void refreshDebts() {
+        int vUnitsCount = 0;
+        for (SQDebt vDebt : mListDebts) {
+            if (vDebt.isActive()) {
+                vUnitsCount += vDebt.getRecipient().getWeight();
+            }
+        }
+        SQLog.d("units count: " + vUnitsCount);
+        Float vValuePerUnit = mDeal.getValue() / vUnitsCount;
+        SQLog.d("debt value per unit: " + vValuePerUnit);
+        for (SQDebt vDebt : mListDebts) {
+            if (vDebt.isActive()) {
+                vDebt.setValue(vValuePerUnit * vDebt.getRecipient().getWeight());
+            } else {
+                vDebt.setValue(0f);
+            }
+        }
+        mAdapterDebts.notifyDataSetChanged();
+    }
+
     private void initLayout() {
+
         if (mDeal.getTag() != null) {
             mEditTextTag.append(mDeal.getTag());
         }
         mTextViewDate.setText(SQFormatUtils.formatLongDateTime(mDeal.getDate(), getString(R.string.sq_commons_at)));
-        mEditTextValue.setText(SQFormatUtils.formatAmount(mDeal.getValue()));
-        mEditTextValue.setOnEditorActionListener((pView, pActionId, pKeyEvent) -> {
-            if (pActionId == EditorInfo.IME_ACTION_DONE) {
-                mViewFocus.requestFocus();
-                SQUIUtils.SoftInput.hide(SQEditDealActivity.this);
-            }
-            return true;
-        });
-        mEditTextValue.setOnFocusChangeListener((pView, pHasFocus) -> {
-            if (pHasFocus) {
-                mEditTextValue.setText("");
-            } else {
-                Float vValue = SQFormatUtils.parseFloatEntry(mEditTextValue.getText().toString());
-                mEditTextValue.setText(SQFormatUtils.formatAmount(vValue));
-                //computeDebtValues(value);
-            }
-        });
-        mEditTextCurrency.append(getString(R.string.sq_format_currency_label, mDeal.getCurrency().getName(),
-                mDeal.getCurrency().getCode()));
+
+        initEditTextValue();
+        initEditTextCurrency();
 
         try {
 
@@ -302,6 +347,57 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
             SQLog.e("fail to load deal participants");
         }
         mEditTextTag.requestFocus();
+    }
+
+    private void initEditTextCurrency() {
+        try {
+            mDeal.setCurrency(SQDatabaseHelper.getInstance(this).getEventDao().getCurrencyForNewDeal(getIntent()
+                    .getExtras().getLong(SQConstants.EXTRA_EVENT_ID)));
+        } catch (SQLException pException) {
+            try {
+                String vCode = SQCurrencyUtils.getLocaleCurrency().getCurrencyCode();
+                SQCurrency vCurrency = SQDatabaseHelper.getInstance(this).getCurrencyDao().findByCode(vCode);
+                mDeal.setCurrency(vCurrency);
+            } catch (SQLException pException2) {
+                SQLog.e("fail to init deal currency");
+            }
+        }
+        mEditTextCurrency.append(getString(R.string.sq_format_currency_label, mDeal.getCurrency().getName(),
+                mDeal.getCurrency().getCode()));
+        /*mEditTextCurrency.setOnEditorActionListener((pView, pActionId, pKeyEvent) -> {
+            if (pActionId == EditorInfo.IME_ACTION_DONE) {
+                mEditTextCurrency.clearFocus();
+            }
+            return true;
+        });
+        mEditTextCurrency.setOnFocusChangeListener((pView, pHasFocus) -> {
+            if (pHasFocus) {
+                mEditTextCurrency.setText("");
+            } else {
+                mEditTextCurrency.append(getString(R.string.sq_format_currency_label, mDeal.getCurrency().getName(),
+                        mDeal.getCurrency().getCode()));
+            }
+        });*/
+    }
+
+    private void initEditTextValue() {
+        mEditTextValue.setText(SQFormatUtils.formatAmount(mDeal.getValue()));
+        /*mEditTextValue.setOnEditorActionListener((pView, pActionId, pKeyEvent) -> {
+            if (pActionId == EditorInfo.IME_ACTION_DONE) {
+                mEditTextValue.clearFocus();
+            }
+            return true;
+        });*/
+        mEditTextValue.setOnFocusChangeListener((pView, pHasFocus) -> {
+            if (pHasFocus) {
+                mEditTextValue.setText("");
+            } else {
+                Float vValue = SQFormatUtils.parseFloatEntry(mEditTextValue.getText().toString(), false);
+                mDeal.setValue(vValue);
+                mEditTextValue.setText(SQFormatUtils.formatAmount(mDeal.getValue()));
+                refreshDebts();
+            }
+        });
     }
 
     private void initSpinnerOwner(List<SQPerson> pParticipants) {
@@ -334,12 +430,28 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     }
 
     private void initRecyclerView(List<SQPerson> pParticipants) {
-        mListParticipants = new ArrayList<>();
-        mListParticipants.addAll(pParticipants);
-        mAdapterParticipants = new SQDealParticipantsListAdapter(mListParticipants);
+        mListDebts = new ArrayList<>();
+        SQDebt debt;
+        for (SQPerson vParticipant : pParticipants) {
+            debt = new SQDebt(vParticipant);
+            mListDebts.add(debt);
+        }
+        mAdapterDebts = new SQDealDebtsListAdapter(mListDebts);
+        mAdapterDebts.setOnDebtActionListener(new SQDealDebtsListAdapter.OnDebtActionListener() {
+            @Override
+            public SQActivity getActivity() {
+                return SQEditDealActivity.this;
+            }
+
+            @Override
+            public void onToggle() {
+                SQLog.v("onToggle");
+                mUIThread.post(() -> refreshDebts());
+            }
+        });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapterParticipants);
+        mRecyclerView.setAdapter(mAdapterDebts);
     }
     //endregion
 }

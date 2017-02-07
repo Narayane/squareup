@@ -1,8 +1,10 @@
 package com.sebastien.balard.android.squareup.data.db;
 
 import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
-import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQConversionBase;
+import com.sebastien.balard.android.squareup.data.models.SQCurrency;
+import com.sebastien.balard.android.squareup.data.models.SQDeal;
+import com.sebastien.balard.android.squareup.data.models.SQDebt;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQLog;
@@ -36,7 +38,9 @@ public class SQDatabaseConfig extends OrmLiteConfigUtil {
 
     public static void main(String[] pArgs) {
         try {
-            final Class[] vClasses = {SQCurrency.class, SQConversionBase.class, SQEvent.class, SQPerson.class};
+            final Class[] vClasses = {SQCurrency.class, SQConversionBase.class, SQDeal.class, SQDebt.class, SQEvent
+                    .class, SQPerson
+                    .class};
             writeConfigFile("sq_config_ormlite.txt", vClasses);
         } catch (IOException pException) {
             SQLog.e("fail to write in ormlite config file");
