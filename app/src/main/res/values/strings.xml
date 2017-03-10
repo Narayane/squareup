@@ -77,4 +77,5 @@
         account to sign in, please use it again"</string>
     <string name="sq_message_error_at_least_one_active_participant">"At least one active participant is
         required for a deal"</string>
+    <string name="sq_message_error_create_deal">"This deal could not be created"</string>
 </resources>

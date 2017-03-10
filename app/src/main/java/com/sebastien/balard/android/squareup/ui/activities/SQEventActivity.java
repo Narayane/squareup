@@ -32,6 +32,7 @@ import com.sebastien.balard.android.squareup.data.models.SQEvent;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
 import com.sebastien.balard.android.squareup.ui.SQActivity;
+import com.sebastien.balard.android.squareup.ui.fragments.event.SQEventDealsListFragment;
 import com.sebastien.balard.android.squareup.ui.fragments.event.SQEventSynthesisFragment;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQViewPagerAdapter;
 
@@ -76,6 +77,21 @@ public class SQEventActivity extends SQActivity {
     }
 
     @Override
+    protected void onActivityResult(int pRequestCode, int pResultCode, Intent pData) {
+        SQLog.v("onActivityResult");
+        switch (pRequestCode) {
+            case SQConstants.NOTIFICATION_REQUEST_CREATE_DEAL:
+                if (pResultCode == RESULT_OK) {
+                    //FIXME: refresh layout
+                }
+                break;
+            default:
+                super.onActivityResult(pRequestCode, pResultCode, pData);
+                break;
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         SQLog.v("onResume");
@@ -100,7 +116,7 @@ public class SQEventActivity extends SQActivity {
     private void initViewPager() {
         SQViewPagerAdapter vViewPagerAdapter = new SQViewPagerAdapter(getSupportFragmentManager());
         vViewPagerAdapter.addFragment(new SQEventSynthesisFragment(), "Synthèse");
-        vViewPagerAdapter.addFragment(new Fragment(), "Opérations");
+        vViewPagerAdapter.addFragment(new SQEventDealsListFragment(), "Opérations");
         vViewPagerAdapter.addFragment(new Fragment(), "Dettes");
         mViewPager.setAdapter(vViewPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);

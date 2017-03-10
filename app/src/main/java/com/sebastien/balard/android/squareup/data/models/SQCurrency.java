@@ -85,6 +85,11 @@ public class SQCurrency implements Comparable<SQCurrency> {
         return new HashCodeBuilder(17, 37).append(mCode).toHashCode();
     }
 
+    @Override
+    public String toString() {
+        return "Currency [" + mId + ", " + mCode + ", base: " + mIsBase + ")]";
+    }
+
     public Boolean isBase() {
         return mIsBase;
     }

@@ -19,6 +19,7 @@
 
 package com.sebastien.balard.android.squareup.ui.activities;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
@@ -279,6 +280,8 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
                 // value is formatted
                 value = SQFormatUtils.parseFloatEntry(mEditTextValue.getText().toString(), true);
             }
+            mDeal.setRate(mDeal.getCurrency().getRate());
+            mDeal.setConversionBaseCode(SQCurrencyUtils.getDefaultConversionBase().getCode());
             mDeal.setValue(value);
             mDeal.setOwner((SQPerson) mSpinnerOwner.getSelectedItem());
             /*if (this.latitude != null && this.longitude != null) {
@@ -296,12 +299,13 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
             } else {
                 SQFabricUtils.AnswersUtils.logCreateEvent(mEvent.getCurrency().getCode(), mEvent.getParticipants().size());
             }*/
+            SQLog.d("create " + mDeal);
             SQUIUtils.SoftInput.hide(this);
-            //setResult(Activity.RESULT_OK, SQHomeActivity.getIntentForNewEvent(mEvent.getId(), mEvent.getName()));
+            setResult(Activity.RESULT_OK);
             finish();
         } catch (SQLException pException) {
-            SQLog.e("fail to create event", pException);
-            SQDialogUtils.createSnackBarError(mToolbar, getString(R.string.sq_message_error_create_event),
+            SQLog.e("fail to create deal", pException);
+            SQDialogUtils.createSnackBarError(mToolbar, getString(R.string.sq_message_error_create_deal),
                     Snackbar.LENGTH_LONG);
         }
     }

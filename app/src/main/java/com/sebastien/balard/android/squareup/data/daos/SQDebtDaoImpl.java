@@ -43,6 +43,7 @@ public class SQDebtDaoImpl extends BaseDaoImpl<SQDebt, Long> {
         for (SQDebt vDebt : pListDebts) {
             try {
                 vDebt.setDeal(pDeal);
+                vDebt.setCurrency(pDeal.getCurrency());
                 createOrUpdate(vDebt);
                 //SQLog.v("create deal: " + vDebt.get);
             } catch (SQLException pException) {

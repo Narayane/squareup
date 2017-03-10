@@ -17,19 +17,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.sebastien.balard.android.squareup;
+package com.sebastien.balard.android.squareup.ui.widgets.recyclerviews;
 
-import com.sebastien.balard.android.squareup.data.daos.SQConversionBaseDaoImplTest;
-import com.sebastien.balard.android.squareup.data.daos.SQCurrencyDaoImplTest;
-import com.sebastien.balard.android.squareup.data.daos.SQEventDaoImplTest;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by Sebastien BALARD on 24/06/2016.
+ * Created by Sebastien BALARD on 19/08/2016.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({SQCurrencyDaoImplTest.class, SQConversionBaseDaoImplTest.class, SQEventDaoImplTest.class})
-public class UnitTestsSuite {
+
+public class SQRecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
+
+    @Override
+    public void onScrolled(RecyclerView pRecyclerView, int pDx, int pDy) {
+        super.onScrolled(pRecyclerView, pDx, pDy);
+        if (pRecyclerView instanceof SQSectionRecyclerView) {
+            ((SQSectionRecyclerView) pRecyclerView).configureHeaderView(((LinearLayoutManager) pRecyclerView
+                    .getLayoutManager()).findFirstVisibleItemPosition());
+        }
+    }
 }

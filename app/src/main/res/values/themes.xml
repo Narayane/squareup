@@ -30,6 +30,7 @@
 
         <item name="editTextStyle">@style/SQTheme.Widget.EditText</item>
         <item name="buttonStyle">@style/SQTheme.Widget.Button</item>
+        <item name="android:listViewStyle">@style/SQTheme.Widget.ListView</item>
         <!--<item name="autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>
         <item name="android:autoCompleteTextViewStyle">@style/Widget.SquareUp.EditText</item>-->
     </style>

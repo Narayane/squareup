@@ -23,44 +23,52 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.sebastien.balard.android.squareup.R;
+import com.sebastien.balard.android.squareup.data.models.SQDeal;
 import com.sebastien.balard.android.squareup.data.models.SQEvent;
-import com.sebastien.balard.android.squareup.data.models.SQPerson;
-import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.SQLog;
+import com.sebastien.balard.android.squareup.misc.utils.SQCurrencyUtils;
 import com.sebastien.balard.android.squareup.ui.SQFragment;
-import com.sebastien.balard.android.squareup.ui.activities.SQEditDealActivity;
 import com.sebastien.balard.android.squareup.ui.activities.SQEventActivity;
-import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventSynthesisAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQEventDealsSectionRecyclerViewAdapter;
 import com.sebastien.balard.android.squareup.ui.widgets.listeners.SQRecyclerViewItemTouchListener;
+import com.sebastien.balard.android.squareup.ui.widgets.recyclerviews.SQSectionRecyclerView;
 
+import org.joda.time.DateTime;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Sebastien BALARD on 09/01/2017.
+ * Created by Sebastien BALARD on 13/02/2017.
  */
 
-public class SQEventSynthesisFragment extends SQFragment {
+public class SQEventDealsListFragment extends SQFragment {
 
     public static final String TAG = SQEventSynthesisFragment.class.getSimpleName();
 
-    @BindView(R.id.sq_fragment_event_synthesis_textview_empty)
+    @BindView(R.id.sq_fragment_event_deals_list_textview_empty)
     protected AppCompatTextView mTextViewEmpty;
-    @BindView(R.id.sq_fragment_event_synthesis_recyclerview)
-    protected RecyclerView mRecyclerView;
+    @BindView(R.id.sq_fragment_event_deals_list_recyclerview)
+    protected SQSectionRecyclerView mRecyclerView;
 
-    private SQEventSynthesisAdapter mAdapterPersons;
-    private List<SQPerson> mListPersons;
+    private SQEventDealsSectionRecyclerViewAdapter mSectionAdapter;
+    private Map<DateTime, List<SQDeal>> mSections;
+    private List<SQDeal> mListDeals;
 
     //region fragment lifecycle methods
     @Override
@@ -73,7 +81,7 @@ public class SQEventSynthesisFragment extends SQFragment {
     public View onCreateView(LayoutInflater pInflater, @Nullable ViewGroup pContainer, @Nullable Bundle
             pSavedInstanceState) {
         SQLog.v("onCreateView");
-        View vView = pInflater.inflate(R.layout.sq_fragment_event_synthesis, pContainer, false);
+        View vView = pInflater.inflate(R.layout.sq_fragment_event_deals_list, pContainer, false);
         ButterKnife.bind(this, vView);
         return vView;
     }
@@ -101,43 +109,112 @@ public class SQEventSynthesisFragment extends SQFragment {
 
     //region private methods
     private void refreshLayout() {
+
+        SQDeal vDeal = new SQDeal("Essence");
+        try {
+            vDeal.setCurrency(SQCurrencyUtils.getBaseCurrency());
+        } catch (SQLException pE) {
+            pE.printStackTrace();
+        }
+        vDeal.setValue(100.95f);
+        vDeal.setDate(DateTime.now().minusMinutes(35));
+        mListDeals.add(vDeal);
+
+        vDeal = new SQDeal("Bijou");
+        try {
+            vDeal.setCurrency(SQCurrencyUtils.getBaseCurrency());
+        } catch (SQLException pE) {
+            pE.printStackTrace();
+        }
+        vDeal.setValue(51.25f);
+        mListDeals.add(vDeal);
+
+        vDeal = new SQDeal("Bijou");
+        try {
+            vDeal.setCurrency(SQCurrencyUtils.getBaseCurrency());
+        } catch (SQLException pE) {
+            pE.printStackTrace();
+        }
+        vDeal.setValue(51.25f);
+        vDeal.setDate(DateTime.now().minusHours(50));
+        mListDeals.add(vDeal);
+
+        vDeal = new SQDeal("Kdo");
+        try {
+            vDeal.setCurrency(SQCurrencyUtils.getBaseCurrency());
+        } catch (SQLException pE) {
+            pE.printStackTrace();
+        }
+        vDeal.setValue(188.5f);
+        vDeal.setDate(DateTime.now().minusDays(10));
+        mListDeals.add(vDeal);
+
+        vDeal = new SQDeal("Bouffe");
+        try {
+            vDeal.setCurrency(SQCurrencyUtils.getBaseCurrency());
+        } catch (SQLException pE) {
+            pE.printStackTrace();
+        }
+        vDeal.setValue(14.5f);
+        vDeal.setDate(DateTime.now().minusDays(3));
+        mListDeals.add(vDeal);
+
         if (getEvent() != null) {
-            if (getEvent().getParticipants().size() > 0) {
+            //if (getEvent().getParticipants().size() > 0) {
                 mTextViewEmpty.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mListPersons.clear();
-                mListPersons.addAll(getEvent().getParticipants());
-            } else {
+                mSections.clear();
+                mSections.putAll(new TreeMap<>(generateSections(mListDeals)).descendingMap());
+                mSectionAdapter.notifyDataSetChanged();
+            /*} else {
                 mTextViewEmpty.setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.GONE);
-            }
+            }*/
         } else {
             mTextViewEmpty.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
         }
     }
 
+    private Map<DateTime, List<SQDeal>> generateSections(List<SQDeal> pListDeals) {
+        Map<DateTime, List<SQDeal>> vSections = new HashMap<>();
+        List<SQDeal> vList;
+        for (SQDeal vDeal : pListDeals) {
+            boolean vFound = false;
+            for (Map.Entry<DateTime, List<SQDeal>> vEntry : vSections.entrySet()) {
+                if (vEntry.getKey().toLocalDate().equals(vDeal.getDate().toLocalDate())) {
+                    vEntry.getValue().add(vDeal);
+                    vFound = true;
+                    break;
+                }
+            }
+            if (!vFound) {
+                vList = new ArrayList<>();
+                vList.add(vDeal);
+                vSections.put(vDeal.getDate(), vList);
+            }
+        }
+        return vSections;
+    }
+
     private void initRecyclerView() {
-        mListPersons = new ArrayList<>();
-        mAdapterPersons = new SQEventSynthesisAdapter(mListPersons);
+        mListDeals = new ArrayList<>();
+        mSections = new LinkedHashMap<>();
+        mSectionAdapter = new SQEventDealsSectionRecyclerViewAdapter(mSections);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapterPersons);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.setAdapter(mSectionAdapter);
         mRecyclerView.addOnItemTouchListener(new SQRecyclerViewItemTouchListener(getActivity(), mRecyclerView, new
                 SQRecyclerViewItemTouchListener.OnItemTouchListener() {
                     @Override
                     public void onClick(View pView, int pPosition) {
                         SQLog.v("onClick");
-                        startActivity(SQEditDealActivity.getIntentToCreate(getActivity(), getEvent().getId(),
-                                getEvent().getParticipants().get(pPosition).getId()));
                     }
 
                     @Override
                     public void onLongClick(View pView, int pPosition) {
                         SQLog.v("onLongClick");
-                        startActivityForResult(SQEditDealActivity.getIntentToCreate(getActivity(), getEvent().getId(),
-                                getEvent().getParticipants().get(pPosition).getId()), SQConstants
-                                .NOTIFICATION_REQUEST_CREATE_DEAL);
                     }
 
                     @Override

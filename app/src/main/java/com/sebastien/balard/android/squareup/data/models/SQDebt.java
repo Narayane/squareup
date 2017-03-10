@@ -90,6 +90,10 @@ public class SQDebt {
         return mCurrency;
     }
 
+    public void setCurrency(SQCurrency pCurrency) {
+        mCurrency = pCurrency;
+    }
+
     public SQDeal getDeal() {
         return mDeal;
     }

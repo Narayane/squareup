@@ -1,5 +1,5 @@
 #
-# generated on 2017/02/05 09:27:19
+# generated on 2017/02/21 05:37:56
 #
 # --table-start--
 dataClass=com.sebastien.balard.android.squareup.data.models.SQCurrency
@@ -72,7 +72,7 @@ canBeNull=false
 generatedId=true
 # --field-end--
 # --field-start--
-fieldName=type
+fieldName=mType
 columnName=deal_type
 canBeNull=false
 # --field-end--
@@ -95,6 +95,11 @@ canBeNull=false
 # --field-start--
 fieldName=mRate
 columnName=deal_currency_rate
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=mConversionBaseCode
+columnName=deal_conversion_base_code
 canBeNull=false
 # --field-end--
 # --field-start--

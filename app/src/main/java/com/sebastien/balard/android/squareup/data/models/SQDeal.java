@@ -26,6 +26,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.sebastien.balard.android.squareup.data.daos.SQDealDaoImpl;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
+import com.sebastien.balard.android.squareup.misc.utils.SQFormatUtils;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -34,6 +35,8 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.R.attr.value;
 
 /**
  * Created by Sebastien BALARD on 22/01/2017.
@@ -45,7 +48,7 @@ public class SQDeal {
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_DEAL_COLUMN_ID, canBeNull = false)
     protected Long mId;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TYPE, canBeNull = false)
-    protected String type;
+    protected String mType;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TAG, canBeNull = false)
     protected String mTag;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_DATE, dataType = DataType.DATE_TIME, canBeNull = false)
@@ -54,6 +57,8 @@ public class SQDeal {
     protected Float mValue;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_CURRENCY_RATE, canBeNull = false)
     protected Float mRate;
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_CONVERSION_BASE_CODE, canBeNull = false)
+    protected String mConversionBaseCode;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_LATITUDE)
     protected Double mLatitude;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_LONGITUDE)
@@ -86,14 +91,21 @@ public class SQDeal {
 
         SQDeal vOther = (SQDeal) pObject;
 
-        return new EqualsBuilder().append(mTag, vOther.mTag).append(mDate, vOther.mDate).append(mValue,
-                vOther.mValue).append(mRate, vOther.mRate).isEquals();
+        return new EqualsBuilder().append(mTag, vOther.mTag).append(mDate, vOther.mDate).append(mValue, vOther
+                .mValue).append(mRate, vOther.mRate).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(mTag).append(mDate).append(mValue).append(mRate)
-                .toHashCode();
+        return new HashCodeBuilder(17, 37).append(mTag).append(mDate).append(mValue).append(mRate).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Deal [" + mId + ", " + mType + ", " + mTag + ", " + SQFormatUtils.formatDateTime(mDate) + ", " +
+                mOwner + ", " + value + " " + mCurrency + " (" + SQFormatUtils.formatRate(mRate) + ", " +
+                mConversionBaseCode + "), (" + mLatitude + ", " + mLongitude + "), eventId: " + mEventId +
+                "]";
     }
 
     public SQCurrency getCurrency() {
@@ -136,6 +148,18 @@ public class SQDeal {
         return mRate;
     }
 
+    public void setRate(Float pRate) {
+        mRate = pRate;
+    }
+
+    public String getConversionBaseCode() {
+        return mConversionBaseCode;
+    }
+
+    public void setConversionBaseCode(String pConversionBaseCode) {
+        mConversionBaseCode = pConversionBaseCode;
+    }
+
     public String getTag() {
         return mTag;
     }
@@ -155,8 +179,8 @@ public class SQDeal {
     public List<SQDebt> getDebts() {
         if (mDebts != null) {
             List<SQDebt> vList = new ArrayList<>(mDebts);
-            Collections.sort(vList, (pFirst, pSecond) -> pFirst.getRecipient().getName().compareTo(pSecond.getRecipient().getName
-                    ()));
+            Collections.sort(vList, (pFirst, pSecond) -> pFirst.getRecipient().getName().compareTo(pSecond
+                    .getRecipient().getName()));
             return vList;
         } else {
             return new ArrayList<>();
@@ -164,6 +188,6 @@ public class SQDeal {
     }
 
     public enum SQDealType {
-        Food, Drink, Accomodation, Restaurant, Parking, Taxi, Bar, Transport, Gas, Toll;
+        Food, Drink, Accommodation, Restaurant, Parking, Taxi, Bar, Leisure, Transport, Gas, Toll;
     }
 }

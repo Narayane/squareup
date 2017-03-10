@@ -58,6 +58,7 @@ public interface SQConstants {
     String TABLE_DEAL_COLUMN_DATE = "deal_date";
     String TABLE_DEAL_COLUMN_VALUE = "deal_value";
     String TABLE_DEAL_COLUMN_CURRENCY_RATE = "deal_currency_rate";
+    String TABLE_DEAL_COLUMN_CONVERSION_BASE_CODE = "deal_conversion_base_code";
     String TABLE_DEAL_COLUMN_LATITUDE = "deal_latitude";
     String TABLE_DEAL_COLUMN_LONGITUDE = "deal_longitude";
     String TABLE_DEAL_COLUMN_FK_CURRENCY_ID = "fk_currency_id";
@@ -89,6 +90,7 @@ public interface SQConstants {
     int NOTIFICATION_REQUEST_GOOGLE_SIGN_IN = 10003;
     int NOTIFICATION_REQUEST_LOGIN = 10004;
     int NOTIFICATION_REQUEST_LOGIN_TO_CREATE_EVENT = 10005;
+    int NOTIFICATION_REQUEST_CREATE_DEAL = 10006;
 
     String EXTRA_EVENT_ID = "EXTRA_EVENT_ID";
     String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";

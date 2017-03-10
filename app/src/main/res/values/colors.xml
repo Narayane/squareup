@@ -5,12 +5,13 @@
     <color name="sq_color_accent">@color/sq_color_amber_800</color>
     <color name="sq_color_pressed">@color/sq_color_orange_a700</color>
     <color name="sq_color_selected">@color/sq_color_amber_800</color>
-    <color name="sq_color_text_primary">@color/gm_color_grey_dark</color>
-    <color name="sq_color_text_secondary">@color/gm_color_grey</color>
+    <color name="sq_color_text_primary">@color/sq_color_grey_dark</color>
+    <color name="sq_color_text_secondary">@color/sq_color_grey</color>
     <color name="sq_color_divider">@color/sq_color_grey_100</color>
     <color name="sq_color_warning">@color/sq_color_orange_500</color>
 
     <color name="sq_color_white">#ffffff</color>
+    <color name="sq_color_white40">#40ffffff</color>
     <color name="sq_color_black">#000000</color>
     <color name="sq_color_blue_500">#2196f3</color>
     <color name="sq_color_blue_700">#1976d2</color>
@@ -20,12 +21,12 @@
     <color name="sq_color_red_500">#f44336</color>
     <color name="sq_color_orange_500">#ff9800</color>
     <color name="sq_color_orange_a700">#ff6d00</color>
-    <color name="sq_color_grey_100">#f5f5f5</color>
-    <color name="gm_color_grey_light">#b6b6b6</color>
-    <color name="gm_color_grey_dark">#212121</color>
-    <color name="gm_color_grey">#727272</color>
+    <color name="sq_color_grey_100">#f0f0f0</color>
+    <color name="sq_color_grey_light">#b6b6b6</color>
+    <color name="sq_color_grey_dark">#212121</color>
+    <color name="sq_color_grey">#727272</color>
 
-    <color name="blue">#4a90e2</color>
+    <color name="sq_color_chips_blue">#4a90e2</color>
     <color name="base10">#eaeaea</color>
     <color name="base30">#c1c1c1</color>
 </resources>

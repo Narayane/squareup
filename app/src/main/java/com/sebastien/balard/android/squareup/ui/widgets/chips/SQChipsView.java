@@ -135,7 +135,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
         mChipsColorClicked = ContextCompat.getColor(context, R.color.sq_color_primary_dark);
 
         mChipsBgColor = ContextCompat.getColor(context, R.color.base10);
-        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.blue);
+        mChipsBgColorClicked = ContextCompat.getColor(context, R.color.sq_color_chips_blue);
 
         mChipsTextColor = ContextCompat.getColor(context, R.color.sq_color_black);
         mChipsTextColorClicked = ContextCompat.getColor(context, R.color.sq_color_white);
@@ -501,7 +501,7 @@ public class SQChipsView extends ScrollView implements SQChipsEditText.InputConn
                         mView.getBackground().setColorFilter(mChipsBgColor, PorterDuff.Mode.SRC_ATOP);
                     }
                 });
-                mIconWrapper.setBackgroundResource(R.drawable.sq_shape_circle);
+                mIconWrapper.setBackgroundResource(R.drawable.sq_shape_circle_chip);
                 mTextView.setTextColor(mChipsTextColor);
 
                 // set icon resources
