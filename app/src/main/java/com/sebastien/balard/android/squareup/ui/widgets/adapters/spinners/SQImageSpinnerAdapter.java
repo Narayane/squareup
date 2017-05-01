@@ -17,12 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.sebastien.balard.android.squareup.ui.widgets.adapters;
+package com.sebastien.balard.android.squareup.ui.widgets.adapters.spinners;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
@@ -31,8 +30,6 @@ import android.view.ViewGroup;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sebastien.balard.android.squareup.R;
-import com.sebastien.balard.android.squareup.SQApplication;
-import com.sebastien.balard.android.squareup.ui.widgets.SQAbstractSpinnerAdapter;
 
 import java.util.List;
 
@@ -43,10 +40,16 @@ import butterknife.ButterKnife;
  * Created by Sebastien BALARD on 22/01/2017.
  */
 
-public class SQPersonSpinnerAdapter<T> extends SQAbstractSpinnerAdapter<T> {
+public class SQImageSpinnerAdapter<T extends SQImageSpinnerAdapter.SQImageSpinnerAdapterItem> extends
+        SQAbstractSpinnerAdapter<T> {
 
-    public SQPersonSpinnerAdapter(Context pContext, List<T> pElements, SQSpinnerAdapterItemAdapter<T> pItemAdapter) {
-        super(pContext, pElements, pItemAdapter);
+    public interface SQImageSpinnerAdapterItem extends SQAbstractSpinnerAdapterItem {
+        String getItemImageStringUri();
+        TextDrawable getItemImageDrawable();
+    }
+
+    public SQImageSpinnerAdapter(Context pContext, List<T> pElements) {
+        super(pContext, pElements);
     }
 
     @NonNull
@@ -58,21 +61,18 @@ public class SQPersonSpinnerAdapter<T> extends SQAbstractSpinnerAdapter<T> {
             vViewHolder = (ViewHolder) pConvertView.getTag();
         } else {
             LayoutInflater layout = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            pConvertView = layout.inflate(R.layout.sq_item_spinner_person, null);
+            pConvertView = layout.inflate(R.layout.sq_item_image_spinner, null);
             vViewHolder = new ViewHolder(pConvertView);
             pConvertView.setTag(vViewHolder);
         }
 
-        String vPhotoUriString = mItemAdapter.getStringUri(mListItems.get(pPosition));
+        String vPhotoUriString = mListItems.get(pPosition).getItemImageStringUri();
         if (vPhotoUriString != null) {
-            vViewHolder.mImageViewPicture.setImageURI(Uri.parse(vPhotoUriString));
+            vViewHolder.mImageView.setImageURI(Uri.parse(vPhotoUriString));
         } else {
-            TextDrawable vPlaceholder = TextDrawable.builder().buildRound(Character.toString(mItemAdapter.getLabel
-                    (mListItems.get(pPosition)).charAt(0)), ContextCompat.getColor(SQApplication.getContext(), R
-                    .color.sq_color_primary_dark));
-            vViewHolder.mImageViewPicture.setImageDrawable(vPlaceholder);
+            vViewHolder.mImageView.setImageDrawable(mListItems.get(pPosition).getItemImageDrawable());
         }
-        vViewHolder.mTextViewName.setText(mItemAdapter.getLabel(mListItems.get(pPosition)));
+        vViewHolder.mTextViewLabel.setText(mListItems.get(pPosition).getItemLabel());
 
         return pConvertView;
     }
@@ -85,31 +85,28 @@ public class SQPersonSpinnerAdapter<T> extends SQAbstractSpinnerAdapter<T> {
             vViewHolder = (ViewHolder) pConvertView.getTag();
         } else {
             LayoutInflater layout = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            pConvertView = layout.inflate(R.layout.sq_item_spinner_person, null);
+            pConvertView = layout.inflate(R.layout.sq_item_image_spinner, null);
             vViewHolder = new ViewHolder(pConvertView);
             pConvertView.setTag(vViewHolder);
         }
 
-        String vPhotoUriString = mItemAdapter.getStringUri(mListItems.get(pPosition));
+        String vPhotoUriString = mListItems.get(pPosition).getItemImageStringUri();
         if (vPhotoUriString != null) {
-            vViewHolder.mImageViewPicture.setImageURI(Uri.parse(vPhotoUriString));
+            vViewHolder.mImageView.setImageURI(Uri.parse(vPhotoUriString));
         } else {
-            TextDrawable vPlaceholder = TextDrawable.builder().buildRound(Character.toString(mItemAdapter.getLabel
-                    (mListItems.get(pPosition)).charAt(0)), ContextCompat.getColor(SQApplication.getContext(), R
-                    .color.sq_color_primary_dark));
-            vViewHolder.mImageViewPicture.setImageDrawable(vPlaceholder);
+            vViewHolder.mImageView.setImageDrawable(mListItems.get(pPosition).getItemImageDrawable());
         }
-        vViewHolder.mTextViewName.setText(mItemAdapter.getLabel(mListItems.get(pPosition)));
+        vViewHolder.mTextViewLabel.setText(mListItems.get(pPosition).getItemLabel());
 
         return pConvertView;
     }
 
     static class ViewHolder {
 
-        @BindView(R.id.sq_item_spinner_contact_imageview_picture)
-        AppCompatImageView mImageViewPicture;
-        @BindView(R.id.sq_item_spinner_contact_textview_name)
-        AppCompatTextView mTextViewName;
+        @BindView(R.id.sq_item_image_spinner_imageview)
+        AppCompatImageView mImageView;
+        @BindView(R.id.sq_item_image_spinner_textview_label)
+        AppCompatTextView mTextViewLabel;
 
         public ViewHolder(View pView) {
             ButterKnife.bind(this, pView);

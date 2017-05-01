@@ -39,7 +39,7 @@
         android:padding="8dp"
         android:background="@drawable/sq_shape_circle"
         android:tint="@color/sq_color_white"
-        app:srcCompat="@drawable/sq_ic_home_24dp"/>
+        app:srcCompat="@drawable/sq_ic_accommodation_24dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

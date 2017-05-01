@@ -53,7 +53,7 @@ public interface SQConstants {
 
     String TABLE_DEAL_NAME = "sq_deals";
     String TABLE_DEAL_COLUMN_ID = "deal_id";
-    String TABLE_DEAL_COLUMN_TYPE = "deal_type";
+    String TABLE_DEAL_COLUMN_CATEGORY = "deal_type";
     String TABLE_DEAL_COLUMN_TAG = "deal_tag";
     String TABLE_DEAL_COLUMN_DATE = "deal_date";
     String TABLE_DEAL_COLUMN_VALUE = "deal_value";

@@ -47,8 +47,8 @@ public class SQDeal {
 
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_DEAL_COLUMN_ID, canBeNull = false)
     protected Long mId;
-    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TYPE, canBeNull = false)
-    protected String mType;
+    @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_CATEGORY, canBeNull = false)
+    protected String mCategory;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_TAG, canBeNull = false)
     protected String mTag;
     @DatabaseField(columnName = SQConstants.TABLE_DEAL_COLUMN_DATE, dataType = DataType.DATE_TIME, canBeNull = false)
@@ -102,7 +102,7 @@ public class SQDeal {
 
     @Override
     public String toString() {
-        return "Deal [" + mId + ", " + mType + ", " + mTag + ", " + SQFormatUtils.formatDateTime(mDate) + ", " +
+        return "Deal [" + mId + ", " + mCategory + ", " + mTag + ", " + SQFormatUtils.formatDateTime(mDate) + ", " +
                 mOwner + ", " + value + " " + mCurrency + " (" + SQFormatUtils.formatRate(mRate) + ", " +
                 mConversionBaseCode + "), (" + mLatitude + ", " + mLongitude + "), eventId: " + mEventId +
                 "]";
@@ -185,9 +185,5 @@ public class SQDeal {
         } else {
             return new ArrayList<>();
         }
-    }
-
-    public enum SQDealType {
-        Food, Drink, Accommodation, Restaurant, Parking, Taxi, Bar, Leisure, Transport, Gas, Toll;
     }
 }

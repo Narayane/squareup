@@ -156,6 +156,37 @@
                     android:background="#bdbdbd"/>
 
                 <RelativeLayout
+                    android:id="@+id/fragment_card_new_event_layout_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/sq_activity_edit_deal_imageview_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        app:srcCompat="@drawable/sq_ic_type_24dp"/>
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/sq_activity_edit_deal_spinner_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@+id/sq_activity_edit_deal_imageview_type"/>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="56dp"
+                    android:background="#bdbdbd"/>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"

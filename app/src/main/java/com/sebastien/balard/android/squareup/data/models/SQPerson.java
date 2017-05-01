@@ -20,13 +20,17 @@
 package com.sebastien.balard.android.squareup.data.models;
 
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.SQApplication;
 import com.sebastien.balard.android.squareup.data.daos.SQPersonDaoImpl;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
 import com.sebastien.balard.android.squareup.misc.utils.SQContactUtils;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.spinners.SQImageSpinnerAdapter;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -38,7 +42,7 @@ import java.io.Serializable;
  * Created by Sebastien BALARD on 11/05/2016.
  */
 @DatabaseTable(tableName = SQConstants.TABLE_PERSON_NAME, daoClass = SQPersonDaoImpl.class)
-public class SQPerson implements Serializable, Comparable<SQPerson> {
+public class SQPerson implements Serializable, Comparable<SQPerson>, SQImageSpinnerAdapter.SQImageSpinnerAdapterItem {
 
     @DatabaseField(generatedId = true, columnName = SQConstants.TABLE_PERSON_COLUMN_ID, canBeNull = false)
     protected Long mId;
@@ -110,8 +114,8 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
     @Override
     public String toString() {
-        return "Person [" + mId + ", " + getName() + ", " + getEmail() + ", " + mWeight + ", contactId: " + mContactId +
-                ")]";
+        return "Person [" + mId + ", " + getName() + ", " + getEmail() + ", " + mWeight + ", contactId: " +
+                mContactId + ")]";
     }
 
     public SQPerson clone() {
@@ -175,5 +179,26 @@ public class SQPerson implements Serializable, Comparable<SQPerson> {
 
     public boolean isOwner() {
         return mContactId.equals(0L);
+    }
+
+    @Override
+    public Long getItemId() {
+        return getId();
+    }
+
+    @Override
+    public String getItemLabel() {
+        return getName();
+    }
+
+    @Override
+    public String getItemImageStringUri() {
+        return getPhotoUriString();
+    }
+
+    @Override
+    public TextDrawable getItemImageDrawable() {
+        return TextDrawable.builder().buildRound(Character.toString(getItemLabel().charAt(0)), ContextCompat.getColor
+                (SQApplication.getContext(), R.color.sq_color_primary_dark));
     }
 }

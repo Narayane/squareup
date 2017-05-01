@@ -45,6 +45,7 @@ import com.sebastien.balard.android.squareup.R;
 import com.sebastien.balard.android.squareup.data.db.SQDatabaseHelper;
 import com.sebastien.balard.android.squareup.data.models.SQCurrency;
 import com.sebastien.balard.android.squareup.data.models.SQDeal;
+import com.sebastien.balard.android.squareup.data.models.SQDealCategory;
 import com.sebastien.balard.android.squareup.data.models.SQDebt;
 import com.sebastien.balard.android.squareup.data.models.SQPerson;
 import com.sebastien.balard.android.squareup.misc.SQConstants;
@@ -58,12 +59,14 @@ import com.sebastien.balard.android.squareup.ui.fragments.SQSearchContactFragmen
 import com.sebastien.balard.android.squareup.ui.fragments.SQSearchCurrencyFragment;
 import com.sebastien.balard.android.squareup.ui.widgets.SQValidationCallback;
 import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQDealDebtsListAdapter;
-import com.sebastien.balard.android.squareup.ui.widgets.adapters.SQPersonSpinnerAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.spinners.SQIconSpinnerAdapter;
+import com.sebastien.balard.android.squareup.ui.widgets.adapters.spinners.SQImageSpinnerAdapter;
 
 import org.joda.time.DateTime;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 
@@ -87,6 +90,8 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     protected TextInputEditText mEditTextTag;
     @BindView(R.id.sq_activity_edit_deal_textview_date)
     protected AppCompatTextView mTextViewDate;
+    @BindView(R.id.sq_activity_edit_deal_spinner_type)
+    protected AppCompatSpinner mSpinnerType;
     @BindView(R.id.sq_activity_edit_deal_edittext_value)
     protected AppCompatEditText mEditTextValue;
     @BindView(R.id.sq_activity_edit_deal_edittext_currency)
@@ -337,6 +342,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
         }
         mTextViewDate.setText(SQFormatUtils.formatLongDateTime(mDeal.getDate(), getString(R.string.sq_commons_at)));
 
+        initSpinnerType();
         initEditTextValue();
         initEditTextCurrency();
 
@@ -405,24 +411,7 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
     }
 
     private void initSpinnerOwner(List<SQPerson> pParticipants) {
-        mSpinnerOwner.setAdapter(new SQPersonSpinnerAdapter<>(this, pParticipants, new SQPersonSpinnerAdapter
-                .SQSpinnerAdapterItemAdapter<SQPerson>() {
-
-            @Override
-            public Long getId(SQPerson pItem) {
-                return pItem.getId();
-            }
-
-            @Override
-            public String getStringUri(SQPerson pItem) {
-                return pItem.getPhotoUriString();
-            }
-
-            @Override
-            public String getLabel(SQPerson pItem) {
-                return pItem.getName();
-            }
-        }));
+        mSpinnerOwner.setAdapter(new SQImageSpinnerAdapter<>(this, pParticipants));
         int vPosition = 0;
         for (SQPerson owner : pParticipants) {
             if (owner.getId().equals(getIntent().getExtras().getLong(SQConstants.EXTRA_EVENT_OWNER_ID))) {
@@ -431,6 +420,19 @@ public class SQEditDealActivity extends SQActivity implements SQSearchCurrencyFr
             vPosition++;
         }
         mSpinnerOwner.setSelection(vPosition);
+    }
+
+    private void initSpinnerType() {
+        List<SQDealCategory> vList = Arrays.asList(SQDealCategory.values());
+        mSpinnerType.setAdapter(new SQIconSpinnerAdapter<>(this, vList));
+        /*int vPosition = 0;
+        for (SQPerson owner : vList) {
+            if (owner.getId().equals(getIntent().getExtras().getLong(SQConstants.EXTRA_EVENT_OWNER_ID))) {
+                break;
+            }
+            vPosition++;
+        }
+        mSpinnerOwner.setSelection(vPosition);*/
     }
 
     private void initRecyclerView(List<SQPerson> pParticipants) {

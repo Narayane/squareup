@@ -17,45 +17,34 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.sebastien.balard.android.squareup.ui.widgets;
+package com.sebastien.balard.android.squareup.ui.widgets.adapters.spinners;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.AppCompatTextView;
-import android.view.View;
 import android.widget.BaseAdapter;
-
-import com.sebastien.balard.android.squareup.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Sebastien BALARD on 02/02/2017.
  */
 
-public abstract class SQAbstractSpinnerAdapter<T> extends BaseAdapter implements android.widget.SpinnerAdapter {
+public abstract class SQAbstractSpinnerAdapter<T extends SQAbstractSpinnerAdapter.SQAbstractSpinnerAdapterItem> extends
+        BaseAdapter implements android.widget.SpinnerAdapter {
 
-    public interface SQSpinnerAdapterItemAdapter<T> {
-        Long getId(T pItem);
-        String getStringUri(T pItem);
-        String getLabel(T pItem);
+    public interface SQAbstractSpinnerAdapterItem {
+        Long getItemId();
+        String getItemLabel();
     }
 
     protected Context mContext;
 
     protected List<T> mListItems;
 
-    protected SQAbstractSpinnerAdapter.SQSpinnerAdapterItemAdapter<T> mItemAdapter;
-
-    public SQAbstractSpinnerAdapter(Context pContext, List<T> pElements, SQAbstractSpinnerAdapter.SQSpinnerAdapterItemAdapter<T> pItemAdapter) {
+    public SQAbstractSpinnerAdapter(Context pContext, List<T> pElements) {
         mContext = pContext;
         mListItems = new ArrayList<>();
         mListItems.addAll(pElements);
-        mItemAdapter = pItemAdapter;
     }
 
     @Override
@@ -70,6 +59,6 @@ public abstract class SQAbstractSpinnerAdapter<T> extends BaseAdapter implements
 
     @Override
     public long getItemId(int pPosition) {
-        return mItemAdapter.getId(mListItems.get(pPosition));
+        return mListItems.get(pPosition).getItemId();
     }
 }

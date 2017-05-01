@@ -28,6 +28,17 @@
     <string name="sq_commons_email">Email</string>
     <string name="sq_commons_weight">Poids</string>
     <string name="sq_commons_at">à</string>
+    <string name="sq_commons_food">Nourriture</string>
+    <string name="sq_commons_accommodation">Hébergement</string>
+    <string name="sq_commons_restaurant">Restaurant</string>
+    <string name="sq_commons_parking">Parking</string>
+    <string name="sq_commons_taxi">Taxi</string>
+    <string name="sq_commons_party">Sortie</string>
+    <string name="sq_commons_leisure">Loisir</string>
+    <string name="sq_commons_transport">Transport</string>
+    <string name="sq_commons_gas">Essence</string>
+    <string name="sq_commons_toll">Péage</string>
+    <string name="sq_commons_uncategorized">Non définie</string>
     <!-- settings screen -->
     <string name="sq_screen_settings_category_currencies_title">Monnaies</string>
     <string name="sq_screen_settings_category_currencies_label_update_frequency">Fréquence de mise à jour</string>
