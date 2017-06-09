@@ -36,3 +36,6 @@ proguard/
 gradle/
 app/fabric.properties
 app/src/main/res/values/keys.xml
+projectFilesBackup/
+.idea/codeStyleSettings.xml
+app/google-services.json
